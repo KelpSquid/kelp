@@ -25,6 +25,11 @@ public final class Folders {
         return home().resolve("libraries");
     }
 
+    /** The Javas Mojang made for running the game, one folder each. */
+    public static Path runtimes() {
+        return home().resolve("runtimes");
+    }
+
     /** Sounds, languages and textures, shared between versions. */
     public static Path assets() {
         return home().resolve("assets");

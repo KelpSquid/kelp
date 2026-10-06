@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/** Gets everything a Minecraft version needs to run: the game itself, its libraries and its assets. */
+/** Gets everything a Minecraft version needs to run: the game itself, its libraries, its assets and its Java. */
 public class GameInstaller {
     private static final String ASSETS_URL = "https://resources.download.minecraft.net/";
 
@@ -74,8 +74,14 @@ public class GameInstaller {
             jobs.put(file, new Downloader.Job(ASSETS_URL + path, file, hash, size(asset)));
         }
 
+        // 5. The Java this version runs on
+        stage = "Getting the Java list";
+        String java = JavaRuntime.componentFor(details);
+        for (Downloader.Job job : JavaRuntime.jobs(java, downloader)) jobs.put(job.file(), job);
+
         stage = "Downloading";
         downloader.downloadAll(new ArrayList<>(jobs.values()));
+        JavaRuntime.markRunnable(java);
         stage = "Done";
     }
 
