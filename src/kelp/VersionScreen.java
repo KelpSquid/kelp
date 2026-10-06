@@ -1,7 +1,11 @@
 package kelp;
 
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Graphics2D;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +17,8 @@ public class VersionScreen extends Screen {
 
     private final TitleScreen parent;
     private final McButton playButton = new McButton("Play Selected Version", this::play);
+    private final McButton squidButton = new McButton("", this::toggleSquid);
+    private final McButton modsButton = new McButton("Mods Folder", this::openMods);
     private final McButton filterButton = new McButton("", this::nextFilter);
     private final McButton backButton = new McButton("Back", this::back);
 
@@ -36,6 +42,8 @@ public class VersionScreen extends Screen {
         this.parent = parent;
         this.selected = parent.getVersion();
         buttons.add(playButton);
+        buttons.add(squidButton);
+        buttons.add(modsButton);
         buttons.add(filterButton);
         buttons.add(backButton);
         updateFilterLabel();
@@ -64,7 +72,22 @@ public class VersionScreen extends Screen {
 
     private void play() {
         parent.setVersion(selected);
-        panel.setScreen(new DownloadScreen(panel, parent, selected));
+        panel.setScreen(new DownloadScreen(panel, parent, selected, Settings.squid()));
+    }
+
+    private void toggleSquid() {
+        Settings.setSquid(!Settings.squid());
+    }
+
+    /** Opens the picked version's mods folder in File Explorer, making it first if needed. */
+    private void openMods() {
+        Path mods = Folders.instances().resolve(selected.id()).resolve("mods");
+        try {
+            Files.createDirectories(mods);
+            Desktop.getDesktop().open(mods.toFile());
+        } catch (IOException e) {
+            System.err.println("Couldn't open " + mods + ": " + e.getMessage());
+        }
     }
 
     private void back() {
@@ -101,7 +124,7 @@ public class VersionScreen extends Screen {
         List<VersionManifest.Version> shown = shown();
 
         listTop = 32 * GUI;
-        listBottom = h - 60 * GUI;
+        listBottom = h - 84 * GUI;
         rowX = (w - ROW_WIDTH) / 2;
         scroll = Math.max(0, Math.min(scroll, maxScroll(shown.size())));
 
@@ -123,12 +146,16 @@ public class VersionScreen extends Screen {
             drawScrollbar(g, shown.size(), boxX + boxW);
         }
 
-        // Buttons along the bottom. Play stays grayed out until a version is picked.
-        int buttonsY = h - 52 * GUI;
+        // Buttons along the bottom. Play and Mods Folder stay grayed out until a version is picked.
+        int buttonsY = h - 76 * GUI;
         playButton.setActive(selected != null);
+        modsButton.setActive(selected != null);
+        squidButton.setLabel("Squid: " + (Settings.squid() ? "ON" : "OFF"));
         playButton.setBounds(w / 2 - 100 * GUI, buttonsY, 200 * GUI, 20 * GUI);
-        filterButton.setBounds(w / 2 - 100 * GUI, buttonsY + 24 * GUI, 98 * GUI, 20 * GUI);
-        backButton.setBounds(w / 2 + 2 * GUI, buttonsY + 24 * GUI, 98 * GUI, 20 * GUI);
+        squidButton.setBounds(w / 2 - 100 * GUI, buttonsY + 24 * GUI, 98 * GUI, 20 * GUI);
+        modsButton.setBounds(w / 2 + 2 * GUI, buttonsY + 24 * GUI, 98 * GUI, 20 * GUI);
+        filterButton.setBounds(w / 2 - 100 * GUI, buttonsY + 48 * GUI, 98 * GUI, 20 * GUI);
+        backButton.setBounds(w / 2 + 2 * GUI, buttonsY + 48 * GUI, 98 * GUI, 20 * GUI);
         for (McButton b : buttons) b.draw(g, font, GUI);
     }
 

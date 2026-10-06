@@ -11,6 +11,7 @@ public class DownloadScreen extends Screen {
 
     private final TitleScreen parent;
     private final VersionManifest.Version version;
+    private final boolean withSquid;
     private final GameInstaller installer = new GameInstaller();
     private final McButton button = new McButton("Cancel", this::leave);
 
@@ -19,17 +20,18 @@ public class DownloadScreen extends Screen {
     private volatile String error;
     private volatile int exitCode;
 
-    public DownloadScreen(OceanPanel panel, TitleScreen parent, VersionManifest.Version version) {
+    public DownloadScreen(OceanPanel panel, TitleScreen parent, VersionManifest.Version version, boolean withSquid) {
         super(panel);
         this.parent = parent;
         this.version = version;
+        this.withSquid = withSquid;
         buttons.add(button);
 
         Thread worker = new Thread(() -> {
             try {
                 installer.install(version);
                 phase = Phase.STARTING;
-                Process game = Launcher.launch(version.id(), PLAYER_NAME);
+                Process game = Launcher.launch(version.id(), PLAYER_NAME, withSquid);
                 phase = Phase.RUNNING;
                 exitCode = game.waitFor();
                 phase = exitCode == 0 ? Phase.CLOSED : Phase.CRASHED;
@@ -53,11 +55,11 @@ public class DownloadScreen extends Screen {
         int centerY = h / 2;
         int titleY = centerY - 40 * GUI;
         int lineY = centerY - 16 * GUI;
-        String name = "Minecraft " + version.id();
+        String name = "Minecraft " + version.id() + (withSquid ? " + Squid" : "");
 
         switch (phase) {
             case DOWNLOADING -> {
-                centered(g, font, "Downloading " + name, w, titleY, 0xFFFFFF);
+                centered(g, font, "Downloading Minecraft " + version.id(), w, titleY, 0xFFFFFF);
                 drawProgress(g, font, w, lineY);
                 button.setLabel("Cancel");
             }

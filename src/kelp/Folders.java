@@ -30,6 +30,11 @@ public final class Folders {
         return home().resolve("instances");
     }
 
+    /** The Squid mod loader: squid.jar and the libraries it needs. Squid's build.bat puts them here. */
+    public static Path squid() {
+        return home().resolve("squid");
+    }
+
     /** The Javas Mojang made for running the game, one folder each. */
     public static Path runtimes() {
         return home().resolve("runtimes");

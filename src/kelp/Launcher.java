@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -28,10 +29,13 @@ public final class Launcher {
     private Launcher() {
     }
 
-    /** Starts a downloaded version. Everything the game prints goes into kelp-output.log in its folder. */
-    public static Process launch(String versionId, String playerName) throws IOException {
+    /**
+     * Starts a downloaded version, through the Squid mod loader if withSquid is on.
+     * Everything the game prints goes into kelp-output.log in its folder.
+     */
+    public static Process launch(String versionId, String playerName, boolean withSquid) throws IOException {
         Path gameFolder = Folders.instances().resolve(versionId);
-        List<String> command = buildCommand(versionId, playerName);
+        List<String> command = buildCommand(versionId, playerName, withSquid);
         return new ProcessBuilder(command)
                 .directory(gameFolder.toFile())
                 .redirectErrorStream(true)
@@ -40,7 +44,7 @@ public final class Launcher {
     }
 
     /** The full command that starts the game: java, its settings, then the game's own settings. */
-    public static List<String> buildCommand(String versionId, String playerName) throws IOException {
+    public static List<String> buildCommand(String versionId, String playerName, boolean withSquid) throws IOException {
         Path versionFolder = Folders.versions().resolve(versionId);
         Map<String, Object> details = Json.object(Json.parse(Files.readString(versionFolder.resolve(versionId + ".json"))));
         Path gameFolder = Folders.instances().resolve(versionId); // saves, settings and screenshots go here
@@ -72,7 +76,21 @@ public final class Launcher {
         vars.put("natives_directory", natives.toString());
         vars.put("library_directory", Folders.libraries().toString());
         vars.put("classpath_separator", File.pathSeparator);
-        vars.put("classpath", String.join(File.pathSeparator, classpath(details, versionFolder.resolve(versionId + ".jar"))));
+        String gameClasspath = String.join(File.pathSeparator, classpath(details, versionFolder.resolve(versionId + ".jar")));
+        String mainClass = (String) details.get("mainClass");
+        List<String> squidSettings = new ArrayList<>();
+        if (withSquid) {
+            // Squid starts first. Only Squid goes on the normal classpath, and Squid loads Minecraft itself,
+            // so mods can change Minecraft's code as it loads.
+            checkSquidCanRun(details, versionId);
+            vars.put("classpath", String.join(File.pathSeparator, squidJars()));
+            squidSettings.add("-Dsquid.gameClasspath=" + gameClasspath);
+            squidSettings.add("-Dsquid.mainClass=" + mainClass);
+            mainClass = "squid.Main";
+            Files.createDirectories(gameFolder.resolve("mods"));
+        } else {
+            vars.put("classpath", gameClasspath);
+        }
         vars.put("launcher_name", NAME);
         vars.put("launcher_version", VERSION);
 
@@ -102,7 +120,8 @@ public final class Launcher {
             command.add(fill((String) client.get("argument"), vars));
         }
 
-        command.add((String) details.get("mainClass"));
+        command.addAll(squidSettings);
+        command.add(mainClass);
 
         if (arguments != null) {
             addArguments(command, arguments.get("game"), vars);
@@ -110,6 +129,27 @@ public final class Launcher {
             for (String part : ((String) details.get("minecraftArguments")).split(" ")) command.add(fill(part, vars));
         }
         return command;
+    }
+
+    /** squid.jar and its libraries, from the folder Squid's build.bat copies them into. */
+    private static List<String> squidJars() throws IOException {
+        Path folder = Folders.squid();
+        if (!Files.exists(folder.resolve("squid.jar"))) {
+            throw new IOException("Squid isn't installed. Run build.bat in the squid repo, or turn Squid off.");
+        }
+        try (Stream<Path> files = Files.list(folder)) {
+            return files.filter(p -> p.toString().endsWith(".jar")).map(Path::toString).sorted().toList();
+        }
+    }
+
+    /** Squid is built for Java 21, so it can only start versions that run on Java 21 or newer. */
+    private static void checkSquidCanRun(Map<String, Object> details, String versionId) throws IOException {
+        Map<String, Object> javaVersion = Json.object(details.get("javaVersion"));
+        int java = javaVersion == null ? 8 : ((Number) javaVersion.get("majorVersion")).intValue();
+        if (java < 21) {
+            throw new IOException("Squid needs Java 21, but Minecraft " + versionId + " runs on Java " + java
+                    + ". Turn Squid off to play it.");
+        }
     }
 
     /** Every library the game needs, plus the game itself, in the order Mojang lists them. */
