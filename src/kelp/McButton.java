@@ -9,7 +9,7 @@ public class McButton {
     private final BufferedImage normal = Textures.load("button.png");
     private final BufferedImage highlighted = Textures.load("button_highlighted.png");
 
-    private final String label;
+    private String label;
     private final Runnable action;
     private final Rectangle bounds = new Rectangle();
     private boolean hovered;
@@ -17,6 +17,10 @@ public class McButton {
     public McButton(String label, Runnable action) {
         this.label = label;
         this.action = action;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
     }
 
     /** Where the button sits on screen, in screen pixels. */
