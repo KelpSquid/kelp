@@ -1,6 +1,8 @@
 package kelp;
 
 import javax.imageio.ImageIO;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -11,7 +13,11 @@ public final class Textures {
     }
 
     public static BufferedImage load(String name) {
-        File file = new File("textures", name);
+        return read(new File("textures", name));
+    }
+
+    /** Loads any PNG, like the Kelp logo in the branding folder. */
+    public static BufferedImage read(File file) {
         try {
             BufferedImage image = ImageIO.read(file);
             if (image == null) throw new IOException("it is not a PNG");
@@ -29,6 +35,22 @@ public final class Textures {
             frames[i] = strip.getSubimage(0, i * size, size, size);
         }
         return frames;
+    }
+
+    /** Shrinks a big image smoothly, halving it step by step so small sizes stay clean instead of jagged. */
+    public static BufferedImage shrink(BufferedImage image, int size) {
+        BufferedImage current = image;
+        int w = image.getWidth();
+        while (w > size) {
+            w = Math.max(size, w / 2);
+            BufferedImage half = new BufferedImage(w, w, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = half.createGraphics();
+            g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            g.drawImage(current, 0, 0, w, w, null);
+            g.dispose();
+            current = half;
+        }
+        return current;
     }
 
     /** Multiplies every pixel by a color, the same way Minecraft turns its gray water texture blue. */
