@@ -3,6 +3,8 @@ package kelp;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,12 +16,19 @@ public class OceanPanel extends JPanel {
     private static final int BLOCK = 16 * SCALE;      // so one block is 64 screen pixels
     private static final int OCEAN_COLOR = 0x3F76E4;  // Minecraft's normal ocean water color
     private static final Color DEEP = new Color(0x0B1633);
+    private static final int GUI = 2;                 // buttons and their text are drawn at 2x, like Minecraft's GUI scale
 
     private final BufferedImage[] water = Textures.frames(Textures.tint(Textures.load("water_still.png"), OCEAN_COLOR));
     private final BufferedImage[] kelpTop = Textures.frames(Textures.load("kelp.png"));
     private final BufferedImage[] kelpStem = Textures.frames(Textures.load("kelp_plant.png"));
     private final BufferedImage bubble = Textures.load("bubble.png");
     private final McFont font = new McFont(Textures.load("ascii.png"));
+
+    private final McButton play = new McButton("Play", () -> { });
+    private final McButton instances = new McButton("Instances", () -> { });
+    private final McButton settings = new McButton("Settings", () -> { });
+    private final McButton quit = new McButton("Quit", () -> System.exit(0));
+    private final List<McButton> buttons = List.of(play, instances, settings, quit);
 
     private final Random random = new Random();
     private final int[] kelpHeights = new int[40]; // how many blocks tall the kelp is in each column (0 = none)
@@ -31,6 +40,22 @@ public class OceanPanel extends JPanel {
             kelpHeights[i] = random.nextInt(10) < 7 ? 1 + random.nextInt(5) : 0;
         }
         for (int i = 0; i < 25; i++) bubbles.add(newBubble(true));
+
+        MouseAdapter mouse = new MouseAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                for (McButton b : buttons) b.setHovered(b.contains(e.getX(), e.getY()));
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                for (McButton b : buttons) {
+                    if (b.contains(e.getX(), e.getY())) b.click();
+                }
+            }
+        };
+        addMouseListener(mouse);
+        addMouseMotionListener(mouse);
 
         // Move everything about 60 times a second
         new Timer(16, e -> {
@@ -100,20 +125,31 @@ public class OceanPanel extends JPanel {
             g.drawImage(bubble, x, y, 8 * SCALE, 8 * SCALE, null);
         }
 
-        // 5. The title
+        // 5. The buttons, laid out like Minecraft's title screen (sizes are in GUI pixels, times GUI)
+        int buttonsY = h / 4 + 48 * GUI;
+        int left = w / 2 - 100 * GUI;
+        play.setBounds(left, buttonsY, 200 * GUI, 20 * GUI);
+        instances.setBounds(left, buttonsY + 24 * GUI, 200 * GUI, 20 * GUI);
+        settings.setBounds(left, buttonsY + 60 * GUI, 98 * GUI, 20 * GUI);
+        quit.setBounds(left + 102 * GUI, buttonsY + 60 * GUI, 98 * GUI, 20 * GUI);
+        for (McButton b : buttons) b.draw(g, font, GUI);
+
+        // 6. The title, sitting above the buttons
         int titleScale = 12;
         String title = "Kelp";
         int titleX = (w - font.width(title, titleScale)) / 2;
-        int titleY = h / 5;
+        int titleY = buttonsY - 8 * titleScale - 40;
         font.draw(g, title, titleX, titleY, titleScale, 0xFFFFFF);
 
-        // 6. A yellow splash, tilted and pulsing like the one on Minecraft's title screen
+        // 7. A yellow splash, tilted and pulsing like the one on Minecraft's title screen.
+        //    Minecraft's own formula: it pulses every second and long splashes get shrunk to fit.
         String splash = "A launcher from the deep!";
-        double pulse = 2 * (1.8 - Math.abs(Math.sin(time % 1.0 * Math.PI * 2) * 0.1));
+        double pulse = 1.8 - Math.abs(Math.sin(time % 1.0 * Math.PI * 2) * 0.1);
+        double splashScale = pulse * 100 / (font.width(splash, 1) + 32) * GUI;
         Graphics2D s = (Graphics2D) g.create();
-        s.translate(titleX + font.width(title, titleScale) + 40, titleY + 8 * titleScale + 10);
+        s.translate(w / 2 + 90 * GUI, titleY + 6 * titleScale);
         s.rotate(Math.toRadians(-20));
-        s.scale(pulse, pulse);
+        s.scale(splashScale, splashScale);
         font.draw(s, splash, -font.width(splash, 1) / 2, -4, 1, 0xFFFF00);
         s.dispose();
 
