@@ -1,0 +1,21 @@
+# Kelp build output (made by run.bat)
+out/
+
+# Compiled class files
+*.class
+
+# Package files
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Java crash logs
+hs_err_pid*
+replay_pid*
+
+# Editor folders
+.vscode/
+.idea/
