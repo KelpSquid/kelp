@@ -36,6 +36,7 @@ public final class Launcher {
     public static Process launch(String versionId, String playerName, boolean withSquid) throws IOException {
         Path gameFolder = Folders.instances().resolve(versionId);
         List<String> command = buildCommand(versionId, playerName, withSquid);
+        Files.deleteIfExists(SquidReport.file(versionId)); // so Kelp never shows last time's report
         return new ProcessBuilder(command)
                 .directory(gameFolder.toFile())
                 .redirectErrorStream(true)

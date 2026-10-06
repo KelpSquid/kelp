@@ -2,6 +2,8 @@ package kelp;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.util.ArrayList;
+import java.util.List;
 
 /** Downloads a Minecraft version with a progress bar, then starts it and keeps an eye on it. */
 public class DownloadScreen extends Screen {
@@ -19,6 +21,8 @@ public class DownloadScreen extends Screen {
     private volatile Phase phase = Phase.DOWNLOADING;
     private volatile String error;
     private volatile int exitCode;
+    private SquidReport report;        // what Squid last said, checked about once a second
+    private double reportCheckedAt = -1;
 
     public DownloadScreen(OceanPanel panel, TitleScreen parent, VersionManifest.Version version, boolean withSquid) {
         super(panel);
@@ -69,7 +73,13 @@ public class DownloadScreen extends Screen {
             }
             case RUNNING -> {
                 centered(g, font, name + " is running!", w, titleY, 0xFFFFFF);
-                centered(g, font, "Have fun. Kelp will wait down here.", w, lineY, 0xA0A0A0);
+                SquidReport squid = squidReport();
+                String line = "Have fun. Kelp will wait down here.";
+                if (squid != null && squid.status().equals("loading")) line = "Squid is starting your mods...";
+                if (squid != null && squid.status().equals("running")) {
+                    line = "Squid loaded " + squid.modCount() + (squid.modCount() == 1 ? " mod." : " mods.") + " Have fun!";
+                }
+                centered(g, font, line, w, lineY, 0xA0A0A0);
                 button.setLabel("Back");
             }
             case CLOSED -> {
@@ -77,9 +87,21 @@ public class DownloadScreen extends Screen {
                 button.setLabel("Done");
             }
             case CRASHED -> {
-                centered(g, font, name + " crashed (code " + exitCode + ")", w, titleY, 0xFF5555);
-                centered(g, font, "What it said is saved in:", w, lineY, 0xA0A0A0);
-                centered(g, font, "Kelp\\instances\\" + version.id() + "\\kelp-output.log", w, lineY + 12 * GUI, 0xFFFFFF);
+                SquidReport squid = squidReport();
+                if (squid != null && squid.status().equals("failed")) {
+                    // Squid stopped the game before it opened, and says why
+                    String who = squid.mod() != null ? squid.mod() + " broke while starting:" : "Squid couldn't start the game:";
+                    centered(g, font, who, w, titleY, 0xFF5555);
+                    int y = lineY;
+                    for (String part : wrap(font, String.valueOf(squid.error()), 300 * GUI)) {
+                        centered(g, font, part, w, y, 0xFFFFFF);
+                        y += 12 * GUI;
+                    }
+                } else {
+                    centered(g, font, name + " crashed (code " + exitCode + ")", w, titleY, 0xFF5555);
+                    centered(g, font, "What it said is saved in:", w, lineY, 0xA0A0A0);
+                    centered(g, font, "Kelp\\instances\\" + version.id() + "\\kelp-output.log", w, lineY + 12 * GUI, 0xFFFFFF);
+                }
                 button.setLabel("Back");
             }
             case FAILED -> {
@@ -91,6 +113,36 @@ public class DownloadScreen extends Screen {
 
         button.setBounds(w / 2 - 100 * GUI, centerY + 30 * GUI, 200 * GUI, 20 * GUI);
         button.draw(g, font, GUI);
+    }
+
+    /** Squid's report for this game, read again at most once a second (or never, without Squid). */
+    private SquidReport squidReport() {
+        if (!withSquid) return null;
+        double now = panel.getTime();
+        if (reportCheckedAt < 0 || now - reportCheckedAt >= 1) {
+            report = SquidReport.read(version.id());
+            reportCheckedAt = now;
+        }
+        return report;
+    }
+
+    /** Splits text into lines that fit the width, breaking between words (and at line breaks). Shows 3 lines at most. */
+    private static List<String> wrap(McFont font, String text, int maxWidth) {
+        List<String> lines = new ArrayList<>();
+        for (String paragraph : text.split("\n")) {
+            String line = "";
+            for (String word : paragraph.split(" ")) {
+                String longer = line.isEmpty() ? word : line + " " + word;
+                if (!line.isEmpty() && font.width(longer, GUI) > maxWidth) {
+                    lines.add(line);
+                    line = word;
+                } else {
+                    line = longer;
+                }
+            }
+            lines.add(line);
+        }
+        return lines.size() > 3 ? lines.subList(0, 3) : lines;
     }
 
     /** A progress bar in the style of Minecraft's loading screen: a white outline that fills up. */
