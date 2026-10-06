@@ -4,15 +4,17 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
-/** A Minecraft-style button: the stone texture, which turns blue when the mouse is over it. */
+/** A Minecraft-style button: the stone texture, which turns blue when the mouse is over it and dark when it's off. */
 public class McButton {
     private final BufferedImage normal = Textures.load("button.png");
     private final BufferedImage highlighted = Textures.load("button_highlighted.png");
+    private final BufferedImage disabled = Textures.load("button_disabled.png");
 
     private String label;
     private final Runnable action;
     private final Rectangle bounds = new Rectangle();
     private boolean hovered;
+    private boolean active = true;
 
     public McButton(String label, Runnable action) {
         this.label = label;
@@ -28,6 +30,11 @@ public class McButton {
         bounds.setBounds(x, y, width, height);
     }
 
+    /** A button that isn't active is grayed out and can't be clicked. */
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
     public boolean contains(int x, int y) {
         return bounds.contains(x, y);
     }
@@ -37,11 +44,11 @@ public class McButton {
     }
 
     public void click() {
-        action.run();
+        if (active) action.run();
     }
 
     public void draw(Graphics2D g, McFont font, int scale) {
-        BufferedImage texture = hovered ? highlighted : normal;
+        BufferedImage texture = !active ? disabled : hovered ? highlighted : normal;
         int x = bounds.x;
         int y = bounds.y;
         int w = bounds.width;
@@ -54,8 +61,8 @@ public class McButton {
         g.drawImage(texture, x, y, x + left, y + h, 0, 0, left / scale, 20, null);
         g.drawImage(texture, x + left, y, x + w, y + h, 200 - right / scale, 0, 200, 20, null);
 
-        // Old Minecraft makes the text yellow when you hover
-        int color = hovered ? 0xFFFFA0 : 0xE0E0E0;
+        // Old Minecraft makes the text yellow when you hover, and gray when the button is off
+        int color = !active ? 0xA0A0A0 : hovered ? 0xFFFFA0 : 0xE0E0E0;
         font.draw(g, label, x + (w - font.width(label, scale)) / 2, y + (h - 8 * scale) / 2, scale, color);
     }
 }

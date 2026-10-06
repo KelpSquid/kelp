@@ -12,8 +12,9 @@ public class VersionScreen extends Screen {
     private static final int ROW_WIDTH = 220 * GUI;
 
     private final TitleScreen parent;
+    private final McButton playButton = new McButton("Play Selected Version", this::play);
     private final McButton filterButton = new McButton("", this::nextFilter);
-    private final McButton doneButton = new McButton("Done", this::done);
+    private final McButton backButton = new McButton("Back", this::back);
 
     // The download happens on another thread, so these are volatile to be seen by the drawing thread
     private volatile List<VersionManifest.Version> allVersions;
@@ -34,8 +35,9 @@ public class VersionScreen extends Screen {
         super(panel);
         this.parent = parent;
         this.selected = parent.getVersion();
+        buttons.add(playButton);
         buttons.add(filterButton);
-        buttons.add(doneButton);
+        buttons.add(backButton);
         updateFilterLabel();
 
         Thread download = new Thread(() -> {
@@ -60,8 +62,12 @@ public class VersionScreen extends Screen {
         filterButton.setLabel("Show: " + FILTERS[filter]);
     }
 
-    private void done() {
-        if (selected != null) parent.setVersion(selected);
+    private void play() {
+        parent.setVersion(selected);
+        panel.setScreen(new DownloadScreen(panel, parent, selected));
+    }
+
+    private void back() {
         panel.setScreen(parent);
     }
 
@@ -95,7 +101,7 @@ public class VersionScreen extends Screen {
         List<VersionManifest.Version> shown = shown();
 
         listTop = 32 * GUI;
-        listBottom = h - 36 * GUI;
+        listBottom = h - 60 * GUI;
         rowX = (w - ROW_WIDTH) / 2;
         scroll = Math.max(0, Math.min(scroll, maxScroll(shown.size())));
 
@@ -117,10 +123,12 @@ public class VersionScreen extends Screen {
             drawScrollbar(g, shown.size(), boxX + boxW);
         }
 
-        // Buttons along the bottom
-        int buttonsY = h - 28 * GUI;
-        filterButton.setBounds(w / 2 - 100 * GUI, buttonsY, 98 * GUI, 20 * GUI);
-        doneButton.setBounds(w / 2 + 2 * GUI, buttonsY, 98 * GUI, 20 * GUI);
+        // Buttons along the bottom. Play stays grayed out until a version is picked.
+        int buttonsY = h - 52 * GUI;
+        playButton.setActive(selected != null);
+        playButton.setBounds(w / 2 - 100 * GUI, buttonsY, 200 * GUI, 20 * GUI);
+        filterButton.setBounds(w / 2 - 100 * GUI, buttonsY + 24 * GUI, 98 * GUI, 20 * GUI);
+        backButton.setBounds(w / 2 + 2 * GUI, buttonsY + 24 * GUI, 98 * GUI, 20 * GUI);
         for (McButton b : buttons) b.draw(g, font, GUI);
     }
 
