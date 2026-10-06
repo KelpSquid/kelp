@@ -25,6 +25,11 @@ public final class Folders {
         return home().resolve("libraries");
     }
 
+    /** Where each version keeps its saves, settings, screenshots and logs. */
+    public static Path instances() {
+        return home().resolve("instances");
+    }
+
     /** The Javas Mojang made for running the game, one folder each. */
     public static Path runtimes() {
         return home().resolve("runtimes");
