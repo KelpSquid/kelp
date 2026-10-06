@@ -3,29 +3,34 @@ package kelp;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 import java.awt.*;
-import java.awt.geom.Path2D;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-/** The animated underwater background behind everything in Kelp. */
+/** The title screen background: Minecraft water and kelp, animated like in the game. */
 public class OceanPanel extends JPanel {
-    private static final Color SURFACE = new Color(0x1B6E7A);
-    private static final Color DEEP = new Color(0x04121C);
-    private static final Color KELP_BACK = new Color(0x184A2A);
-    private static final Color KELP_FRONT = new Color(0x2F8A45);
+    private static final int SCALE = 4;               // each Minecraft pixel becomes 4x4 screen pixels
+    private static final int BLOCK = 16 * SCALE;      // so one block is 64 screen pixels
+    private static final int OCEAN_COLOR = 0x3F76E4;  // Minecraft's normal ocean water color
+    private static final Color DEEP = new Color(0x0B1633);
+
+    private final BufferedImage[] water = Textures.frames(Textures.tint(Textures.load("water_still.png"), OCEAN_COLOR));
+    private final BufferedImage[] kelpTop = Textures.frames(Textures.load("kelp.png"));
+    private final BufferedImage[] kelpStem = Textures.frames(Textures.load("kelp_plant.png"));
+    private final BufferedImage bubble = Textures.load("bubble.png");
+    private final McFont font = new McFont(Textures.load("ascii.png"));
 
     private final Random random = new Random();
+    private final int[] kelpHeights = new int[40]; // how many blocks tall the kelp is in each column (0 = none)
     private final List<Bubble> bubbles = new ArrayList<>();
-    private final List<Stalk> stalks = new ArrayList<>();
     private double time = 0;
 
     public OceanPanel() {
-        for (int i = 0; i < 40; i++) bubbles.add(newBubble(true));
-
-        // Two rows of kelp: a dark one in the back, a bright one in front
-        for (int i = 0; i < 14; i++) stalks.add(newStalk(false));
-        for (int i = 0; i < 9; i++) stalks.add(newStalk(true));
+        for (int i = 0; i < kelpHeights.length; i++) {
+            kelpHeights[i] = random.nextInt(10) < 7 ? 1 + random.nextInt(5) : 0;
+        }
+        for (int i = 0; i < 25; i++) bubbles.add(newBubble(true));
 
         // Move everything about 60 times a second
         new Timer(16, e -> {
@@ -34,21 +39,11 @@ public class OceanPanel extends JPanel {
         }).start();
     }
 
-    private Stalk newStalk(boolean front) {
-        Stalk s = new Stalk();
-        s.x = random.nextDouble();
-        s.height = front ? 0.35 + random.nextDouble() * 0.35 : 0.45 + random.nextDouble() * 0.4;
-        s.phase = random.nextDouble() * Math.PI * 2;
-        s.front = front;
-        return s;
-    }
-
     private Bubble newBubble(boolean anywhere) {
         Bubble b = new Bubble();
         b.x = random.nextDouble();
         b.y = anywhere ? random.nextDouble() : 1.05; // new bubbles start below the bottom edge
-        b.size = 3 + random.nextDouble() * 9;
-        b.speed = 0.0008 + random.nextDouble() * 0.002;
+        b.speed = 0.001 + random.nextDouble() * 0.002;
         b.wobble = random.nextDouble() * Math.PI * 2;
         return b;
     }
@@ -62,92 +57,70 @@ public class OceanPanel extends JPanel {
         }
     }
 
+    /** Minecraft runs 20 ticks a second and these textures change frame every 2 ticks: 10 frames a second. */
+    private BufferedImage frame(BufferedImage[] frames) {
+        return frames[(int) (time * 10) % frames.length];
+    }
+
     @Override
     protected void paintComponent(Graphics graphics) {
         Graphics2D g = (Graphics2D) graphics.create();
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        // Keep the pixels sharp and blocky instead of blurry
+        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
         int w = getWidth();
         int h = getHeight();
 
-        // 1. Water: bright near the surface, almost black at the bottom
-        g.setPaint(new GradientPaint(0, 0, SURFACE, 0, h, DEEP));
+        // 1. Water: the see-through water texture tiled over a deep blue
+        g.setColor(DEEP);
         g.fillRect(0, 0, w, h);
-
-        // 2. Sunlight rays coming down from the surface
-        for (int i = 0; i < 5; i++) {
-            double x = w * (0.1 + i * 0.2) + Math.sin(time * 0.3 + i) * 40;
-            int alpha = (int) (16 + 10 * Math.sin(time * 0.8 + i * 1.7));
-            // Each ray fades out before it reaches the seafloor
-            g.setPaint(new GradientPaint(0, 0, new Color(255, 255, 255, alpha), 0, h * 0.8f, new Color(255, 255, 255, 0)));
-            Path2D ray = new Path2D.Double();
-            ray.moveTo(x - 30, 0);
-            ray.lineTo(x + 30, 0);
-            ray.lineTo(x + 170, h);
-            ray.lineTo(x + 40, h);
-            ray.closePath();
-            g.fill(ray);
+        BufferedImage waterFrame = frame(water);
+        for (int y = 0; y < h; y += BLOCK) {
+            for (int x = 0; x < w; x += BLOCK) {
+                g.drawImage(waterFrame, x, y, BLOCK, BLOCK, null);
+            }
         }
 
-        // 3. Kelp, back row first so the front row covers it
-        for (Stalk s : stalks) if (!s.front) drawStalk(g, s, w, h);
-        for (Stalk s : stalks) if (s.front) drawStalk(g, s, w, h);
+        // 2. Get darker the deeper you go
+        g.setPaint(new GradientPaint(0, 0, new Color(0, 0, 20, 0), 0, h, new Color(0, 0, 20, 150)));
+        g.fillRect(0, 0, w, h);
+
+        // 3. Kelp growing up from the bottom, one block at a time
+        for (int column = 0; column < kelpHeights.length; column++) {
+            int height = kelpHeights[column];
+            for (int i = 0; i < height; i++) {
+                BufferedImage block = i == height - 1 ? frame(kelpTop) : frame(kelpStem);
+                g.drawImage(block, column * BLOCK, h - (i + 1) * BLOCK, BLOCK, BLOCK, null);
+            }
+        }
 
         // 4. Bubbles
         for (Bubble b : bubbles) {
-            double x = b.x * w + Math.sin(time * 2 + b.wobble) * 6;
-            double y = b.y * h;
-            int d = (int) b.size;
-            g.setColor(new Color(200, 240, 255, 50));
-            g.fillOval((int) x, (int) y, d, d);
-            g.setColor(new Color(220, 250, 255, 140));
-            g.setStroke(new BasicStroke(1.2f));
-            g.drawOval((int) x, (int) y, d, d);
+            int x = (int) (b.x * w + Math.sin(time * 2 + b.wobble) * 6);
+            int y = (int) (b.y * h);
+            g.drawImage(bubble, x, y, 8 * SCALE, 8 * SCALE, null);
         }
 
         // 5. The title
-        g.setFont(new Font("Segoe UI", Font.BOLD, 84));
-        FontMetrics fm = g.getFontMetrics();
+        int titleScale = 12;
         String title = "Kelp";
-        int tx = (w - fm.stringWidth(title)) / 2;
-        int ty = h / 3;
-        g.setColor(new Color(0, 0, 0, 90));
-        g.drawString(title, tx + 3, ty + 4); // shadow
-        g.setColor(new Color(0xE6FFF4));
-        g.drawString(title, tx, ty);
+        int titleX = (w - font.width(title, titleScale)) / 2;
+        int titleY = h / 5;
+        font.draw(g, title, titleX, titleY, titleScale, 0xFFFFFF);
 
-        g.setFont(new Font("Segoe UI", Font.PLAIN, 20));
-        fm = g.getFontMetrics();
-        String sub = "a launcher from the deep";
-        g.setColor(new Color(0xA8DCCB));
-        g.drawString(sub, (w - fm.stringWidth(sub)) / 2, ty + 38);
+        // 6. A yellow splash, tilted and pulsing like the one on Minecraft's title screen
+        String splash = "A launcher from the deep!";
+        double pulse = 2 * (1.8 - Math.abs(Math.sin(time % 1.0 * Math.PI * 2) * 0.1));
+        Graphics2D s = (Graphics2D) g.create();
+        s.translate(titleX + font.width(title, titleScale) + 40, titleY + 8 * titleScale + 10);
+        s.rotate(Math.toRadians(-20));
+        s.scale(pulse, pulse);
+        font.draw(s, splash, -font.width(splash, 1) / 2, -4, 1, 0xFFFF00);
+        s.dispose();
 
         g.dispose();
     }
 
-    private void drawStalk(Graphics2D g, Stalk s, int w, int h) {
-        double baseX = s.x * w;
-        double height = s.height * h;
-        Path2D path = new Path2D.Double();
-        int segments = 24;
-        for (int i = 0; i <= segments; i++) {
-            double t = (double) i / segments; // 0 at the seafloor, 1 at the tip
-            double sway = Math.sin(time * 1.1 + s.phase + t * 3) * 22 * t; // tips sway more than roots
-            double x = baseX + sway;
-            double y = h - t * height;
-            if (i == 0) path.moveTo(x, y);
-            else path.lineTo(x, y);
-        }
-        g.setColor(s.front ? KELP_FRONT : KELP_BACK);
-        g.setStroke(new BasicStroke(s.front ? 12f : 8f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-        g.draw(path);
-    }
-
     private static class Bubble {
-        double x, y, size, speed, wobble;
-    }
-
-    private static class Stalk {
-        double x, height, phase;
-        boolean front;
+        double x, y, speed, wobble;
     }
 }
