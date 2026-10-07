@@ -1,5 +1,5 @@
 # Kelp in Icelandic (Íslenska). One line per text: English => translation. {0}, {1} are filled in by Kelp.
-# Lines left out (or left empty) show in English. Written by Claude; a native speaker should check it before launch.
+# BETA, not checked: written by an AI. No native speaker has checked it yet, so please suggest fixes.
 Use Account => Nota aðgang
 Remove => Fjarlægja
 Add Microsoft => + Microsoft
@@ -83,7 +83,7 @@ Added {0}! => Bætti við {0}!
 New Mod => Nýtt modd
 Open Folder => Opna möppu
 Shader Packs => Shaderar
-Add Mod... => Bæta við moddi...
+Add Mod... => Bæta við...
 Couldn't open the folder: {0} => Gat ekki opnað möppuna: {0}
 Pick mods to add => Veldu modd til að bæta við
 Couldn't add it: {0} => Gat ekki bætt við: {0}

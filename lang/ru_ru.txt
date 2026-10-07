@@ -1,5 +1,5 @@
 # Kelp in Russian (Русский). One line per text: English => translation. {0}, {1} are filled in by Kelp.
-# Lines left out (or left empty) show in English. Written by Claude; a native speaker should check it before launch.
+# BETA, not checked: written by an AI. No native speaker has checked it yet, so please suggest fixes.
 Use Account => Выбрать
 Remove => Удалить
 Add Microsoft => + Microsoft
@@ -78,7 +78,7 @@ beta => бета
 Click an instance to play it or change it. => Нажми на сборку, чтобы играть или менять её.
 Loader => Загрузчик
 Not Default => Не основная
-Make Default => Сделать основной
+Make Default => Основная
 Added {0}! => Добавлен {0}!
 New Mod => Новый мод
 Open Folder => Открыть папку

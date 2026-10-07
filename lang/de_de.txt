@@ -1,5 +1,5 @@
 # Kelp in German (Deutsch). One line per text: English => translation. {0}, {1} are filled in by Kelp.
-# Lines left out (or left empty) show in English. Written by Claude; a native speaker should check it before launch.
+# BETA, not checked: written by an AI. No native speaker has checked it yet, so please suggest fixes.
 Use Account => Konto nutzen
 Remove => Entfernen
 Add Microsoft => + Microsoft

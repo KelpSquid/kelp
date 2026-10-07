@@ -138,33 +138,50 @@ public class KelpTest {
 
     static void languages() throws Exception {
         check("a language line is read", Lang.parse("# a note\nPlay => Jugar\nDone => \n").toString(), "{Play=Jugar}");
-        Settings.setLanguage("es");
+        Settings.setLanguage("es_es");
         Lang.reload();
         check("text is translated", Lang.t("Play"), "Jugar");
         check("values are filled in", Lang.t("Added {0}!", "X-Ray"), "¡Añadido X-Ray!");
         check("missing text stays English", Lang.t("Not in any file"), "Not in any file");
-        Settings.setLanguage("en");
+        Settings.setLanguage("es");
+        check("an older Kelp's language code still works", Lang.current().code(), "es_es");
+        Settings.setLanguage("en_us");
         Lang.reload();
         check("English is English", Lang.t("Play"), "Play");
+        check("English comes first, and isn't beta", Lang.ALL.get(0).code() + " " + Lang.ALL.get(0).beta(), "en_us false");
 
-        List<String> english = Files.readAllLines(Path.of("lang/es.txt")).stream()
+        // Every language file has every text, with the same {0}s, and is in the list (and the other way around)
+        List<String> english = Files.readAllLines(Path.of("lang/es_es.txt")).stream()
                 .filter(line -> !line.startsWith("#") && line.contains(" => ")).map(line -> line.substring(0, line.indexOf(" => "))).toList();
-        for (Lang.Language language : Lang.ALL) {
-            String drawable = language.name().chars().allMatch(KelpTest::drawable) ? "yes" : language.name();
-            check(language.name() + "'s name can be drawn", drawable, "yes");
-            if (language.code().equals("en")) continue;
-            Map<String, String> table = Lang.parse(Files.readString(Path.of("lang/" + language.code() + ".txt")));
-            List<String> missing = english.stream().filter(key -> !table.containsKey(key)).toList();
-            check(language.name() + " has every text", missing, List.of());
-            List<String> bad = table.entrySet().stream().filter(e -> !e.getValue().chars().allMatch(KelpTest::drawable)
-                    || !placeholders(e.getKey()).equals(placeholders(e.getValue()))).map(Map.Entry::getValue).toList();
-            check(language.name() + " can be drawn and keeps {0}", bad, List.of());
+        List<String> files;
+        try (java.util.stream.Stream<Path> list = Files.list(Path.of("lang"))) {
+            files = list.map(f -> f.getFileName().toString()).filter(n -> n.endsWith(".txt") && !n.equals("languages.txt"))
+                    .map(n -> n.substring(0, n.length() - 4)).sorted().toList();
         }
-    }
+        check("every language file is in the list", Lang.ALL.stream().map(Lang.Language::code).filter(c -> !c.equals("en_us")).sorted().toList(), files);
+        List<String> problems = new java.util.ArrayList<>();
+        for (Lang.Language language : Lang.ALL) {
+            if (!language.beta()) continue;
+            String text = Files.readString(Path.of("lang/" + language.code() + ".txt"));
+            if (!text.contains("BETA, not checked")) problems.add(language.code() + " isn't marked BETA");
+            Map<String, String> table = Lang.parse(text);
+            for (String key : english) {
+                if (!table.containsKey(key)) problems.add(language.code() + " is missing: " + key);
+                else if (!placeholders(key).equals(placeholders(table.get(key)))) problems.add(language.code() + " changes the {0}s in: " + key);
+            }
+        }
+        check("all " + Lang.ALL.size() + " languages have every text, marked BETA", problems, List.of());
 
-    /** Whether Kelp's font has this letter. */
-    static boolean drawable(int c) {
-        return (c >= 32 && c <= 126) || McFont.EXTRA.indexOf(c) >= 0;
+        // Letters Kelp's pixel font doesn't have are drawn with the computer's font, as 16-pixel letters at half size
+        McFont font = new McFont(Textures.load("font.png"), Textures.load("font-extra.png"));
+        check("Kelp's own letters use the pixel font", font.pixelOnly("Añadir Ö") + " " + font.pixelOnly("単一"), "true false");
+        java.awt.image.BufferedImage canvas = new java.awt.image.BufferedImage(200, 40, java.awt.image.BufferedImage.TYPE_INT_ARGB);
+        java.awt.Graphics2D g = canvas.createGraphics();
+        font.draw(g, "シングルプレイ", 4, 12, 2, 0xFFFFFF);
+        g.dispose();
+        long white = 0;
+        for (int y = 0; y < 40; y++) for (int x = 0; x < 200; x++) if (canvas.getRGB(x, y) == 0xFFFFFFFF) white++;
+        check("Japanese gets drawn (and its width measured)", white > 50 && font.width("シングルプレイ", 2) > 40, true);
     }
 
     /** The {0}, {1}... in a text, sorted. */

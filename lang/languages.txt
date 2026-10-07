@@ -1,0 +1,121 @@
+# Every language Kelp speaks besides English: code|name. Made by a script from the files in this folder.
+af_za|Afrikaans
+esan|Andalûh
+enp|Anglish
+ast_es|Asturianu
+az_az|Azərbaycanca
+id_id|Bahasa Indonesia
+ms_my|Bahasa Melayu
+qid|Bhs. Indonesia edjaän lama
+be_latn|Biełaruskaja
+bar|Boarisch
+bs_ba|Bosanski
+brb|Braobans
+br_fr|Brezhoneg
+ca_es|Català
+val_es|Català (Valencià)
+cy_gb|Cymraeg
+qcb_es|Cántabru/Montañés
+da_dk|Dansk
+se_no|Davvisámegiella
+de_at|Deitsch
+de_de|Deutsch
+et_ee|Eesti keel
+es_es|Español (España)
+es_mx|Español (Latinoamérica)
+eo_uy|Esperanto
+eu_es|Euskara
+fil_ph|Filipino
+fr_fr|Français
+fy_nl|Frysk
+fra_de|Fränggisch
+fur_it|Furlan
+fo_fo|Føroyskt
+ga_ie|Gaeilge
+gl_es|Galego
+gd_gb|Gàidhlig
+hr_hr|Hrvatski
+hn_no|Høgnorsk
+io_en|Ido
+ig_ng|Igbo
+it_it|Italiano
+kw_gb|Kernewek
+ksh|Kölsch/Ripoarisch
+jbo_en|la .lojban.
+la_la|Latina
+lv_lv|Latviešu
+lt_lt|Lietuvių
+li_li|Limburgs
+lol_us|LOLCAT
+lmo|Lombard
+lb_lu|Lëtzebuergesch
+hu_hu|Magyar
+mt_mt|Malti
+isv|Medžuslovjansky
+nl_nl|Nederlands
+no_no|Norsk bokmål
+nn_no|Norsk nynorsk
+uz_uz|O'zbekcha
+oc_fr|Occitan
+en_pt|Pirate Speak
+nds_de|Plattdüütsch
+pl_pl|Polski
+pt_br|Português (Brasil)
+pt_pt|Português (Portugal)
+ro_ro|Română
+de_ch|Schwiizerdütsch
+enws|Shakespearean English
+sq_al|Shqip
+sk_sk|Slovenčina
+sl_si|Slovenščina
+so_so|Soomaali
+sr_cs|Srpski
+fi_fi|Suomi
+sv_se|Svenska
+sxu|Säggs’sch
+tl_ph|Tagalog
+vi_vn|Tiếng Việt
+tlh_aa|tlhIngan Hol
+tok|toki pona
+tr_tr|Türkçe
+nl_be|Vlaams
+vec_it|Vèneto
+yo_ng|Yorùbá
+is_is|Íslenska
+cs_cz|Čeština
+szl|Ślōnski
+en_ud|ɥsᴉꞁᵷuƎ
+haw_us|ʻŌlelo Hawaiʻi
+el_gr|Ελληνικά
+ba_ru|Башҡортса
+be_by|Беларуская
+bg_bg|Български
+hal_ua|Галицка
+ky_kg|Кыргызча
+mk_mk|Македонски
+mn_mn|Монгол
+ry_ua|Руснацькый
+ru_ru|Русский
+rpr|Русскій дореформенный
+sr_sp|Српски
+tt_ru|Татарча
+uk_ua|Українська
+kk_kz|Қазақша
+hy_am|Հայերեն
+yi_de|ייִדיש
+he_il|עברית
+ar_sa|العربية
+zlm_arab|بهاس ملايو
+fa_ir|فارسی
+hi_in|हिंदी
+ta_in|தமிழ்
+kn_in|ಕನ್ನಡ
+th_th|ไทย
+lo_la|ລາວ
+ka_ge|ქართული
+lzh|文言
+ja_jp|日本語
+zh_cn|简体中文
+zh_tw|繁體中文 (台灣)
+zh_hk|繁體中文 (香港特別行政區)
+ko_kr|한국어

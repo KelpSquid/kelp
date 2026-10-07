@@ -15,20 +15,22 @@ import java.util.Map;
  * Kelp in other languages. Every bit of text goes through {@link #t}, written in English. Each language is a
  * plain text file in lang/ with one line per text, like "Play => Jugar", so translating Kelp means filling in one
  * file. Anything a file doesn't have yet just shows in English.
+ *
+ * Languages use Minecraft's own codes (es_es, ja_jp...), listed with their names in lang/languages.txt. Every one but
+ * English is marked beta: they were written by an AI and haven't been checked by native speakers yet.
  */
 public final class Lang {
-    /** A language Kelp can show, by its code and its own name for itself. */
+    /** A language Kelp can show, by its Minecraft code and its own name for itself. */
     public record Language(String code, String name) {
+        /** Whether it's still being checked (every language but English). */
+        public boolean beta() {
+            return !code.equals(ENGLISH);
+        }
     }
 
-    public static final List<Language> ALL = List.of(
-            new Language("en", "English"),
-            new Language("es", "Español"),
-            new Language("fr", "Français"),
-            new Language("de", "Deutsch"),
-            new Language("sv", "Svenska"),
-            new Language("is", "Íslenska"),
-            new Language("ru", "Русский"));
+    public static final String ENGLISH = "en_us";
+    /** Every language, English first, then the rest by name. */
+    public static final List<Language> ALL = languages();
 
     private static Map<String, String> table = Map.of();
     private static String loaded;
@@ -41,7 +43,7 @@ public final class Lang {
      * name in it is translated as one sentence: t("Added {0}!", name).
      */
     public static String t(String english, Object... values) {
-        String code = Settings.language();
+        String code = current().code();
         if (!code.equals(loaded)) load(code);
         String text = table.getOrDefault(english, english);
         for (int i = 0; i < values.length; i++) text = text.replace("{" + i + "}", String.valueOf(values[i]));
@@ -49,21 +51,48 @@ public final class Lang {
     }
 
     public static Language current() {
-        String code = Settings.language();
+        String code = upgrade(Settings.language());
         for (Language language : ALL) {
             if (language.code().equals(code)) return language;
         }
         return ALL.get(0);
     }
 
-    /** The language after this one, for the Language button. */
-    public static Language next() {
-        return ALL.get((ALL.indexOf(current()) + 1) % ALL.size());
+    /** Older Kelps saved short codes like "es"; they're Minecraft's codes now. */
+    static String upgrade(String code) {
+        return switch (code) {
+            case "en" -> ENGLISH;
+            case "es" -> "es_es";
+            case "fr" -> "fr_fr";
+            case "de" -> "de_de";
+            case "sv" -> "sv_se";
+            case "is" -> "is_is";
+            case "ru" -> "ru_ru";
+            default -> code;
+        };
+    }
+
+    /** lang/languages.txt: one language per line, "code|name". */
+    private static List<Language> languages() {
+        List<Language> all = new java.util.ArrayList<>();
+        all.add(new Language(ENGLISH, "English"));
+        try {
+            String index = text("lang/languages.txt");
+            if (index != null) {
+                for (String line : index.split("\\R")) {
+                    String[] parts = line.split("\\|");
+                    if (parts.length == 2 && !line.startsWith("#") && !parts[0].equals(ENGLISH)) all.add(new Language(parts[0], parts[1]));
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Couldn't read the list of languages: " + e.getMessage());
+        }
+        return List.copyOf(all);
     }
 
     private static synchronized void load(String code) {
         Map<String, String> read = new HashMap<>();
-        if (!code.equals("en")) {
+        if (!code.equals(ENGLISH)) {
             try {
                 String text = text("lang/" + code + ".txt");
                 if (text != null) read = parse(text);

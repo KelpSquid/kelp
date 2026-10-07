@@ -10,7 +10,7 @@ import java.nio.file.Files;
 /** The Options screen: who you play as, and how much memory the game gets. */
 public class SettingsScreen extends Screen {
     private final Screen parent;
-    private final McButton languageButton = new McButton("", this::nextLanguage);
+    private final McButton languageButton = new McButton("", this::pickLanguage);
     private final McButton accountButton = new McButton("", () -> panel.setScreen(new AccountsScreen(panel, this)));
     private final McButton memoryButton = new McButton("", this::nextMemory);
     private final McButton folderButton = new McButton(t("Open Kelp Folder"), this::openFolder);
@@ -33,10 +33,9 @@ public class SettingsScreen extends Screen {
         Settings.setMemoryGb(choices[(current + 1) % choices.length]);
     }
 
-    /** Switches to the next language. The title screen is made again, so its buttons change too. */
-    private void nextLanguage() {
-        Settings.setLanguage(Lang.next().code());
-        panel.setScreen(new SettingsScreen(panel, new TitleScreen(panel)));
+    /** The list of every language. Picking one makes the title screen again, so its buttons change too. */
+    private void pickLanguage() {
+        panel.setScreen(new LanguageScreen(panel, this));
     }
 
     private void openFolder() {
