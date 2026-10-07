@@ -13,17 +13,24 @@ import java.util.Map;
 
 /**
  * Draws text with Kelp's pixel font. font.png is a 16x16 grid of 8x8 characters, in character order.
- * font-extra.png has the letters other languages need (accents, and the Russian alphabet), in the order of EXTRA.
+ * font-extra.png has the letters other languages need (every accented Latin letter they use, Greek, and Cyrillic),
+ * in the order of EXTRA.
  * Its cells are 10 tall: the top 2 rows are above the line, where capitals like É and Ö wear their accents.
  *
  * Text with letters neither sheet has (Chinese, Arabic, Hindi...) is drawn whole with the computer's own font, the way
  * Minecraft does it: as 16-pixel letters with smoothing off, shown at half size, so they stay crisp and blocky like
  * the rest. Drawing the whole text at once lets right-to-left languages and joined-up letters (like Arabic's) come out
  * right. No font files come with Kelp for this.
+ *
+ * In upside-down English, every text is the English one turned over: drawn normally, then rotated half a turn around
+ * its middle, so it stays in the same spot (and its shadow still falls down and to the right).
  */
 public class McFont {
     /** The letters in font-extra.png, in order. Made by the same script that draws them. */
-    static final String EXTRA = "áéíóúýàèùâêîôûäëïöüÿñåÁÉÍÓÚÝÀÈÙÂÊÎÔÛÄËÏÖÜÑÅçÇßæÆœŒþÞðÐ¿¡«»БГДЖЗИЛПУФЦЧШЩЪЫЬЭЮЯбвгджзиклмнптфцчшщъыьэюяАВЕКМНОРСТХаеорсухЙйЁё";
+    static final String EXTRA = "áéíóúýàèùâêîôûäëïöüÿñåÁÉÍÓÚÝÀÈÙÂÊÎÔÛÄËÏÖÜÑÅçÇßæÆœŒþÞðÐ¿¡«»БГДЖЗИЛПУФЦЧШЩЪЫЬЭЮЯбвгджзиклмнптфцчшщъыьэюяАВЕКМНОРСТХаеорсухЙйЁё·ÃÌÒÕØãìòõøĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĖėĘęĚěĜĝĞğĠġĢģĦħĨĩĪīĮįİıĴĵĻļĽľŁłŃńŅņŇňŊŋŌōŎŏŐőŘřŚśŜŝŞşŠšŤťŨũŪūŬŭŮůŰűŲųŹźŻżŽžƏƠơƯưǸǹȘșȚțəʻΆΈΉΊΌΎΏΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩΪάέήίαβγδεζηθικλμνξοπρςστυφχψωϊόύώЂЄІЇЈЉЊЋЌЍЎђєіїјљњћќѝўѢѣҐґҒғҖҗҘҙҚқҠҡҢңҪҫҮүҰұҺһӘәӨөṄṅṢṣẠạẢảẤấẦầẨẩẪẫẬậẮắẰằẴẵẶặẸẹẺẻẼẽẾếỀềỂểỄễỆệỈỉỊịỌọỎỏỐốỒồỔổỖỗỘộỚớỜờỞởỠỡỢợỤụỦủỨứỪừỬửỮữỰự–—“”„\uE000\uE001\uE002\uE003\uE004\uE005\uE006\uE007";
+    /** Letters with an accent that has no single character (Yoruba's ẹ́): each pair is drawn as private character
+     * U+E000, U+E001... from the end of font-extra.png. */
+    static final String[] COMBINED = {"ẹ\u0301", "ẹ\u0300", "ọ\u0301", "ọ\u0300", "Ẹ\u0301", "Ẹ\u0300", "Ọ\u0301", "Ọ\u0300"};
 
     /** Rows above the line in font-extra.png. */
     private static final int ABOVE = 2;
@@ -67,19 +74,33 @@ public class McFont {
     public int width(String text, int scale) {
         if (!pixelOnly(text)) return (int) Math.ceil(layout(text).getAdvance() * scale / 2);
         int width = 0;
-        for (char c : text.toCharArray()) width += advance(c);
+        for (char c : combine(text).toCharArray()) width += advance(c);
         return (width - 1) * scale; // no gap after the last letter
     }
 
     /** Draws text with a drop shadow: the same color at a quarter brightness, one pixel down-right. */
     public void draw(Graphics2D g, String text, int x, int y, int scale, int rgb) {
-        if (!pixelOnly(text)) {
-            drawWithComputerFont(g, text, x, y, scale, rgb);
+        int shadow = (rgb & 0xFCFCFC) >> 2;
+        drawTurned(g, text, x + scale, y + scale, scale, shadow);
+        drawTurned(g, text, x, y, scale, rgb);
+    }
+
+    /** One pass of the text, turned over around its middle when the language is upside-down English. */
+    private void drawTurned(Graphics2D g, String text, int x, int y, int scale, int rgb) {
+        if (!Lang.upsideDown()) {
+            drawOnce(g, text, x, y, scale, rgb);
             return;
         }
-        int shadow = (rgb & 0xFCFCFC) >> 2;
-        drawPlain(g, text, x + scale, y + scale, scale, shadow);
-        drawPlain(g, text, x, y, scale, rgb);
+        Graphics2D turned = (Graphics2D) g.create();
+        // Kelp's letters stand on row 7 of 8, so capitals fill rows 0 to 6: their middle is 3.5 rows down
+        turned.rotate(Math.PI, x + width(text, scale) / 2.0, y + 3.5 * scale);
+        drawOnce(turned, text, x, y, scale, rgb);
+        turned.dispose();
+    }
+
+    private void drawOnce(Graphics2D g, String text, int x, int y, int scale, int rgb) {
+        if (pixelOnly(text)) drawPlain(g, combine(text), x, y, scale, rgb);
+        else drawWithComputerFont(g, text, x, y, scale, rgb);
     }
 
     private void drawPlain(Graphics2D g, String text, int x, int y, int scale, int rgb) {
@@ -101,8 +122,19 @@ public class McFont {
         }
     }
 
+    /** The text with each letter-and-accent pair in COMBINED swapped for its own character. */
+    static String combine(String text) {
+        for (int i = 0; i < text.length(); i++) {
+            if (Character.getType(text.charAt(i)) != Character.NON_SPACING_MARK) continue;
+            for (int k = 0; k < COMBINED.length; k++) text = text.replace(COMBINED[k], String.valueOf((char) (0xE000 + k)));
+            break;
+        }
+        return text;
+    }
+
     /** Whether every letter is in Kelp's own pixel font. */
     boolean pixelOnly(String text) {
+        text = combine(text);
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
             if (c >= 128 && (extra == null || EXTRA.indexOf(c) < 0)) return false;
@@ -195,20 +227,14 @@ public class McFont {
         return best;
     }
 
-    /**
-     * Draws the whole text as 16-pixel letters shown at half size, blown up without smoothing like Kelp's own letters,
-     * with the same drop shadow.
-     */
+    /** Draws the whole text as 16-pixel letters shown at half size, blown up without smoothing like Kelp's own letters. */
     private static void drawWithComputerFont(Graphics2D g, String text, int x, int y, int scale, int rgb) {
         Object oldScaling = g.getRenderingHint(RenderingHints.KEY_INTERPOLATION);
         g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-        for (int pass = 0; pass < 2; pass++) {
-            BufferedImage image = picture(text, pass == 0 ? (rgb & 0xFCFCFC) >> 2 : rgb);
-            int offset = pass == 0 ? scale : 0;
-            int top = y + 7 * scale - 8 * scale + offset; // the picture's baseline (row 16) lands on Kelp's (row 7)
-            g.drawImage(image, x + offset, top, x + offset + image.getWidth() * scale / 2, top + image.getHeight() * scale / 2, 0, 0,
-                    image.getWidth(), image.getHeight(), null);
-        }
+        BufferedImage image = picture(text, rgb);
+        int top = y + 7 * scale - 8 * scale; // the picture's baseline (row 16) lands on Kelp's (row 7)
+        g.drawImage(image, x, top, x + image.getWidth() * scale / 2, top + image.getHeight() * scale / 2, 0, 0,
+                image.getWidth(), image.getHeight(), null);
         if (oldScaling != null) g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, oldScaling);
     }
 

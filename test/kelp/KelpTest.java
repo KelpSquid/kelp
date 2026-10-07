@@ -178,6 +178,53 @@ public class KelpTest {
         }
         check("all " + Lang.ALL.size() + " languages have every text, marked BETA", problems, List.of());
 
+        // Upside-down English is the English text turned over around its middle, with its shadow still down-right
+        Settings.setLanguage(Lang.UPSIDE_DOWN);
+        Lang.reload();
+        check("upside-down English uses the English texts, and isn't beta", Lang.t("Play") + " " + Lang.current().beta(), "Play false");
+        McFont turnFont = new McFont(Textures.load("font.png"), Textures.load("font-extra.png"));
+        java.awt.image.BufferedImage turned = new java.awt.image.BufferedImage(80, 40, java.awt.image.BufferedImage.TYPE_INT_ARGB);
+        java.awt.Graphics2D turnedG = turned.createGraphics();
+        turnFont.draw(turnedG, "Play", 10, 10, 2, 0xFFFFFF);
+        turnedG.dispose();
+        Settings.setLanguage("en_us");
+        Lang.reload();
+        java.awt.image.BufferedImage upright = new java.awt.image.BufferedImage(80, 40, java.awt.image.BufferedImage.TYPE_INT_ARGB);
+        java.awt.Graphics2D uprightG = upright.createGraphics();
+        turnFont.draw(uprightG, "Play", 10, 10, 2, 0xFFFFFF);
+        uprightG.dispose();
+        int turnWidth = turnFont.width("Play", 2);
+        int mismatches = 0;
+        int whites = 0;
+        for (int px = 0; px < 80; px++) {
+            for (int py = 0; py < 40; py++) {
+                boolean white = upright.getRGB(px, py) == 0xFFFFFFFF;
+                if (!white) continue;
+                whites++;
+                int tx = 2 * 10 + turnWidth - 1 - px; // turned half a turn around (10 + width / 2, 10 + 3.5 rows)
+                int ty = 2 * 10 + 7 * 2 - 1 - py;
+                if (turned.getRGB(tx, ty) != 0xFFFFFFFF) mismatches++;
+            }
+        }
+        check("upside-down text is the same letters turned over", whites > 0 && mismatches == 0, true);
+        int whiteRight = 0;
+        int shadowRight = 0;
+        int whiteBottom = 0;
+        int shadowBottom = 0;
+        for (int px = 0; px < 80; px++) {
+            for (int py = 0; py < 40; py++) {
+                int argb = turned.getRGB(px, py);
+                if (argb == 0xFFFFFFFF) {
+                    whiteRight = Math.max(whiteRight, px);
+                    whiteBottom = Math.max(whiteBottom, py);
+                } else if ((argb >>> 24) != 0) {
+                    shadowRight = Math.max(shadowRight, px);
+                    shadowBottom = Math.max(shadowBottom, py);
+                }
+            }
+        }
+        check("its shadow still falls down and to the right", shadowRight > whiteRight && shadowBottom > whiteBottom, true);
+
         // Letters Kelp's pixel font doesn't have are drawn with the computer's font, as 16-pixel letters at half size
         McFont font = new McFont(Textures.load("font.png"), Textures.load("font-extra.png"));
         check("Kelp's own letters use the pixel font", font.pixelOnly("Añadir Ö") + " " + font.pixelOnly("単一"), "true false");

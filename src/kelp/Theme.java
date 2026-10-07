@@ -103,6 +103,11 @@ public record Theme(String id, String name, Scene scene, int water, int base, in
         return Folders.home().resolve("themes");
     }
 
+    /** The name to show: Kelp's own themes in the chosen language, people's own themes as they named them. */
+    public String label() {
+        return builtIn() ? Lang.t(name) : name;
+    }
+
     public boolean builtIn() {
         return BUILT_IN.stream().anyMatch(t -> t.id().equals(id));
     }

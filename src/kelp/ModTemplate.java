@@ -63,6 +63,11 @@ public final class ModTemplate {
                 //   every(10, () -> { ... });              every 10 seconds
                 //   onTick(() -> { ... });                 20 times a second
                 //
+                // Settings players can change in the game's Mods screen (ask for them whenever you need them):
+                //   setting("Play a sound", true)          ON or OFF
+                //   setting("Zoom", 4, 1, 10)              a number from 1 to 10, starting at 4
+                //   setting("Corner", "Top left", "Top left", "Top right")   one of a few choices
+                //
                 // Things to know: x(), y(), z(), health(), playerName(), random(1, 6)
 
                 public class %2$s extends EasyMod {
@@ -71,7 +76,7 @@ public final class ModTemplate {
 
                         onKey("H", () -> {
                             say("You pressed H! You're at " + x() + ", " + y() + ", " + z());
-                            playSound("entity.experience_orb.pickup");
+                            if (setting("Play a sound", true)) playSound("entity.experience_orb.pickup");
                         });
                     }
                 }

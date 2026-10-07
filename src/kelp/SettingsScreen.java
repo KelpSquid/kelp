@@ -75,7 +75,7 @@ public class SettingsScreen extends Screen {
         languageButton.setBounds(left, top + 76 * GUI, 200 * GUI, 20 * GUI);
         backupButton.setLabel(Settings.autoBackup() ? t("World Backups: Every 15 min") : t("World Backups: Off"));
         backupButton.setBounds(left, top + 100 * GUI, 200 * GUI, 20 * GUI);
-        themeButton.setLabel(t("Theme: {0}", Theme.current().name()));
+        themeButton.setLabel(t("Theme: {0}", Theme.current().label()));
         themeButton.setBounds(left, top + 124 * GUI, 200 * GUI, 20 * GUI);
         folderButton.setBounds(left, top + 148 * GUI, 200 * GUI, 20 * GUI);
         doneButton.setBounds(left, h - 28 * GUI, 200 * GUI, 20 * GUI);

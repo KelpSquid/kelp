@@ -55,9 +55,9 @@ public class ThemeScreen extends Screen {
     @Override
     public void draw(Graphics2D g, int w, int h) {
         McFont font = panel.getMcFont();
-        centered(g, t("Theme: {0}", Theme.current().name()), w, 12 * GUI, 0xFFFFFF);
+        centered(g, t("Theme: {0}", Theme.current().label()), w, 12 * GUI, 0xFFFFFF);
         list.draw(g, font, w, 32 * GUI, h - 84 * GUI, null, (gg, theme, x, y, width) -> {
-            font.draw(gg, theme.name(), x, y, GUI, 0xFFFFFF);
+            font.draw(gg, theme.label(), x, y, GUI, 0xFFFFFF);
             String kind = theme.builtIn() ? t(theme.scene().label) : t("Yours");
             font.draw(gg, kind, x + width - font.width(kind, GUI), y, GUI, 0xA0A0A0);
         });

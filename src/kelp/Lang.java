@@ -22,13 +22,15 @@ import java.util.Map;
 public final class Lang {
     /** A language Kelp can show, by its Minecraft code and its own name for itself. */
     public record Language(String code, String name) {
-        /** Whether it's still being checked (every language but English). */
+        /** Whether it's still being checked (every language but English, and English upside down). */
         public boolean beta() {
-            return !code.equals(ENGLISH);
+            return !code.equals(ENGLISH) && !code.equals(UPSIDE_DOWN);
         }
     }
 
     public static final String ENGLISH = "en_us";
+    /** Upside-down English: Kelp shows the English texts and McFont turns them over. */
+    public static final String UPSIDE_DOWN = "en_ud";
     /** Every language, English first, then the rest by name. */
     public static final List<Language> ALL = languages();
 
@@ -56,6 +58,11 @@ public final class Lang {
             if (language.code().equals(code)) return language;
         }
         return ALL.get(0);
+    }
+
+    /** Whether texts are drawn upside down (the language is upside-down English). */
+    public static boolean upsideDown() {
+        return current().code().equals(UPSIDE_DOWN);
     }
 
     /** Older Kelps saved short codes like "es"; they're Minecraft's codes now. */
@@ -92,7 +99,7 @@ public final class Lang {
 
     private static synchronized void load(String code) {
         Map<String, String> read = new HashMap<>();
-        if (!code.equals(ENGLISH)) {
+        if (!code.equals(ENGLISH) && !code.equals(UPSIDE_DOWN)) {
             try {
                 String text = text("lang/" + code + ".txt");
                 if (text != null) read = parse(text);
