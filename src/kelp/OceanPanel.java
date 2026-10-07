@@ -32,7 +32,7 @@ public class OceanPanel extends JPanel {
     private final List<Bubble> bubbles = new ArrayList<>();
     private double time = 0;
 
-    private Screen screen = new TitleScreen(this);
+    private Screen screen = WelcomeScreen.needed() ? new WelcomeScreen(this) : new TitleScreen(this); // a friendly start, the first time
     private Point mouse = new Point(-1, -1);
     private int quietFrames;
 

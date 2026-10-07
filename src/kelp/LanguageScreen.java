@@ -10,12 +10,19 @@ import java.awt.Graphics2D;
  */
 public class LanguageScreen extends Screen {
     private final Screen parent;
+    private final java.util.function.Supplier<Screen> remake;
     private final McList<Lang.Language> list = new McList<>(220);
     private final McButton doneButton = new McButton(t("Done"), this::back);
 
     public LanguageScreen(OceanPanel panel, Screen parent) {
+        this(panel, parent, () -> new SettingsScreen(panel, new TitleScreen(panel)));
+    }
+
+    /** remake makes the screen to go back to again, after a language is picked, so it's in the new language. */
+    public LanguageScreen(OceanPanel panel, Screen parent, java.util.function.Supplier<Screen> remake) {
         super(panel);
         this.parent = parent;
+        this.remake = remake;
         list.setItems(Lang.ALL);
         list.setSelected(Lang.current());
         buttons.add(doneButton);
@@ -28,7 +35,7 @@ public class LanguageScreen extends Screen {
     private void pick(Lang.Language language) {
         Settings.setLanguage(language.code());
         // Every screen is made again, so all their buttons are in the new language
-        panel.setScreen(new LanguageScreen(panel, new SettingsScreen(panel, new TitleScreen(panel))));
+        panel.setScreen(new LanguageScreen(panel, remake.get(), remake));
     }
 
     @Override
