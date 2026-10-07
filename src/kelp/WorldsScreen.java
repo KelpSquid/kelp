@@ -25,6 +25,8 @@ public class WorldsScreen extends Screen {
     private final McButton importButton = new McButton(t("Import World"), this::pickWorld);
     private final McButton openButton = new McButton(t("Open Folder"), this::openFolder);
     private final McButton doneButton = new McButton(t("Done"), this::back);
+    private final McButton backUpButton = new McButton(t("Back Up Now"), this::backUpNow);
+    private final McButton backupsButton = new McButton(t("Backups..."), this::openBackups);
     private volatile String status;
     private volatile int statusColor = 0xA0A0A0;
     private volatile boolean importing;
@@ -36,6 +38,33 @@ public class WorldsScreen extends Screen {
         buttons.add(importButton);
         buttons.add(openButton);
         buttons.add(doneButton);
+        buttons.add(backUpButton);
+        buttons.add(backupsButton);
+    }
+
+    /** Zips the picked world into its backups right away. */
+    private void backUpNow() {
+        Worlds.World world = list.getSelected();
+        if (world == null || importing) return;
+        importing = true;
+        show(t("Backing up {0}...", world.name()), 0xA0A0A0);
+        Thread worker = new Thread(() -> {
+            try {
+                Backups.backUp(instance, world.folder());
+                show(t("Backed up {0}!", world.name()), 0x55FF55);
+            } catch (IOException e) {
+                show(t("Couldn't back it up: {0}", e.getMessage()), 0xFF5555);
+            } finally {
+                importing = false;
+            }
+        }, "back up world");
+        worker.setDaemon(true);
+        worker.start();
+    }
+
+    private void openBackups() {
+        Worlds.World world = list.getSelected();
+        if (world != null) panel.setScreen(new BackupsScreen(panel, this, instance, world.name()));
     }
 
     @Override
@@ -120,7 +149,7 @@ public class WorldsScreen extends Screen {
         McFont font = panel.getMcFont();
         centered(g, t("Worlds in {0}", instance.name()), w, 12 * GUI, 0xFFFFFF);
 
-        int listBottom = h - 72 * GUI;
+        int listBottom = h - 96 * GUI;
         String empty = list.getItems().isEmpty() ? t("No worlds yet. Play, or Import World!") : null;
         list.draw(g, font, w, 32 * GUI, listBottom, empty, (gg, world, x, y, width) -> {
             font.draw(gg, world.name(), x, y, GUI, 0xFFFFFF);
@@ -136,6 +165,12 @@ public class WorldsScreen extends Screen {
         }
 
         importButton.setActive(!importing);
+        // The picked world's backups: zip it now, or look at (and bring back) earlier ones
+        boolean picked = list.getSelected() != null;
+        backUpButton.setActive(picked && !importing);
+        backupsButton.setActive(picked);
+        backUpButton.setBounds(w / 2 - 100 * GUI, h - 76 * GUI, 98 * GUI, 20 * GUI);
+        backupsButton.setBounds(w / 2 + 2 * GUI, h - 76 * GUI, 98 * GUI, 20 * GUI);
         int y = h - 52 * GUI;
         importButton.setBounds(w / 2 - 100 * GUI, y, 98 * GUI, 20 * GUI);
         openButton.setBounds(w / 2 + 2 * GUI, y, 98 * GUI, 20 * GUI);

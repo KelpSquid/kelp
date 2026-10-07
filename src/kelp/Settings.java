@@ -41,6 +41,15 @@ public final class Settings {
         set("memoryGb", String.valueOf(gb));
     }
 
+    /** Whether worlds are backed up every 15 minutes while they're played. On unless it's switched off in Options. */
+    public static boolean autoBackup() {
+        return !"false".equals(VALUES.getProperty("autoBackup"));
+    }
+
+    public static void setAutoBackup(boolean on) {
+        set("autoBackup", String.valueOf(on));
+    }
+
     /** Kelp's language code, like "en" or "es". English until one is picked in Options. */
     public static String language() {
         return VALUES.getProperty("language", "en");

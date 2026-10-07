@@ -13,6 +13,7 @@ public final class RunningGames {
     /** Remembers a game Kelp just started. It's forgotten again as soon as the game closes. */
     public static void add(Instance instance, Process game) {
         GAMES.put(instance.id(), game);
+        Backups.watch(instance, game); // worlds get backed up while it's played
         game.onExit().thenRun(() -> GAMES.remove(instance.id(), game));
     }
 

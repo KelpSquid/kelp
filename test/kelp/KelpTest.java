@@ -68,6 +68,7 @@ public class KelpTest {
         projects();
         updates();
         crashHelper();
+        backups();
         squidReport();
         accounts();
         microsoftLogin();
@@ -814,6 +815,42 @@ public class KelpTest {
         CrashHelper.Diagnosis unknown = CrashHelper.diagnose("", "---- Minecraft Crash Report ----\nDescription: Ticking entity\n", List.of(), 1, "26.3");
         check("anything else says what Minecraft said", unknown.what() + " | " + unknown.fix(),
                 "Minecraft crashed: Ticking entity | Try again. If it keeps happening, copy the report and ask for help.");
+    }
+
+    static void backups() throws Exception {
+        VersionManifest.Version v = new VersionManifest.Version("26.3", "release", "", "");
+        Instance instance = Instance.create("Backup Test", v, Loader.VANILLA);
+        Path world = Files.createDirectories(Worlds.saves(instance).resolve("My Base"));
+        Files.writeString(world.resolve("level.dat"), "the world");
+        Files.createDirectories(world.resolve("region"));
+        Files.writeString(world.resolve("region/r.0.0.mca"), "blocks");
+        Files.writeString(world.resolve("session.lock"), "in use");
+
+        check("a changed world gets backed up", Backups.backUpChanged(instance), 1);
+        check("an unchanged one doesn't", Backups.backUpChanged(instance), 0);
+        Backups.Backup first = Backups.list(instance, "My Base").get(0);
+        List<String> entries = new java.util.ArrayList<>();
+        try (java.util.zip.ZipFile zip = new java.util.zip.ZipFile(first.file().toFile())) {
+            zip.stream().forEach(e -> entries.add(e.getName()));
+        }
+        check("a backup has the world, but not the lock file", entries.stream().sorted().toList().toString(), "[My Base/level.dat, My Base/region/r.0.0.mca]");
+
+        Files.writeString(world.resolve("level.dat"), "the world, changed");
+        Files.setLastModifiedTime(world.resolve("level.dat"), java.nio.file.attribute.FileTime.fromMillis(System.currentTimeMillis() + 2000));
+        Thread.sleep(1100); // backups are named by the second
+        check("changing it makes it back up again", Backups.backUpChanged(instance), 1);
+        for (int n = 0; n < Backups.KEEP + 2; n++) {
+            Path old = Backups.folder(instance, "My Base").resolve("2026-01-0" + (n % 9 + 1) + "_10-00-" + String.format("%02d", n) + ".zip");
+            Files.copy(first.file(), old, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+        }
+        Backups.backUp(instance, world);
+        List<Backups.Backup> kept = Backups.list(instance, "My Base");
+        check("only the newest " + Backups.KEEP + " are kept", kept.size(), Backups.KEEP);
+
+        Path restored = Backups.restore(instance, kept.get(0));
+        check("restoring adds a new world and keeps the original", restored.getFileName().toString().startsWith("My Base (backup ") + " "
+                + Files.readString(restored.resolve("level.dat")) + " | " + Files.readString(world.resolve("level.dat")),
+                "true the world, changed | the world, changed");
     }
 
     static void addMods() throws Exception {
