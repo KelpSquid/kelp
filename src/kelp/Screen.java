@@ -35,6 +35,13 @@ public abstract class Screen {
         }
     }
 
+    /** The mouse moved while its button was held, like when dragging a slider. */
+    public void mouseDragged(int x, int y) {
+    }
+
+    public void mouseReleased(int x, int y) {
+    }
+
     /** notches is positive when scrolling down and negative when scrolling up. */
     public void mouseWheel(int x, int y, int notches) {
     }

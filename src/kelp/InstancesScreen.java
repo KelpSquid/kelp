@@ -11,6 +11,7 @@ public class InstancesScreen extends Screen {
     private final McButton newButton = new McButton("New Instance", () -> panel.setScreen(new NewInstanceScreen(panel, this)));
     private final McButton squidButton = new McButton("", this::toggleSquid);
     private final McButton modsButton = new McButton("Mods", this::openMods);
+    private final McButton optionsButton = new McButton("Game Options", this::openOptions);
     private final McButton deleteButton = new McButton("Delete", this::delete);
     private final McButton backButton = new McButton("Back", this::back);
     private String problem;
@@ -22,6 +23,7 @@ public class InstancesScreen extends Screen {
         buttons.add(newButton);
         buttons.add(squidButton);
         buttons.add(modsButton);
+        buttons.add(optionsButton);
         buttons.add(deleteButton);
         buttons.add(backButton);
     }
@@ -60,6 +62,10 @@ public class InstancesScreen extends Screen {
         panel.setScreen(new ModsScreen(panel, this, list.getSelected()));
     }
 
+    private void openOptions() {
+        panel.setScreen(new GameOptionsScreen(panel, this, list.getSelected()));
+    }
+
     private void delete() {
         Instance instance = list.getSelected();
         panel.setScreen(new ConfirmScreen(panel, "Delete " + instance.name() + "?",
@@ -79,7 +85,7 @@ public class InstancesScreen extends Screen {
         McFont font = panel.getMcFont();
         centered(g, "Instances", w, 12 * GUI, 0xFFFFFF);
 
-        int listBottom = h - 84 * GUI;
+        int listBottom = h - 108 * GUI;
         String empty = list.getItems().isEmpty() ? "No instances yet. Make one with New Instance!" : null;
         list.draw(g, font, w, 32 * GUI, listBottom, empty, (gg, instance, x, y, width) -> {
             font.draw(gg, instance.name(), x, y, GUI, 0xFFFFFF);
@@ -90,17 +96,20 @@ public class InstancesScreen extends Screen {
 
         // Buttons: everything but New Instance and Back needs an instance picked first
         Instance selected = list.getSelected();
-        for (McButton b : new McButton[] {playButton, squidButton, modsButton, deleteButton}) b.setActive(selected != null);
+        for (McButton b : new McButton[] {playButton, squidButton, modsButton, optionsButton, deleteButton}) {
+            b.setActive(selected != null);
+        }
         squidButton.setLabel("Squid: " + (selected != null && selected.squid() ? "ON" : "OFF"));
-        int y = h - 76 * GUI;
+        int y = h - 100 * GUI;
         int left = w / 2 - 100 * GUI;
         int right = w / 2 + 2 * GUI;
         playButton.setBounds(left, y, 98 * GUI, 20 * GUI);
         newButton.setBounds(right, y, 98 * GUI, 20 * GUI);
         squidButton.setBounds(left, y + 24 * GUI, 98 * GUI, 20 * GUI);
         modsButton.setBounds(right, y + 24 * GUI, 98 * GUI, 20 * GUI);
-        deleteButton.setBounds(left, y + 48 * GUI, 98 * GUI, 20 * GUI);
-        backButton.setBounds(right, y + 48 * GUI, 98 * GUI, 20 * GUI);
+        optionsButton.setBounds(left, y + 48 * GUI, 98 * GUI, 20 * GUI);
+        deleteButton.setBounds(right, y + 48 * GUI, 98 * GUI, 20 * GUI);
+        backButton.setBounds(left, y + 72 * GUI, 200 * GUI, 20 * GUI);
         for (McButton b : buttons) b.draw(g, font, GUI);
     }
 

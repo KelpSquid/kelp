@@ -55,6 +55,17 @@ public class OceanPanel extends JPanel {
             }
 
             @Override
+            public void mouseDragged(MouseEvent e) {
+                mouse = e.getPoint();
+                screen.mouseDragged(e.getX(), e.getY());
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON1) screen.mouseReleased(e.getX(), e.getY());
+            }
+
+            @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
                 screen.mouseWheel(e.getX(), e.getY(), e.getWheelRotation());
             }
