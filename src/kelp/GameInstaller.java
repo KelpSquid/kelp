@@ -122,7 +122,7 @@ public class GameInstaller {
         JavaRuntime.markRunnable(java);
 
         // 7. NeoForge and Forge patch the game with their own installer, which needs the game and Java first
-        if (loader == Loader.NEOFORGE || loader == Loader.FORGE) {
+        if ((loader == Loader.NEOFORGE || loader == Loader.FORGE) && !downloader.isCancelled()) {
             stage = "Installing " + loader.label();
             loaderVersion = ForgeInstallers.install(loader, version.id(), downloader, JavaRuntime.executable(java));
         }

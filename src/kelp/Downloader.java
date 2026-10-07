@@ -48,6 +48,7 @@ public class Downloader {
     private volatile int filesTotal;
     private volatile long bytesTotal;
     private volatile ExecutorService pool;
+    private volatile boolean cancelled; // once cancelled, every later download stops right away too
 
     public int getFilesDone() {
         return filesDone.get();
@@ -70,6 +71,7 @@ public class Downloader {
      * Without internet it uses the copy saved last time, so games that are already downloaded still start.
      */
     public String fetchText(String url, Path saveTo) throws IOException, InterruptedException {
+        stopIfCancelled();
         String text;
         try {
             HttpRequest request = HttpRequest.newBuilder(URI.create(url)).header("User-Agent", USER_AGENT)
@@ -91,6 +93,7 @@ public class Downloader {
 
     /** Downloads every job, 8 at a time. Files that are already there are skipped. */
     public void downloadAll(List<Job> jobs) throws IOException, InterruptedException {
+        stopIfCancelled();
         filesTotal = jobs.size();
         bytesTotal = jobs.stream().mapToLong(job -> Math.max(0, job.size())).sum();
         pool = Executors.newFixedThreadPool(THREADS);
@@ -113,12 +116,22 @@ public class Downloader {
         } finally {
             pool.shutdownNow();
         }
+        stopIfCancelled(); // a cancel during the downloads can look like a finished download, so check again
     }
 
-    /** Stops all downloads. */
+    /** Stops all downloads, including any that haven't started yet. */
     public void cancel() {
+        cancelled = true;
         ExecutorService p = pool;
         if (p != null) p.shutdownNow();
+    }
+
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    private void stopIfCancelled() throws IOException {
+        if (cancelled) throw new IOException("Cancelled.");
     }
 
     private void download(Job job) throws IOException, InterruptedException {

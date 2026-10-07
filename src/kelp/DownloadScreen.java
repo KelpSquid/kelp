@@ -20,6 +20,7 @@ public class DownloadScreen extends Screen {
     private volatile Phase phase = Phase.DOWNLOADING;
     private volatile String error;
     private volatile int exitCode;
+    private volatile boolean cancelled; // Cancel was pressed before the game started, so it mustn't start
     private SquidReport report;        // what Squid last said, checked about once a second
     private double reportCheckedAt = -1;
 
@@ -42,9 +43,16 @@ public class DownloadScreen extends Screen {
                 if (game == null) {
                     installer.install(findDetails(version), instance.loader(), instance.mods());
                     if (installer.getLoaderVersion() != null) instance.setLoaderVersion(installer.getLoaderVersion());
+                    if (cancelled) return;
                     phase = Phase.STARTING;
-                    game = Launcher.launch(version.id(), instance.folder(), Accounts.readyToPlay(), instance.loader(),
+                    Account account = Accounts.readyToPlay();
+                    if (cancelled) return;
+                    game = Launcher.launch(version.id(), instance.folder(), account, instance.loader(),
                             instance.loaderVersion(), Settings.memoryGb());
+                    if (cancelled) { // pressed in the split second while the game was starting
+                        game.destroy();
+                        return;
+                    }
                     RunningGames.add(instance, game);
                     instance.markPlayed();
                 }
@@ -52,6 +60,7 @@ public class DownloadScreen extends Screen {
                 exitCode = game.waitFor();
                 phase = exitCode == 0 ? Phase.CLOSED : Phase.CRASHED;
             } catch (Exception e) {
+                if (cancelled) return; // stopping because of Cancel isn't a problem to show
                 error = e.getMessage() != null ? e.getMessage() : e.toString();
                 phase = Phase.FAILED;
             }
@@ -73,8 +82,12 @@ public class DownloadScreen extends Screen {
     }
 
     private void leave() {
-        if (phase == Phase.DOWNLOADING) installer.getDownloader().cancel();
-        panel.setScreen(parent); // if the game is running, it keeps running
+        // Before the game has started, leaving means cancel. Once it's running, it keeps running.
+        if (phase == Phase.DOWNLOADING || phase == Phase.STARTING) {
+            cancelled = true;
+            installer.getDownloader().cancel();
+        }
+        panel.setScreen(parent);
     }
 
     @Override
@@ -93,7 +106,7 @@ public class DownloadScreen extends Screen {
             }
             case STARTING -> {
                 centered(g, font, "Starting " + name + "...", w, titleY, 0xFFFFFF);
-                button.setLabel("Back");
+                button.setLabel("Cancel");
             }
             case RUNNING -> {
                 centered(g, font, name + " is running!", w, titleY, 0xFFFFFF);

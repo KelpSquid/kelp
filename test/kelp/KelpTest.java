@@ -393,6 +393,12 @@ public class KelpTest {
             new Downloader().downloadAll(List.of(job));
             check("a file that's already there isn't downloaded again", requests.get() - before, 0);
 
+            Downloader cancelled = new Downloader();
+            cancelled.cancel();
+            before = requests.get();
+            check("after Cancel, nothing more downloads", problem(() -> cancelled.downloadAll(List.of(job))) + " "
+                    + problem(() -> cancelled.fetchText(base + "/file", folder.resolve("x.txt"))) + " " + (requests.get() - before), "Cancelled. Cancelled. 0");
+
             Downloader.Job damaged = new Downloader.Job(base + "/file", folder.resolve("damaged.bin"), "0".repeat(40), good.length);
             before = requests.get();
             check("a damaged download is explained", problem(() -> new Downloader().downloadAll(List.of(damaged))),
