@@ -100,8 +100,9 @@ public class Package {
     }
 
     /**
-     * squid.jar, ASM, and Squid's built-in parts like the Store, from Squid's own build.
-     * The keys are where each goes inside the squid folder: built-in parts go in squid/builtin.
+     * squid.jar, ASM, Squid's built-in parts like the Store, and the Squid library for code editors, from Squid's own
+     * build. The keys are where each goes inside the squid folder: built-in parts go in squid/builtin, the library in
+     * squid/library.
      */
     static Map<String, Path> squidJars() throws IOException {
         Path squid = SQUID.resolve("build").resolve("squid.jar");
@@ -116,6 +117,14 @@ public class Package {
             try (Stream<Path> parts = Files.list(builtIn)) {
                 for (Path jar : parts.filter(p -> p.toString().endsWith(".jar")).sorted().toList()) {
                     jars.put("builtin/" + jar.getFileName(), jar);
+                }
+            }
+        }
+        Path library = SQUID.resolve("build").resolve("library");
+        if (Files.isDirectory(library)) {
+            try (Stream<Path> parts = Files.list(library)) {
+                for (Path jar : parts.filter(p -> p.toString().endsWith(".jar")).sorted().toList()) {
+                    jars.put("library/" + jar.getFileName(), jar);
                 }
             }
         }

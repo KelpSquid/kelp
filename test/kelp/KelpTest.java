@@ -65,6 +65,7 @@ public class KelpTest {
         forge();
         worlds();
         addMods();
+        projects();
         squidReport();
         accounts();
         microsoftLogin();
@@ -646,6 +647,49 @@ public class KelpTest {
     }
 
     /** Mods dropped onto the Mods screen (or picked with Add Mod) are copied in, and other files are explained. */
+    static void projects() throws Exception {
+        VersionManifest.Version v = new VersionManifest.Version("26.3", "release", "", "");
+        Instance instance = Instance.create("Project Test", v, Loader.SQUID);
+        Path folder = ModProject.create(instance.mods(), "Mega Mod!", "26.3");
+        check("a project is a folder named like its class", folder.getFileName().toString(), "MegaMod");
+        check("it has code, a place for pictures, and a squid.json", Files.exists(folder.resolve("src/MegaMod.java")) + " "
+                + Files.isDirectory(folder.resolve("resources")) + " " + Json.object(Json.parse(Files.readString(folder.resolve("squid.json")))).get("name"),
+                "true true Mega Mod!");
+        Map<String, Object> vsCode = Json.object(Json.parse(Files.readString(folder.resolve(".vscode/settings.json"))));
+        check("VS Code is told about Squid and Minecraft", Json.array(Json.object(vsCode.get("java.project.referencedLibraries")).get("include")).toString(),
+                List.of(Folders.squid().resolve("library").resolve("squid-api.jar").toString(),
+                        Folders.versions().resolve("26.3").resolve("26.3.jar").toString()).toString());
+        javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(folder.resolve(".idea/MegaMod.iml").toFile());
+        check("IntelliJ gets a module", Files.exists(folder.resolve(".idea/modules.xml")), true);
+        check("a second one with the same name gets a number", ModProject.create(instance.mods(), "Mega Mod", "26.3").getFileName().toString(), "MegaMod2");
+        check("an easy mod can't take a project's name", ModTemplate.create(instance.mods(), "Mega Mod").getFileName().toString(), "MegaMod3.java");
+
+        InstalledMod listed = InstalledMod.list(instance.mods()).stream().filter(m -> m.file().equals(folder)).findFirst().orElseThrow();
+        check("Kelp lists a project as a Squid mod you can edit and pack", listed.name() + " " + listed.version() + " "
+                + listed.squidMod() + " " + listed.source() + " " + listed.project(), "Mega Mod! 1.0 true true true");
+        Files.writeString(folder.resolve("resources/picture.png"), "pretend picture");
+        Path packed = ModProject.pack(folder, Files.createDirectories(home.resolve("pack-test")));
+        check("Pack makes one .squid file", packed.getFileName().toString(), "MegaMod.squid");
+        List<String> entries = new java.util.ArrayList<>();
+        Map<String, Object> packedJson;
+        try (java.util.zip.ZipFile zip = new java.util.zip.ZipFile(packed.toFile())) {
+            zip.stream().forEach(e -> entries.add(e.getName()));
+            packedJson = Json.object(Json.parse(new String(zip.getInputStream(zip.getEntry("squid.json")).readAllBytes(), StandardCharsets.UTF_8)));
+        }
+        check("it has the code, pictures and squid.json, but not the editor settings", entries.toString(),
+                "[squid.json, src/MegaMod.java, resources/picture.png]");
+        check("its squid.json is filled in, so renaming the file can't break it",
+                packedJson.get("id") + " " + packedJson.get("name") + " " + packedJson.get("version") + " " + packedJson.get("main"),
+                "mega-mod Mega Mod! 1.0 MegaMod");
+        Files.copy(packed, instance.mods().resolve("Shared.squid"));
+        InstalledMod shared = InstalledMod.list(instance.mods()).stream()
+                .filter(m -> m.file().getFileName().toString().equals("Shared.squid")).findFirst().orElseThrow();
+        check("a .squid file is listed by its squid.json", shared.name() + " " + shared.squidMod() + " " + shared.project(), "Mega Mod! true false");
+        InstalledMod off = listed.toggle();
+        check("a project can be turned off", off.file().getFileName() + " " + InstalledMod.list(instance.mods()).stream()
+                .filter(m -> m.file().equals(off.file())).findFirst().map(InstalledMod::enabled).orElse(null), "MegaMod.disabled false");
+    }
+
     static void addMods() throws Exception {
         VersionManifest.Version v = new VersionManifest.Version("26.3", "release", "", "");
         Instance instance = Instance.create("Drop Test", v, Loader.SQUID);
@@ -666,7 +710,7 @@ public class KelpTest {
                 "sodium.jar is a Fabric mod, so it won't load in this Squid instance.");
         screen.filesDropped(List.of(downloads.resolve("notes.txt")));
         check("a file that isn't a mod is explained", problemField.get(screen) + " " + Files.exists(instance.mods().resolve("notes.txt")),
-                "notes.txt isn't a mod. Mods are .jar files (or .java for your own). false");
+                "notes.txt isn't a mod. Mods are .jar, .squid or .java files. false");
     }
 
     /** Bringing in worlds from a folder or a .zip. */

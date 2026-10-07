@@ -15,8 +15,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 /**
- * A mod in an instance's mods folder: a Squid mod (with a squid.json), a mod written as one .java file
- * (which Squid compiles by itself), or a Fabric, Quilt, NeoForge or Forge mod.
+ * A mod in an instance's mods folder: a Squid mod (a jar with a squid.json), one Squid builds from its code (a .java
+ * file, a project folder, or a project packed into a .squid file), or a Fabric, Quilt, NeoForge or Forge mod.
  * Turned-off mods end in ".disabled", which every loader skips.
  *
  * @param kind      which loader the mod is for, or null if Kelp can't tell (then it isn't a mod any loader knows)
@@ -27,14 +27,19 @@ public record InstalledMod(Path file, boolean enabled, Loader kind, String name,
     private static final String OFF = ".disabled";
     private static final Pattern TOML_TEXT = Pattern.compile("(?m)^\\s*(displayName|version|description|authors)\\s*=\\s*\"([^\"]*)\"");
 
-    /** Whether it's a Squid mod (a jar with a squid.json, or a .java file). */
+    /** Whether it's a Squid mod. */
     public boolean squidMod() {
         return kind == Loader.SQUID;
     }
 
-    /** Whether it's a mod written as a .java file, which can be opened and changed. */
+    /** Whether it's your own code, which can be opened and changed: a .java file or a project folder. */
     public boolean source() {
-        return file.getFileName().toString().contains(".java");
+        return file.getFileName().toString().contains(".java") || project();
+    }
+
+    /** Whether it's a project folder, which can be packed into a .squid file. */
+    public boolean project() {
+        return Files.isDirectory(file);
     }
 
     /** Whether the mod says it works on this Minecraft version, the same way Squid checks. "26.3.x" means 26.3 and its updates. */
@@ -57,8 +62,9 @@ public record InstalledMod(Path file, boolean enabled, Loader kind, String name,
         try (Stream<Path> files = Files.list(folder)) {
             for (Path file : files.toList()) {
                 String fileName = file.getFileName().toString();
-                if (fileName.endsWith(".jar")) mods.add(read(file, true));
-                else if (fileName.endsWith(".jar" + OFF)) mods.add(read(file, false));
+                if (ModProject.isProject(file)) mods.add(readProject(file, !fileName.endsWith(OFF)));
+                else if (fileName.endsWith(".jar") || fileName.endsWith(".squid")) mods.add(read(file, true));
+                else if (fileName.endsWith(".jar" + OFF) || fileName.endsWith(".squid" + OFF)) mods.add(read(file, false));
                 else if (fileName.endsWith(".java")) mods.add(readSource(file, true));
                 else if (fileName.endsWith(".java" + OFF)) mods.add(readSource(file, false));
             }
@@ -81,17 +87,33 @@ public record InstalledMod(Path file, boolean enabled, Loader kind, String name,
     private static InstalledMod readSource(Path file, boolean enabled) {
         String fileName = file.getFileName().toString();
         String className = fileName.substring(0, fileName.indexOf(".java"));
-        String name = className.replace('_', ' ')
-                .replaceAll("(?<=[a-z0-9])(?=[A-Z])", " ")
-                .replaceAll("(?<=[A-Z])(?=[A-Z][a-z])", " ")
-                .replaceAll("(?<=[A-Za-z])(?=[0-9])", " ").trim();
-        return new InstalledMod(file, enabled, Loader.SQUID, name, "", List.of(),
-                "Your own mod, in " + fileName + ". Click Edit to change it, then play!", List.of());
+        return new InstalledMod(file, enabled, Loader.SQUID, ModTemplate.spaced(className), "", List.of(),
+                Lang.t("Your own mod, in {0}. Click Edit to change it, then play!", fileName), List.of());
+    }
+
+    /** A project folder: its squid.json says what it's called, or else its folder's name does, like Squid reads it. */
+    private static InstalledMod readProject(Path folder, boolean enabled) {
+        String folderName = folder.getFileName().toString();
+        if (!enabled) folderName = folderName.substring(0, folderName.length() - OFF.length());
+        String name = ModTemplate.spaced(folderName.replaceAll("[^A-Za-z0-9_]", ""));
+        Map<String, Object> json = Map.of();
+        try {
+            Path squidJson = folder.resolve("squid.json");
+            if (Files.exists(squidJson)) json = Json.object(Json.parse(Files.readString(squidJson, StandardCharsets.UTF_8)));
+        } catch (IOException | RuntimeException e) {
+            return new InstalledMod(folder, enabled, Loader.SQUID, name, "", List.of(), "Its squid.json is broken: " + e.getMessage(), List.of());
+        }
+        if (json == null) json = Map.of();
+        List<String> minecraft = json.get("minecraft") instanceof String one ? List.of(one) : strings(json, "minecraft");
+        String description = text(json, "description", "");
+        return new InstalledMod(folder, enabled, Loader.SQUID, text(json, "name", name), text(json, "version", ""),
+                strings(json, "authors"), description.isEmpty()
+                ? Lang.t("Your own project, in the {0} folder. Edit it, play, or Pack it to share!", folderName) : description, minecraft);
     }
 
     private static InstalledMod read(Path file, boolean enabled) {
         String fileName = file.getFileName().toString();
-        String plainName = fileName.substring(0, fileName.indexOf(".jar"));
+        String plainName = fileName.substring(0, fileName.contains(".squid") ? fileName.indexOf(".squid") : fileName.indexOf(".jar"));
         try (ZipFile zip = new ZipFile(file.toFile())) {
             ZipEntry squid = zip.getEntry("squid.json");
             if (squid != null) {

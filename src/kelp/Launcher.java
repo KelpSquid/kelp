@@ -175,6 +175,21 @@ public final class Launcher {
         }
     }
 
+    /**
+     * Minecraft and every library it needs, for a code editor to know them. Just the game's jar if this version
+     * isn't downloaded yet.
+     */
+    static List<String> gameClasspath(String versionId) {
+        Path versionFolder = Folders.versions().resolve(versionId);
+        Path gameJar = versionFolder.resolve(versionId + ".jar");
+        try {
+            Map<String, Object> details = Json.object(Json.parse(Files.readString(versionFolder.resolve(versionId + ".json"))));
+            return classpath(details, gameJar);
+        } catch (IOException | RuntimeException e) {
+            return List.of(gameJar.toString());
+        }
+    }
+
     /** Every library the game needs, plus the game itself, in the order Mojang lists them. */
     private static List<String> classpath(Map<String, Object> details, Path gameJar) {
         Set<String> paths = new LinkedHashSet<>();

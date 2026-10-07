@@ -24,15 +24,20 @@ public final class ModTemplate {
         return out.toString();
     }
 
+    /** "MyCoolMod" becomes "My Cool Mod", the same way Squid names mods. */
+    public static String spaced(String className) {
+        return className.replace('_', ' ')
+                .replaceAll("(?<=[a-z0-9])(?=[A-Z])", " ")
+                .replaceAll("(?<=[A-Z])(?=[A-Z][a-z])", " ")
+                .replaceAll("(?<=[A-Za-z])(?=[0-9])", " ").trim();
+    }
+
     /** Makes the mod file in the folder and gives back where it is. A taken name gets a number: MyMod2.java. */
     public static Path create(Path modsFolder, String name) throws IOException {
         Files.createDirectories(modsFolder);
         String base = className(name);
         String className = base;
-        for (int n = 2; Files.exists(modsFolder.resolve(className + ".java"))
-                || Files.exists(modsFolder.resolve(className + ".java.disabled")); n++) {
-            className = base + n;
-        }
+        for (int n = 2; ModProject.taken(modsFolder, className); n++) className = base + n;
         String shownName = name.isBlank() ? "My Mod" : name.trim();
         Path file = modsFolder.resolve(className + ".java");
         Files.writeString(file, text(shownName, className).replace("\n", System.lineSeparator()));

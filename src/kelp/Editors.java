@@ -6,7 +6,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-/** Opens a mod's code for editing: in VS Code if it's installed (it colors the code), or else a plain text editor. */
+/**
+ * Opens a mod's code for editing: in VS Code if it's installed (it colors the code), or else a plain text editor.
+ * A project folder opens in VS Code, or in the computer's file browser for any other editor.
+ */
 public final class Editors {
     private Editors() {
     }
@@ -19,6 +22,10 @@ public final class Editors {
         }
         if (Rules.osName().equals("osx") && Files.isDirectory(Path.of("/Applications/Visual Studio Code.app"))) {
             start(List.of("open", "-a", "Visual Studio Code", file.toString()));
+            return;
+        }
+        if (Files.isDirectory(file)) {
+            Desktop.getDesktop().open(file.toFile());
             return;
         }
         try {

@@ -28,8 +28,10 @@ public class ModsScreen extends Screen {
     private boolean wrongLoader; // the notice is a heads-up (yellow), not good news (green)
     private int mouseX = -1;
     private int mouseY = -1;
-    private int editLeft; // where the "Edit" on the rows of .java mods is, to tell clicks on it apart
+    private int editLeft; // where the "Edit" on the rows of your own mods is, to tell clicks on it apart
     private int editRight;
+    private int packLeft; // and "Pack", on the rows of projects
+    private int packRight;
 
     public ModsScreen(OceanPanel panel, Screen parent, Instance instance) {
         super(panel);
@@ -48,6 +50,29 @@ public class ModsScreen extends Screen {
 
     private void back() {
         panel.setScreen(parent);
+    }
+
+    /** Packs a project into one .squid file in Downloads, and shows it there. */
+    private void pack(InstalledMod mod) {
+        try {
+            Path file = ModProject.pack(mod.file(), Path.of(System.getProperty("user.home"), "Downloads"));
+            notice = t("Packed {0} into Downloads! Share it, or send it to the Store.", file.getFileName());
+            wrongLoader = false;
+            problem = null;
+            show(file);
+        } catch (IOException e) {
+            problem = t("Couldn't pack it: {0}", e.getMessage());
+        }
+    }
+
+    /** Opens the file's folder with the file picked, so it's easy to find. */
+    private static void show(Path file) {
+        try {
+            if (Rules.osName().equals("windows")) new ProcessBuilder("explorer.exe", "/select," + file).start();
+            else Desktop.getDesktop().open(file.getParent().toFile());
+        } catch (IOException | RuntimeException e) {
+            System.err.println("Couldn't show " + file + ": " + e.getMessage()); // the notice still says where it is
+        }
     }
 
     private void openFolder() {
@@ -75,7 +100,7 @@ public class ModsScreen extends Screen {
         javax.swing.JFileChooser chooser = new javax.swing.JFileChooser(downloads());
         chooser.setDialogTitle(t("Pick mods to add"));
         chooser.setMultiSelectionEnabled(true);
-        chooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(t("Mods (.jar, .java)"), "jar", "java"));
+        chooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(t("Mods (.jar, .squid, .java)"), "jar", "squid", "java"));
         if (chooser.showDialog(javax.swing.SwingUtilities.getWindowAncestor(panel), t("Add")) != javax.swing.JFileChooser.APPROVE_OPTION) return;
         filesDropped(java.util.Arrays.stream(chooser.getSelectedFiles()).map(java.io.File::toPath).toList());
     }
@@ -98,8 +123,8 @@ public class ModsScreen extends Screen {
             Files.createDirectories(instance.mods());
             for (Path file : files) {
                 String name = file.getFileName().toString();
-                if (!name.endsWith(".jar") && !name.endsWith(".java")) {
-                    problem = t("{0} isn't a mod. Mods are .jar files (or .java for your own).", name);
+                if (!name.endsWith(".jar") && !name.endsWith(".squid") && !name.endsWith(".java")) {
+                    problem = t("{0} isn't a mod. Mods are .jar, .squid or .java files.", name);
                     continue;
                 }
                 Files.copy(file, instance.mods().resolve(name), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
@@ -143,8 +168,6 @@ public class ModsScreen extends Screen {
         boolean canMakeMods = instance.loader() == Loader.SQUID || instance.loader() == Loader.VANILLA;
         String empty = !list.getItems().isEmpty() ? null : canMakeMods ? t("No mods yet. Click New Mod!") : t("No mods yet. Click Open Folder!");
         list.draw(g, font, w, 32 * GUI, listBottom, empty, (gg, mod, x, y, width) -> {
-            String name = mod.version().isEmpty() ? mod.name() : mod.name() + " " + mod.version();
-            font.draw(gg, name, x, y, GUI, mod.enabled() ? 0xFFFFFF : 0x808080);
             // On the right: ON or OFF, like a Minecraft options button. Mods for another loader say which one.
             String state = mod.enabled() ? t("ON") : t("OFF");
             int color = mod.enabled() ? 0x55FF55 : 0xFF5555;
@@ -161,11 +184,25 @@ public class ModsScreen extends Screen {
             }
             font.draw(gg, state, x + width - font.width(state, GUI), y, GUI, color);
             if (mod.source()) {
-                editRight = x + width - font.width(t("OFF"), GUI) - 10 * GUI;
+                editRight = x + width - Math.max(font.width(t("OFF"), GUI), font.width(t("ON"), GUI)) - 10 * GUI;
                 editLeft = editRight - font.width(t("Edit"), GUI);
                 boolean over = mouseX >= editLeft && mouseX < editRight && list.itemAt(mouseX, mouseY) == mod;
                 font.draw(gg, t("Edit"), editLeft, y, GUI, over ? 0xFFFFA0 : 0x55FFFF);
             }
+            if (mod.project()) {
+                packRight = editLeft - 8 * GUI;
+                packLeft = packRight - font.width(t("Pack"), GUI);
+                boolean over = mouseX >= packLeft && mouseX < packRight && list.itemAt(mouseX, mouseY) == mod;
+                font.draw(gg, t("Pack"), packLeft, y, GUI, over ? 0xFFFFA0 : 0x55FFFF);
+            }
+            // The name gets what's left of the row, and a long one ends in "..." instead of running under the links
+            int room = (mod.project() ? packLeft : mod.source() ? editLeft : x + width - font.width(state, GUI)) - x - 6 * GUI;
+            String name = mod.version().isEmpty() ? mod.name() : mod.name() + " " + mod.version();
+            if (font.width(name, GUI) > room) {
+                while (name.length() > 1 && font.width(name.stripTrailing() + "...", GUI) > room) name = name.substring(0, name.length() - 1);
+                name = name.stripTrailing() + "...";
+            }
+            font.draw(gg, name, x, y, GUI, mod.enabled() ? 0xFFFFFF : 0x808080);
         });
 
         // Under the list: who made the mod under the mouse and what it does, or a problem
@@ -236,6 +273,10 @@ public class ModsScreen extends Screen {
         }
         if (mod.kind() == null) {
             problem = t("Kelp can't tell what this jar is, so no loader will load it.");
+            return;
+        }
+        if (mod.project() && x >= packLeft && x < packRight) {
+            pack(mod);
             return;
         }
         if (mod.source() && x >= editLeft && x < editRight) {
