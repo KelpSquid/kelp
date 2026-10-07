@@ -331,6 +331,11 @@ public final class Emblem {
 
     private static final java.util.Map<String, BufferedImage> cache = new java.util.concurrent.ConcurrentHashMap<>();
 
+    /** Forgets a drawn emblem, after it's deleted. */
+    static void forget(String accountId) {
+        cache.remove(accountId);
+    }
+
     /** An account's emblem picture, or null if they haven't made one. */
     public static BufferedImage picture(String accountId) {
         BufferedImage known = cache.get(accountId);

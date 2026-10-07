@@ -163,6 +163,22 @@ public class KelpTest {
         check("more Squid Count unlocks more layers", Emblem.UNLOCKS.layers(0) + " " + Emblem.UNLOCKS.layers(49) + " " + Emblem.UNLOCKS.layers(50)
                 + " " + Emblem.UNLOCKS.layers(5000), "3 3 5 32");
         check("someone without an emblem has none", Emblem.load("nobody") == null && Emblem.picture("nobody") == null, true);
+
+        // Deleting a player's data takes out only theirs
+        Account leaving = Account.offline("Leaving");
+        Accounts.add(leaving);
+        Emblem.starter().save(leaving.id());
+        java.nio.file.Files.writeString(SquidCount.file(), "{\"players\": {\"" + leaving.id() + "\": {\"name\": \"Leaving\", \"points\": 40},"
+                + " \"someone-else\": {\"name\": \"Stays\", \"points\": 70}}}");
+        java.nio.file.Files.writeString(Folders.home().resolve("squid-skins.json"), "{\"" + leaving.id() + "\": {\"skin\": \"a.png\"}, \"x\": {\"skin\": \"b.png\"}}");
+        PlayerData.delete(leaving);
+        check("deleting a player's data removes their emblem, count, wardrobe and sign-in, and nobody else's",
+                (Emblem.load(leaving.id()) == null) + " " + SquidCount.points(leaving.id()) + " " + SquidCount.points("someone-else") + " "
+                        + java.nio.file.Files.readString(Folders.home().resolve("squid-skins.json")).contains("b.png") + " "
+                        + java.nio.file.Files.readString(Folders.home().resolve("squid-skins.json")).contains("a.png") + " "
+                        + Accounts.all().stream().anyMatch(a -> a.id().equals(leaving.id())), "true 0 70 true false false");
+        check("JSON is written back the way it was read", PlayerData.write(Json.parse("{\"a\": [1, 2.5, \"x\\\"y\"], \"b\": {\"c\": true, \"d\": null}}"), ""),
+                "{\n    \"a\": [1, 2.5, \"x\\\"y\"],\n    \"b\": {\n        \"c\": true,\n        \"d\": null\n    }\n}");
         for (Emblem.Shape shape : Emblem.Shape.values()) {
             if (Emblem.outline(shape).getBounds2D().isEmpty()) throw new AssertionError("empty shape " + shape);
         }

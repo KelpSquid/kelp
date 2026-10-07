@@ -13,6 +13,7 @@ public class AccountsScreen extends Screen {
     private final McButton microsoftButton = new McButton(t("Add Microsoft"), () -> panel.setScreen(new SignInScreen(panel, this)));
     private final McButton offlineButton = new McButton(t("Add Offline"), this::addOffline);
     private final McButton doneButton = new McButton(t("Done"), this::done);
+    private final McButton deleteDataButton = new McButton(t("Delete Data..."), this::deleteData);
     private String problem;
 
     public AccountsScreen(OceanPanel panel, Screen parent) {
@@ -23,6 +24,7 @@ public class AccountsScreen extends Screen {
         buttons.add(microsoftButton);
         buttons.add(offlineButton);
         buttons.add(doneButton);
+        buttons.add(deleteDataButton);
     }
 
     @Override
@@ -46,6 +48,24 @@ public class AccountsScreen extends Screen {
         panel.setScreen(new ConfirmScreen(panel, t("Remove {0}?", account.name()), warning, () -> {
             Accounts.remove(account);
             panel.setScreen(this);
+        }, () -> panel.setScreen(this)));
+    }
+
+    /** Deletes everything Kelp and Squid keep about a player on this computer, after asking. */
+    private void deleteData() {
+        Account account = list.getSelected();
+        if (account == null) return;
+        panel.setScreen(new ConfirmScreen(panel, t("Delete all of {0}'s data?", account.name()),
+                t("Their sign-in, emblem, Squid Count and skin and cape choices. Worlds and mods stay. This can't be undone!"), () -> {
+            String result;
+            try {
+                PlayerData.delete(account);
+                result = t("Deleted {0}'s data.", account.name());
+            } catch (java.io.IOException e) {
+                result = t("Couldn't delete it: {0}", e.getMessage());
+            }
+            panel.setScreen(this); // showing the screen again refreshes the list
+            problem = result;
         }, () -> panel.setScreen(this)));
     }
 
@@ -88,7 +108,9 @@ public class AccountsScreen extends Screen {
         removeButton.setBounds(right, y, 98 * GUI, 20 * GUI);
         microsoftButton.setBounds(left, y + 24 * GUI, 98 * GUI, 20 * GUI);
         offlineButton.setBounds(right, y + 24 * GUI, 98 * GUI, 20 * GUI);
-        doneButton.setBounds(left, y + 48 * GUI, 200 * GUI, 20 * GUI);
+        deleteDataButton.setActive(selected != null);
+        deleteDataButton.setBounds(left, y + 48 * GUI, 98 * GUI, 20 * GUI);
+        doneButton.setBounds(right, y + 48 * GUI, 98 * GUI, 20 * GUI);
         for (McButton b : buttons) b.draw(g, font, GUI);
     }
 
