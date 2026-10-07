@@ -76,6 +76,27 @@ public class OceanPanel extends JPanel {
         addMouseMotionListener(mouseHandler);
         addMouseWheelListener(mouseHandler);
 
+        // Files dragged onto the window go to the screen that's showing (mods onto Mods, worlds onto Worlds)
+        setTransferHandler(new javax.swing.TransferHandler() {
+            @Override
+            public boolean canImport(TransferSupport support) {
+                return support.isDataFlavorSupported(java.awt.datatransfer.DataFlavor.javaFileListFlavor);
+            }
+
+            @Override
+            public boolean importData(TransferSupport support) {
+                try {
+                    @SuppressWarnings("unchecked")
+                    java.util.List<java.io.File> files = (java.util.List<java.io.File>)
+                            support.getTransferable().getTransferData(java.awt.datatransfer.DataFlavor.javaFileListFlavor);
+                    screen.filesDropped(files.stream().map(java.io.File::toPath).toList());
+                    return true;
+                } catch (Exception e) {
+                    return false;
+                }
+            }
+        });
+
         // Pass the keyboard along too, for typing in text boxes
         setFocusable(true);
         addKeyListener(new KeyAdapter() {

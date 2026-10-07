@@ -17,10 +17,12 @@ public class ModsScreen extends Screen {
     private final McButton newButton = new McButton("New Mod", this::newMod);
     private final McButton openButton = new McButton("Open Folder", this::openFolder);
     private final McButton shaderButton = new McButton("Shader Packs", this::openShaderPacks);
+    private final McButton addButton = new McButton("Add Mod...", this::pickMods);
     private final McButton doneButton = new McButton("Done", this::back);
 
     private double listedAt = -1; // the folder is checked again every second, in case mods were added
     private String problem;
+    private String notice; // good news, like "Added X!"; problems take its place
     private int mouseX = -1;
     private int mouseY = -1;
     private int editLeft; // where the "Edit" on the rows of .java mods is, to tell clicks on it apart
@@ -33,6 +35,7 @@ public class ModsScreen extends Screen {
         buttons.add(newButton);
         buttons.add(openButton);
         buttons.add(shaderButton);
+        buttons.add(addButton);
         buttons.add(doneButton);
     }
 
@@ -61,6 +64,58 @@ public class ModsScreen extends Screen {
             Desktop.getDesktop().open(folder.toFile());
         } catch (IOException e) {
             problem = "Couldn't open the folder: " + e.getMessage();
+        }
+    }
+
+    /** Asks which mod files to add, with the computer's own file window. */
+    private void pickMods() {
+        javax.swing.JFileChooser chooser = new javax.swing.JFileChooser(downloads());
+        chooser.setDialogTitle("Pick mods to add");
+        chooser.setMultiSelectionEnabled(true);
+        chooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Mods (.jar, .java)", "jar", "java"));
+        if (chooser.showDialog(javax.swing.SwingUtilities.getWindowAncestor(panel), "Add") != javax.swing.JFileChooser.APPROVE_OPTION) return;
+        filesDropped(java.util.Arrays.stream(chooser.getSelectedFiles()).map(java.io.File::toPath).toList());
+    }
+
+    /** The Downloads folder, where most mods end up, if there is one. */
+    private static java.io.File downloads() {
+        java.io.File folder = new java.io.File(System.getProperty("user.home"), "Downloads");
+        return folder.isDirectory() ? folder : null;
+    }
+
+    /**
+     * Mods dropped onto the window (or picked with Add Mod) are copied into this instance's mods folder, so the
+     * originals can be deleted from Downloads. A mod with the same file name is replaced, like an update.
+     */
+    @Override
+    public void filesDropped(java.util.List<Path> files) {
+        java.util.List<String> added = new java.util.ArrayList<>();
+        try {
+            Files.createDirectories(instance.mods());
+            for (Path file : files) {
+                String name = file.getFileName().toString();
+                if (!name.endsWith(".jar") && !name.endsWith(".java")) {
+                    problem = name + " isn't a mod. Mods are .jar files (or .java for your own).";
+                    continue;
+                }
+                Files.copy(file, instance.mods().resolve(name), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                added.add(name);
+            }
+        } catch (IOException e) {
+            problem = "Couldn't add it: " + e.getMessage();
+        }
+        listedAt = -1; // show them right away
+        if (!added.isEmpty()) {
+            problem = null;
+            notice = added.size() == 1 ? "Added " + added.get(0) + "!" : "Added " + added.size() + " mods!";
+            // A mod for another loader still goes in, but say so, so nobody wonders why it doesn't load
+            for (String name : added) {
+                InstalledMod mod = InstalledMod.list(instance.mods()).stream()
+                        .filter(m -> m.file().getFileName().toString().equals(name)).findFirst().orElse(null);
+                if (mod != null && mod.kind() != null && !instance.loader().runs(mod.kind())) {
+                    notice = name + " is a " + mod.kind().label() + " mod, so it won't load in this " + instance.loader().label() + " instance.";
+                }
+            }
         }
     }
 
@@ -123,9 +178,15 @@ public class ModsScreen extends Screen {
                         + minecraftVersion() + ".";
             }
         }
+        boolean good = false;
+        if ((info == null || info.isEmpty()) && notice != null) {
+            info = notice;
+            good = !notice.contains("won't load");
+        }
         if (info != null && !info.isEmpty()) {
             while (info.length() > 3 && font.width(info, GUI) > w - 8 * GUI) info = info.substring(0, info.length() - 4) + "...";
-            centered(g, info, w, listBottom + 6 * GUI, problem != null ? 0xFF5555 : 0xA0A0A0);
+            int color = problem != null ? 0xFF5555 : info == notice ? (good ? 0x55FF55 : 0xFFFF55) : 0xA0A0A0;
+            centered(g, info, w, listBottom + 6 * GUI, color);
         }
 
         if (instance.loader() == Loader.VANILLA) {
@@ -142,8 +203,9 @@ public class ModsScreen extends Screen {
         newButton.setActive(instance.loader() == Loader.SQUID || instance.loader() == Loader.VANILLA);
         int buttonsY = h - 52 * GUI;
         left.setBounds(w / 2 - 100 * GUI, buttonsY, 98 * GUI, 20 * GUI);
-        openButton.setBounds(w / 2 + 2 * GUI, buttonsY, 98 * GUI, 20 * GUI);
-        doneButton.setBounds(w / 2 - 100 * GUI, buttonsY + 24 * GUI, 200 * GUI, 20 * GUI);
+        addButton.setBounds(w / 2 + 2 * GUI, buttonsY, 98 * GUI, 20 * GUI);
+        openButton.setBounds(w / 2 - 100 * GUI, buttonsY + 24 * GUI, 98 * GUI, 20 * GUI);
+        doneButton.setBounds(w / 2 + 2 * GUI, buttonsY + 24 * GUI, 98 * GUI, 20 * GUI);
         for (McButton b : buttons) {
             if (b != (shaders ? newButton : shaderButton)) b.draw(g, font, GUI);
         }

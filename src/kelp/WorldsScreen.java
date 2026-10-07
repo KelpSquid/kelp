@@ -86,6 +86,12 @@ public class WorldsScreen extends Screen {
         worker.start();
     }
 
+    /** Worlds (folders or .zips) dropped onto the window are imported, one after another. */
+    @Override
+    public void filesDropped(java.util.List<Path> files) {
+        if (!files.isEmpty() && !importing) importWorld(files.get(0));
+    }
+
     private void show(String text, int color) {
         status = text;
         statusColor = color;

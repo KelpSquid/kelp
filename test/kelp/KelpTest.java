@@ -63,6 +63,7 @@ public class KelpTest {
         shaders();
         forge();
         worlds();
+        addMods();
         squidReport();
         accounts();
         microsoftLogin();
@@ -603,6 +604,30 @@ public class KelpTest {
         jar(installer, "install_profile.json", "{\"version\": \"../../escape\"}");
         check("an installer with a strange version name is refused", problem(() -> ForgeInstallers.profileId(installer)),
                 "fake-installer.jar doesn't say which version it makes.");
+    }
+
+    /** Mods dropped onto the Mods screen (or picked with Add Mod) are copied in, and other files are explained. */
+    static void addMods() throws Exception {
+        VersionManifest.Version v = new VersionManifest.Version("26.3", "release", "", "");
+        Instance instance = Instance.create("Drop Test", v, Loader.SQUID);
+        Path downloads = Files.createDirectories(home.resolve("drop-test-downloads"));
+        jar(downloads.resolve("xray.jar"), "squid.json", "{\"id\": \"xray\", \"name\": \"X-Ray\", \"version\": \"1.0\", \"main\": \"x\"}");
+        jar(downloads.resolve("sodium.jar"), "fabric.mod.json", "{\"name\": \"Sodium\"}");
+        Files.writeString(downloads.resolve("notes.txt"), "not a mod");
+        ModsScreen screen = new ModsScreen(new OceanPanel(), null, instance);
+        java.lang.reflect.Field notice = ModsScreen.class.getDeclaredField("notice");
+        java.lang.reflect.Field problemField = ModsScreen.class.getDeclaredField("problem");
+        notice.setAccessible(true);
+        problemField.setAccessible(true);
+        screen.filesDropped(List.of(downloads.resolve("xray.jar")));
+        check("a dropped mod is copied in (the original can be deleted)", Files.exists(instance.mods().resolve("xray.jar")) + " "
+                + Files.exists(downloads.resolve("xray.jar")) + " " + notice.get(screen), "true true Added xray.jar!");
+        screen.filesDropped(List.of(downloads.resolve("sodium.jar")));
+        check("a mod for another loader goes in, with a heads-up", notice.get(screen),
+                "sodium.jar is a Fabric mod, so it won't load in this Squid instance.");
+        screen.filesDropped(List.of(downloads.resolve("notes.txt")));
+        check("a file that isn't a mod is explained", problemField.get(screen) + " " + Files.exists(instance.mods().resolve("notes.txt")),
+                "notes.txt isn't a mod. Mods are .jar files (or .java for your own). false");
     }
 
     /** Bringing in worlds from a folder or a .zip. */

@@ -54,6 +54,10 @@ public abstract class Screen {
     public void keyPressed(int keyCode, boolean ctrl) {
     }
 
+    /** Files were dragged onto the window and let go, like mods onto the Mods screen. */
+    public void filesDropped(java.util.List<java.nio.file.Path> files) {
+    }
+
     /** Draws text centered across the window, at GUI size. */
     protected void centered(Graphics2D g, String text, int w, int y, int rgb) {
         McFont font = panel.getMcFont();
