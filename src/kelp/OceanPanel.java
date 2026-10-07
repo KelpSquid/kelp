@@ -13,21 +13,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-/** Kelp's window contents: Minecraft water and kelp, animated like in the game, with the current screen on top. */
+/** Kelp's window contents: an animated ocean of water, kelp and bubbles, with the current screen on top. */
 public class OceanPanel extends JPanel {
-    private static final int SCALE = 4;               // each Minecraft pixel becomes 4x4 screen pixels
-    private static final int BLOCK = 16 * SCALE;      // so one block is 64 screen pixels
-    private static final int OCEAN_COLOR = 0x3F76E4;  // Minecraft's normal ocean water color
+    private static final int BLOCK = 128;             // water tiles and kelp pieces are 32 pixels, drawn at 4x
+    private static final int BUBBLE = 48;             // bubbles are 16 pixels, drawn at 3x
+    private static final int OCEAN_COLOR = 0x3F76E4;  // the water texture is gray, so this makes it ocean blue
     private static final Color DEEP = new Color(0x0B1633);
 
-    private final BufferedImage[] water = Textures.frames(Textures.tint(Textures.load("water_still.png"), OCEAN_COLOR));
-    private final BufferedImage[] kelpTop = Textures.frames(Textures.load("kelp.png"));
-    private final BufferedImage[] kelpStem = Textures.frames(Textures.load("kelp_plant.png"));
+    private final BufferedImage[] water = Textures.frames(Textures.tint(Textures.load("water.png"), OCEAN_COLOR));
+    private final BufferedImage[] kelpTop = Textures.frames(Textures.load("kelp_top.png"));
+    private final BufferedImage[] kelpStem = Textures.frames(Textures.load("kelp_stem.png"));
     private final BufferedImage bubble = Textures.load("bubble.png");
-    private final McFont font = new McFont(Textures.load("ascii.png"));
+    private final McFont font = new McFont(Textures.load("font.png"));
 
     private final Random random = new Random();
-    private final int[] kelpHeights = new int[40]; // how many blocks tall the kelp is in each column (0 = none)
+    private final int[] kelpHeights = new int[20]; // how many pieces tall the kelp is in each column (0 = none)
     private final List<Bubble> bubbles = new ArrayList<>();
     private double time = 0;
 
@@ -36,7 +36,7 @@ public class OceanPanel extends JPanel {
 
     public OceanPanel() {
         for (int i = 0; i < kelpHeights.length; i++) {
-            kelpHeights[i] = random.nextInt(10) < 7 ? 1 + random.nextInt(5) : 0;
+            kelpHeights[i] = random.nextInt(10) < 7 ? 1 + random.nextInt(3) : 0;
         }
         for (int i = 0; i < 25; i++) bubbles.add(newBubble(true));
 
@@ -123,7 +123,7 @@ public class OceanPanel extends JPanel {
         }
     }
 
-    /** Minecraft runs 20 ticks a second and these textures change frame every 2 ticks: 10 frames a second. */
+    /** The water and kelp animations play at 10 frames a second. */
     private BufferedImage frame(BufferedImage[] frames) {
         return frames[(int) (time * 10) % frames.length];
     }
@@ -163,7 +163,7 @@ public class OceanPanel extends JPanel {
         for (Bubble b : bubbles) {
             int x = (int) (b.x * w + Math.sin(time * 2 + b.wobble) * 6);
             int y = (int) (b.y * h);
-            g.drawImage(bubble, x, y, 8 * SCALE, 8 * SCALE, null);
+            g.drawImage(bubble, x, y, BUBBLE, BUBBLE, null);
         }
 
         // 5. Whatever screen is showing, on top of the ocean

@@ -4,7 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
-/** A Minecraft-style button: the stone texture, which turns blue when the mouse is over it and dark when it's off. */
+/** A pixel-art button made of sea glass: it lights up when the mouse is over it and goes dark when it's off. */
 public class McButton {
     private final BufferedImage normal = Textures.load("button.png");
     private final BufferedImage highlighted = Textures.load("button_highlighted.png");
@@ -54,14 +54,14 @@ public class McButton {
         int w = bounds.width;
         int h = bounds.height;
 
-        // Like old Minecraft: the left half comes from the texture's left end and the right half
+        // The left half comes from the texture's left end and the right half
         // from its right end, so a short button still gets both rounded edges
         int left = w / 2;
         int right = w - left;
         g.drawImage(texture, x, y, x + left, y + h, 0, 0, left / scale, 20, null);
         g.drawImage(texture, x + left, y, x + w, y + h, 200 - right / scale, 0, 200, 20, null);
 
-        // Old Minecraft makes the text yellow when you hover, and gray when the button is off
+        // The text turns yellow when you hover, and gray when the button is off
         int color = !active ? 0xA0A0A0 : hovered ? 0xFFFFA0 : 0xE0E0E0;
         font.draw(g, label, x + (w - font.width(label, scale)) / 2, y + (h - 8 * scale) / 2, scale, color);
     }

@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 
-/** Draws text with Minecraft's pixel font. ascii.png is a 16x16 grid of 8x8 characters. */
+/** Draws text with Kelp's pixel font. font.png is a 16x16 grid of 8x8 characters, in character order. */
 public class McFont {
     private final BufferedImage sheet;
     private final int[] widths = new int[128];
@@ -33,7 +33,7 @@ public class McFont {
         return (width - 1) * scale; // no gap after the last letter
     }
 
-    /** Draws text with Minecraft's drop shadow: the same color at a quarter brightness, one pixel down-right. */
+    /** Draws text with a drop shadow: the same color at a quarter brightness, one pixel down-right. */
     public void draw(Graphics2D g, String text, int x, int y, int scale, int rgb) {
         int shadow = (rgb & 0xFCFCFC) >> 2;
         drawPlain(g, text, x + scale, y + scale, scale, shadow);

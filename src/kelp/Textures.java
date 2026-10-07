@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-/** Loads the Minecraft textures in the textures folder. */
+/** Loads Kelp's textures from the textures folder. */
 public final class Textures {
     private Textures() {
     }
@@ -53,7 +53,7 @@ public final class Textures {
         return current;
     }
 
-    /** Multiplies every pixel by a color, the same way Minecraft turns its gray water texture blue. */
+    /** Multiplies every pixel by a color. That's how the gray water texture turns blue. */
     public static BufferedImage tint(BufferedImage image, int rgb) {
         int tr = rgb >> 16 & 0xFF;
         int tg = rgb >> 8 & 0xFF;
