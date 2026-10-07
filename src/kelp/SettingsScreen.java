@@ -68,8 +68,8 @@ public class SettingsScreen extends Screen {
 
         Account account = Accounts.active();
         accountButton.setLabel(t("Account: {0}", account.name()));
-        accountButton.setBounds(left, top + 6 * GUI, 146 * GUI, 20 * GUI);
-        emblemButton.setBounds(left + 150 * GUI, top + 6 * GUI, 50 * GUI, 20 * GUI);
+        accountButton.setBounds(left, top + 6 * GUI, 140 * GUI, 20 * GUI);
+        emblemButton.setBounds(left + 144 * GUI, top + 6 * GUI, 56 * GUI, 20 * GUI);
         EmblemScreen.drawSmall(g, account.id(), left - 24 * GUI, top + 6 * GUI, 20 * GUI); // the emblem, next to the name
         String kind = account.microsoft() ? t("Signed in with Microsoft.") : t("Offline names show in single player and LAN.");
         centered(g, kind, w, top + 30 * GUI, 0x808080);

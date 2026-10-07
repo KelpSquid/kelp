@@ -186,10 +186,10 @@ public class EmblemScreen extends Screen {
             g.fillRect(cx, cy - 3 * GUI, GUI, 7 * GUI);
         }
         int y = canvasY + canvasSize + 6 * GUI;
-        addButton.setBounds(left, y, 55 * GUI, 20 * GUI);
-        deleteButton.setBounds(left + 57 * GUI, y, 55 * GUI, 20 * GUI);
-        upButton.setBounds(left, y + 22 * GUI, 55 * GUI, 20 * GUI);
-        downButton.setBounds(left + 57 * GUI, y + 22 * GUI, 55 * GUI, 20 * GUI);
+        addButton.setBounds(left, y, 57 * GUI, 20 * GUI);
+        deleteButton.setBounds(left + 59 * GUI, y, 57 * GUI, 20 * GUI);
+        upButton.setBounds(left, y + 22 * GUI, 57 * GUI, 20 * GUI);
+        downButton.setBounds(left + 59 * GUI, y + 22 * GUI, 57 * GUI, 20 * GUI);
 
         // The layers, the front one at the top
         listX = left + 118 * GUI;
