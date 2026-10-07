@@ -4,8 +4,8 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import java.awt.Image;
+import java.awt.Taskbar;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +16,12 @@ public class Kelp {
             JFrame frame = new JFrame("Kelp");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             try {
-                frame.setIconImages(icons());
+                List<Image> icons = icons();
+                frame.setIconImages(icons);
+                // On a Mac the icon goes in the Dock instead of on the window
+                if (Taskbar.isTaskbarSupported() && Taskbar.getTaskbar().isSupported(Taskbar.Feature.ICON_IMAGE)) {
+                    Taskbar.getTaskbar().setIconImage(icons.get(icons.size() - 1));
+                }
                 frame.setContentPane(new OceanPanel());
             } catch (IllegalStateException e) {
                 // Usually a missing texture: show what went wrong instead of silently closing
@@ -29,9 +34,9 @@ public class Kelp {
         });
     }
 
-    /** The Kelp logo in several sizes, so Windows can pick a sharp one for the title bar and the taskbar. */
+    /** The Kelp logo in several sizes, so the computer can pick a sharp one for the title bar and the taskbar. */
     private static List<Image> icons() {
-        BufferedImage logo = Textures.read(new File("branding", "kelp.png"));
+        BufferedImage logo = Textures.readBundled("branding/kelp.png");
         List<Image> icons = new ArrayList<>();
         for (int size : new int[] {16, 20, 24, 32, 40, 48, 64, 128, 256}) icons.add(Textures.shrink(logo, size));
         return icons;

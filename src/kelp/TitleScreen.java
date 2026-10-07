@@ -72,5 +72,15 @@ public class TitleScreen extends Screen {
         String playing = last == null ? "No instances yet" : last.name() + " - Minecraft " + last.version().id()
                 + (last.squid() ? " + Squid" : "");
         font.draw(g, playing, 2 * GUI, h - 10 * GUI, GUI, 0xFFFFFF);
+
+        // Mojang's rules ask projects like Kelp to say this clearly, so it's always on the title screen
+        String[] notice = {"NOT AN OFFICIAL MINECRAFT PRODUCT.", "NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT."};
+        int noticeW = Math.max(font.width(notice[0], 1), font.width(notice[1], 1)) + 8;
+        g.setColor(new java.awt.Color(0, 0, 0, 150)); // a dark backing so kelp and bubbles never cover it
+        g.fillRect(w - noticeW, h - notice.length * 10 - 5, noticeW, notice.length * 10 + 5);
+        for (int i = 0; i < notice.length; i++) {
+            int lineY = h - (notice.length - i) * 10 - 2;
+            font.draw(g, notice[i], w - font.width(notice[i], 1) - 4, lineY, 1, 0xE0E0E0);
+        }
     }
 }

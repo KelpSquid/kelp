@@ -1,6 +1,9 @@
 # Kelp build output (made by run.bat)
 out/
 
+# Downloads made by package.bat
+build/
+
 # Compiled class files
 *.class
 
@@ -18,4 +21,4 @@ replay_pid*
 
 # Editor folders
 .vscode/
-.idea/
+.idea/

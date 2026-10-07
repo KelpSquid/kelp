@@ -6,14 +6,33 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
-/** Loads Kelp's textures from the textures folder. */
+/** Loads Kelp's textures and other images. */
 public final class Textures {
     private Textures() {
     }
 
+    /** One of Kelp's textures, like "water.png". */
     public static BufferedImage load(String name) {
-        return read(new File("textures", name));
+        return readBundled("textures/" + name);
+    }
+
+    /**
+     * An image that comes with Kelp, like "textures/water.png" or "branding/kelp.png". A packaged Kelp
+     * keeps them inside kelp.jar; when running from source they're in the project folder.
+     */
+    public static BufferedImage readBundled(String path) {
+        try (InputStream in = Textures.class.getResourceAsStream("/" + path)) {
+            if (in != null) {
+                BufferedImage image = ImageIO.read(in);
+                if (image == null) throw new IOException("it is not a PNG");
+                return image;
+            }
+        } catch (IOException e) {
+            throw new IllegalStateException("Couldn't load " + path + " (" + e.getMessage() + ")", e);
+        }
+        return read(new File(path));
     }
 
     /** Loads any PNG, like the Kelp logo in the branding folder. */

@@ -139,9 +139,13 @@ public final class Launcher {
         return command;
     }
 
-    /** squid.jar and its libraries, from the folder Squid's build.bat copies them into. */
+    /**
+     * squid.jar and its libraries. A packaged Kelp brings its own Squid in a squid folder next to kelp.jar;
+     * otherwise Kelp uses the one Squid's build.bat installs.
+     */
     private static List<String> squidJars() throws IOException {
-        Path folder = Folders.squid();
+        Path folder = Folders.app().resolve("squid");
+        if (!Files.exists(folder.resolve("squid.jar"))) folder = Folders.squid();
         if (!Files.exists(folder.resolve("squid.jar"))) {
             throw new IOException("Squid isn't installed. Run build.bat in the squid repo, or turn Squid off.");
         }
