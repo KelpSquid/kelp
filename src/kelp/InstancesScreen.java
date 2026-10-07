@@ -1,5 +1,7 @@
 package kelp;
 
+import static kelp.Lang.t;
+
 import java.awt.Graphics2D;
 import java.io.IOException;
 
@@ -7,15 +9,15 @@ import java.io.IOException;
 public class InstancesScreen extends Screen {
     private final Screen parent;
     private final McList<Instance> list = new McList<>(220, 2); // the name, with its version and loader under it
-    private final McButton playButton = new McButton("Play", this::play);
-    private final McButton newButton = new McButton("New Instance", () -> panel.setScreen(new NewInstanceScreen(panel, this)));
+    private final McButton playButton = new McButton(t("Play"), this::play);
+    private final McButton newButton = new McButton(t("New Instance"), () -> panel.setScreen(new NewInstanceScreen(panel, this)));
     private final McButton loaderButton = new McButton("", this::nextLoader);
-    private final McButton modsButton = new McButton("Mods", this::openMods);
-    private final McButton optionsButton = new McButton("Game Options", this::openOptions);
-    private final McButton deleteButton = new McButton("Delete", this::delete);
+    private final McButton modsButton = new McButton(t("Mods"), this::openMods);
+    private final McButton optionsButton = new McButton(t("Game Options"), this::openOptions);
+    private final McButton deleteButton = new McButton(t("Delete"), this::delete);
     private final McButton defaultButton = new McButton("", this::toggleDefault);
-    private final McButton worldsButton = new McButton("Worlds", this::openWorlds);
-    private final McButton backButton = new McButton("Back", this::back);
+    private final McButton worldsButton = new McButton(t("Worlds"), this::openWorlds);
+    private final McButton backButton = new McButton(t("Back"), this::back);
     private String problem;
 
     public InstancesScreen(OceanPanel panel, Screen parent) {
@@ -56,13 +58,13 @@ public class InstancesScreen extends Screen {
     private void nextLoader() {
         Instance instance = list.getSelected();
         if (RunningGames.isRunning(instance)) {
-            problem = "Close the game first, then change its loader.";
+            problem = t("Close the game first, then change its loader.");
             return;
         }
         try {
             instance.setLoader(instance.loader().nextReady());
         } catch (IOException e) {
-            problem = "Couldn't save that: " + e.getMessage();
+            problem = t("Couldn't save that: {0}", e.getMessage());
         }
     }
 
@@ -87,17 +89,17 @@ public class InstancesScreen extends Screen {
     private void delete() {
         Instance instance = list.getSelected();
         if (RunningGames.isRunning(instance)) {
-            problem = "Close the game first, then delete it.";
+            problem = t("Close the game first, then delete it.");
             return;
         }
-        panel.setScreen(new ConfirmScreen(panel, "Delete " + instance.name() + "?",
-                "Its worlds, settings and mods will be gone forever!", () -> {
+        panel.setScreen(new ConfirmScreen(panel, t("Delete {0}?", instance.name()),
+                t("Its worlds, settings and mods will be gone forever!"), () -> {
             try {
                 if (instance.isDefault()) Settings.setDefaultInstance(null);
                 instance.delete();
                 problem = null;
             } catch (IOException e) {
-                problem = "Couldn't delete all of it. Is the game still running?";
+                problem = t("Couldn't delete all of it. Is the game still running?");
             }
             panel.setScreen(this);
         }, () -> panel.setScreen(this)));
@@ -106,17 +108,17 @@ public class InstancesScreen extends Screen {
     @Override
     public void draw(Graphics2D g, int w, int h) {
         McFont font = panel.getMcFont();
-        centered(g, "Instances", w, 12 * GUI, 0xFFFFFF);
+        centered(g, t("Instances"), w, 12 * GUI, 0xFFFFFF);
 
         int listBottom = h - 132 * GUI;
-        String empty = list.getItems().isEmpty() ? "No instances yet. Click New Instance!" : null;
+        String empty = list.getItems().isEmpty() ? t("No instances yet. Click New Instance!") : null;
         list.draw(g, font, w, 32 * GUI, listBottom, empty, (gg, instance, x, y, width) -> {
             // Like Minecraft's world list: the name, and under it in grey, its version and loader.
             // The default instance is yellow, with a star, like it's been picked out.
             boolean isDefault = instance.isDefault();
             String name = fit(font, isDefault ? "* " + instance.name() : instance.name(), width);
             font.draw(gg, name, x, y, GUI, isDefault ? 0xFFFF55 : 0xFFFFFF);
-            String details = "Minecraft " + instance.version().id() + instance.loader().suffix() + (instance.loaderIsBeta() ? " beta" : "");
+            String details = t("Minecraft {0}", instance.version().id()) + instance.loader().suffix() + (instance.loaderIsBeta() ? " " + t("beta") : "");
             font.draw(gg, fit(font, details, width), x, y + 10 * GUI, GUI, 0x808080);
         });
         if (problem != null) centered(g, problem, w, listBottom + 2 * GUI, 0xFF5555);
@@ -125,9 +127,9 @@ public class InstancesScreen extends Screen {
         Instance selected = list.getSelected();
         McButton[] forOne = {playButton, loaderButton, modsButton, optionsButton, deleteButton, defaultButton, worldsButton};
         for (McButton b : forOne) b.setActive(selected != null);
-        if (selected == null) centered(g, "Click an instance to play it or change it.", w, h - 112 * GUI, 0xA0A0A0);
-        loaderButton.setLabel(selected == null ? "Loader" : selected.loader().label());
-        defaultButton.setLabel(selected != null && selected.isDefault() ? "Not Default" : "Make Default");
+        if (selected == null) centered(g, t("Click an instance to play it or change it."), w, h - 112 * GUI, 0xA0A0A0);
+        loaderButton.setLabel(selected == null ? t("Loader") : selected.loader().label());
+        defaultButton.setLabel(selected != null && selected.isDefault() ? t("Not Default") : t("Make Default"));
         int y = h - 124 * GUI;
         int left = w / 2 - 100 * GUI;
         int right = w / 2 + 2 * GUI;

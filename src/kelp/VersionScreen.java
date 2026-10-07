@@ -1,5 +1,7 @@
 package kelp;
 
+import static kelp.Lang.t;
+
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,12 +12,12 @@ public class VersionScreen extends Screen {
     private final Screen parent;
     private final Consumer<VersionManifest.Version> onPick;
     private final McList<VersionManifest.Version> list = new McList<>(220);
-    private final McButton useButton = new McButton("Use Version", this::use);
-    private final McButton cancelButton = new McButton("Cancel", this::back);
+    private final McButton useButton = new McButton(t("Use Version"), this::use);
+    private final McButton cancelButton = new McButton(t("Cancel"), this::back);
 
     // The download happens on another thread, so these are volatile to be seen by the drawing thread
     private volatile List<VersionManifest.Version> allVersions;
-    private volatile String status = "Loading versions...";
+    private volatile String status = t("Loading versions...");
 
     /** current is the version picked before, or null. onPick gets the version chosen. */
     public VersionScreen(OceanPanel panel, Screen parent, VersionManifest.Version current,
@@ -32,7 +34,7 @@ public class VersionScreen extends Screen {
                 allVersions = VersionManifest.download();
                 status = null;
             } catch (Exception e) {
-                status = "Couldn't reach Mojang: " + e.getMessage();
+                status = t("Couldn't reach Mojang: {0}", e.getMessage());
             }
         }, "version list download");
         download.setDaemon(true); // don't keep Kelp running just for this
@@ -62,7 +64,7 @@ public class VersionScreen extends Screen {
     @Override
     public void draw(Graphics2D g, int w, int h) {
         McFont font = panel.getMcFont();
-        centered(g, "Select Version", w, 12 * GUI, 0xFFFFFF);
+        centered(g, t("Select Version"), w, 12 * GUI, 0xFFFFFF);
 
         VersionManifest.Version selected = list.getSelected();
         list.setItems(filtered());

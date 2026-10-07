@@ -1,5 +1,7 @@
 package kelp;
 
+import static kelp.Lang.t;
+
 import java.awt.Graphics2D;
 
 /** Asks "are you sure?" before something that can't be undone, like Minecraft does before deleting a world. */
@@ -11,8 +13,8 @@ public class ConfirmScreen extends Screen {
         super(panel);
         this.title = title;
         this.message = message;
-        buttons.add(new McButton("Yes", yes));
-        buttons.add(new McButton("No", no));
+        buttons.add(new McButton(t("Yes"), yes));
+        buttons.add(new McButton(t("No"), no));
     }
 
     @Override

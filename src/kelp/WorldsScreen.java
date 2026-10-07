@@ -1,5 +1,7 @@
 package kelp;
 
+import static kelp.Lang.t;
+
 import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -20,9 +22,9 @@ public class WorldsScreen extends Screen {
     private final Screen parent;
     private final Instance instance;
     private final McList<Worlds.World> list = new McList<>(220);
-    private final McButton importButton = new McButton("Import World", this::pickWorld);
-    private final McButton openButton = new McButton("Open Folder", this::openFolder);
-    private final McButton doneButton = new McButton("Done", this::back);
+    private final McButton importButton = new McButton(t("Import World"), this::pickWorld);
+    private final McButton openButton = new McButton(t("Open Folder"), this::openFolder);
+    private final McButton doneButton = new McButton(t("Done"), this::back);
     private volatile String status;
     private volatile int statusColor = 0xA0A0A0;
     private volatile boolean importing;
@@ -50,7 +52,7 @@ public class WorldsScreen extends Screen {
             Files.createDirectories(Worlds.saves(instance));
             Desktop.getDesktop().open(Worlds.saves(instance).toFile());
         } catch (IOException e) {
-            show("Couldn't open the folder: " + e.getMessage(), 0xFF5555);
+            show(t("Couldn't open the folder: {0}", e.getMessage()), 0xFF5555);
         }
     }
 
@@ -59,10 +61,10 @@ public class WorldsScreen extends Screen {
         if (importing) return;
         Path start = officialSaves();
         JFileChooser chooser = new JFileChooser(start != null ? start.toFile() : null);
-        chooser.setDialogTitle("Pick a world folder, or a world .zip");
+        chooser.setDialogTitle(t("Pick a world folder, or a world .zip"));
         chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-        chooser.setFileFilter(new FileNameExtensionFilter("World folders and .zip files", "zip"));
-        if (chooser.showDialog(SwingUtilities.getWindowAncestor(panel), "Import") != JFileChooser.APPROVE_OPTION) return;
+        chooser.setFileFilter(new FileNameExtensionFilter(t("World folders and .zip files"), "zip"));
+        if (chooser.showDialog(SwingUtilities.getWindowAncestor(panel), t("Import")) != JFileChooser.APPROVE_OPTION) return;
         File picked = chooser.getSelectedFile();
         importWorld(picked.toPath());
     }
@@ -70,11 +72,11 @@ public class WorldsScreen extends Screen {
     /** Copies the world in, in the background so the window stays smooth for big worlds. */
     void importWorld(Path source) {
         importing = true;
-        show("Importing " + source.getFileName() + "...", 0xA0A0A0);
+        show(t("Importing {0}...", source.getFileName()), 0xA0A0A0);
         Thread worker = new Thread(() -> {
             try {
                 Path world = Worlds.importWorld(source, Worlds.saves(instance));
-                show("Imported " + world.getFileName() + "! It's in the world list when you play.", 0x55FF55);
+                show(t("Imported {0}! It's in the world list when you play.", world.getFileName()), 0x55FF55);
                 SwingUtilities.invokeLater(this::shown);
             } catch (IOException e) {
                 show(e.getMessage(), 0xFF5555);
@@ -116,10 +118,10 @@ public class WorldsScreen extends Screen {
     @Override
     public void draw(Graphics2D g, int w, int h) {
         McFont font = panel.getMcFont();
-        centered(g, "Worlds in " + instance.name(), w, 12 * GUI, 0xFFFFFF);
+        centered(g, t("Worlds in {0}", instance.name()), w, 12 * GUI, 0xFFFFFF);
 
         int listBottom = h - 72 * GUI;
-        String empty = list.getItems().isEmpty() ? "No worlds yet. Play, or Import World!" : null;
+        String empty = list.getItems().isEmpty() ? t("No worlds yet. Play, or Import World!") : null;
         list.draw(g, font, w, 32 * GUI, listBottom, empty, (gg, world, x, y, width) -> {
             font.draw(gg, world.name(), x, y, GUI, 0xFFFFFF);
             String when = WHEN.format(Instant.ofEpochMilli(world.lastPlayed()));
@@ -130,7 +132,7 @@ public class WorldsScreen extends Screen {
             while (text.length() > 4 && font.width(text, GUI) > w - 8 * GUI) text = text.substring(0, text.length() - 4) + "...";
             centered(g, text, w, listBottom + 6 * GUI, statusColor);
         } else if (RunningGames.isRunning(instance)) {
-            centered(g, "Imported worlds show up after you leave to the title screen.", w, listBottom + 6 * GUI, 0xFFFF55);
+            centered(g, t("Imported worlds show up after you leave to the title screen."), w, listBottom + 6 * GUI, 0xFFFF55);
         }
 
         importButton.setActive(!importing);

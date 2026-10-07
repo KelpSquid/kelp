@@ -1,5 +1,7 @@
 package kelp;
 
+import static kelp.Lang.t;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
@@ -14,7 +16,7 @@ public class DownloadScreen extends Screen {
     private final VersionManifest.Version version;
     private final boolean withSquid;
     private final GameInstaller installer = new GameInstaller();
-    private final McButton button = new McButton("Cancel", this::leave);
+    private final McButton button = new McButton(t("Cancel"), this::leave);
 
     // Set by the background thread, read while drawing
     private volatile Phase phase = Phase.DOWNLOADING;
@@ -78,7 +80,7 @@ public class DownloadScreen extends Screen {
                 return v;
             }
         }
-        throw new IllegalStateException("Mojang doesn't list Minecraft " + version.id() + " anymore");
+        throw new IllegalStateException(t("Mojang doesn't list Minecraft {0} anymore", version.id()));
     }
 
     private void leave() {
@@ -100,22 +102,22 @@ public class DownloadScreen extends Screen {
 
         switch (phase) {
             case DOWNLOADING -> {
-                centered(g, font, "Downloading Minecraft " + version.id(), w, titleY, 0xFFFFFF);
+                centered(g, font, t("Downloading Minecraft {0}", version.id()), w, titleY, 0xFFFFFF);
                 drawProgress(g, font, w, lineY);
-                button.setLabel("Cancel");
+                button.setLabel(t("Cancel"));
             }
             case STARTING -> {
-                centered(g, font, "Starting " + name + "...", w, titleY, 0xFFFFFF);
+                centered(g, font, t("Starting {0}...", name), w, titleY, 0xFFFFFF);
                 if (instance.loaderIsBeta()) centered(g, font, betaNotice(), w, lineY, 0xFFFF55);
-                button.setLabel("Cancel");
+                button.setLabel(t("Cancel"));
             }
             case RUNNING -> {
-                centered(g, font, name + " is running!", w, titleY, 0xFFFFFF);
+                centered(g, font, t("{0} is running!", name), w, titleY, 0xFFFFFF);
                 SquidReport squid = squidReport();
-                String line = "Have fun. Kelp will wait down here.";
-                if (squid != null && squid.status().equals("loading")) line = "Squid is starting your mods...";
+                String line = t("Have fun. Kelp will wait down here.");
+                if (squid != null && squid.status().equals("loading")) line = t("Squid is starting your mods...");
                 if (squid != null && squid.status().equals("running")) {
-                    line = "Squid loaded " + squid.modCount() + (squid.modCount() == 1 ? " mod." : " mods.") + " Have fun!";
+                    line = squid.modCount() == 1 ? t("Squid loaded 1 mod. Have fun!") : t("Squid loaded {0} mods. Have fun!", squid.modCount());
                 }
                 centered(g, font, line, w, lineY, 0xA0A0A0);
                 int y = lineY + 12 * GUI;
@@ -127,34 +129,33 @@ public class DownloadScreen extends Screen {
                     // Mods that couldn't work this time. The game still opened without them.
                     List<SquidReport.Skipped> skipped = squid.skipped();
                     if (skipped.size() == 1) {
-                        for (String part : wrap(font, "Squid skipped " + skipped.get(0).mod() + ": " + skipped.get(0).reason(), 300 * GUI)) {
+                        for (String part : wrap(font, t("Squid skipped {0}: {1}", skipped.get(0).mod(), skipped.get(0).reason()), 300 * GUI)) {
                             centered(g, font, part, w, y, 0xFFFF55);
                             y += 12 * GUI;
                         }
                     } else {
                         List<String> names = skipped.stream().map(SquidReport.Skipped::mod).toList();
-                        centered(g, font, "Squid skipped " + skipped.size() + " mods: " + String.join(", ", names), w, y, 0xFFFF55);
-                        centered(g, font, "The Mods screen says why.", w, y + 12 * GUI, 0xFFFF55);
+                        centered(g, font, t("Squid skipped {0} mods: {1}", skipped.size(), String.join(", ", names)), w, y, 0xFFFF55);
+                        centered(g, font, t("The Mods screen says why."), w, y + 12 * GUI, 0xFFFF55);
                         y += 24 * GUI;
                     }
                 }
                 if (squid != null && !squid.problems().isEmpty()) {
                     // A mod's hook kept breaking, so Squid switched it off. The game is fine, but that mod may not work.
                     List<String> names = squid.problems();
-                    String who = names.size() == 1 ? names.get(0) + " had a problem" : String.join(", ", names) + " had problems";
-                    centered(g, font, who + ", so Squid turned part of it off.", w, y, 0xFFFF55);
+                    centered(g, font, t("{0} had a problem, so Squid turned part of it off.", String.join(", ", names)), w, y, 0xFFFF55);
                 }
-                button.setLabel("Back");
+                button.setLabel(t("Back"));
             }
             case CLOSED -> {
-                centered(g, font, name + " closed.", w, titleY, 0xFFFFFF);
-                button.setLabel("Done");
+                centered(g, font, t("{0} closed.", name), w, titleY, 0xFFFFFF);
+                button.setLabel(t("Done"));
             }
             case CRASHED -> {
                 SquidReport squid = squidReport();
                 if (squid != null && squid.status().equals("failed")) {
                     // Squid stopped the game before it opened, and says why
-                    String who = squid.mod() != null ? squid.mod() + " broke while starting:" : "Squid couldn't start the game:";
+                    String who = squid.mod() != null ? t("{0} broke while starting:", squid.mod()) : t("Squid couldn't start the game:");
                     centered(g, font, who, w, titleY, 0xFF5555);
                     int y = lineY;
                     for (String part : wrap(font, String.valueOf(squid.error()), 300 * GUI)) {
@@ -162,16 +163,16 @@ public class DownloadScreen extends Screen {
                         y += 12 * GUI;
                     }
                 } else {
-                    centered(g, font, name + " crashed (code " + exitCode + ")", w, titleY, 0xFF5555);
-                    centered(g, font, "What it said is saved in:", w, lineY, 0xA0A0A0);
+                    centered(g, font, t("{0} crashed (code {1})", name, exitCode), w, titleY, 0xFF5555);
+                    centered(g, font, t("What it said is saved in:"), w, lineY, 0xA0A0A0);
                     centered(g, font, "Kelp\\instances\\" + instance.id() + "\\kelp-output.log", w, lineY + 12 * GUI, 0xFFFFFF);
                 }
-                button.setLabel("Back");
+                button.setLabel(t("Back"));
             }
             case FAILED -> {
-                centered(g, font, "Something went wrong:", w, titleY, 0xFF5555);
+                centered(g, font, t("Something went wrong:"), w, titleY, 0xFF5555);
                 centered(g, font, error, w, lineY, 0xFFFFFF);
-                button.setLabel("Back");
+                button.setLabel(t("Back"));
             }
         }
 
@@ -181,7 +182,7 @@ public class DownloadScreen extends Screen {
 
     /** For a loader that only has a beta for this Minecraft version yet. */
     private String betaNotice() {
-        return instance.loader().label() + " for Minecraft " + version.id() + " is still a beta, so it might crash.";
+        return t("{0} for Minecraft {1} is still a beta, so it might crash.", instance.loader().label(), version.id());
     }
 
     /** Squid's report for this game, read again at most once a second (or never, without Squid). */

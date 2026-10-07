@@ -83,6 +83,7 @@ public class Package {
             addFolder(out, classes, "");
             addFolder(out, Path.of("textures"), "textures/");
             addFolder(out, Path.of("branding"), "branding/");
+            addFolder(out, Path.of("lang"), "lang/");
         }
         System.out.println("Built " + jar);
         return jar;

@@ -1,13 +1,15 @@
 package kelp;
 
+import static kelp.Lang.t;
+
 import java.awt.Graphics2D;
 
 /** The first thing you see: the Kelp title, a splash and the main buttons. */
 public class TitleScreen extends Screen {
-    private final McButton play = new McButton("Play", this::play);
-    private final McButton instances = new McButton("Instances", () -> panel.setScreen(new InstancesScreen(panel, this)));
-    private final McButton settings = new McButton("Options...", () -> panel.setScreen(new SettingsScreen(panel, this)));
-    private final McButton quit = new McButton("Quit Game", () -> System.exit(0));
+    private final McButton play = new McButton(t("Play"), this::play);
+    private final McButton instances = new McButton(t("Instances"), () -> panel.setScreen(new InstancesScreen(panel, this)));
+    private final McButton settings = new McButton(t("Options..."), () -> panel.setScreen(new SettingsScreen(panel, this)));
+    private final McButton quit = new McButton(t("Quit Game"), () -> System.exit(0));
 
     private Instance last; // what Play starts: the default instance, or the one played last
     private int count;
@@ -54,7 +56,7 @@ public class TitleScreen extends Screen {
 
         // A yellow splash, tilted and pulsing like the one on Minecraft's title screen.
         // Minecraft's own formula: it pulses every second and long splashes get shrunk to fit.
-        String splash = "A launcher from the deep!";
+        String splash = t("A launcher from the deep!");
         double pulse = 1.8 - Math.abs(Math.sin(panel.getTime() % 1.0 * Math.PI * 2) * 0.1);
         double splashScale = pulse * 100 / (font.width(splash, 1) + 32) * GUI;
         Graphics2D s = (Graphics2D) g.create();
@@ -65,17 +67,17 @@ public class TitleScreen extends Screen {
         s.dispose();
 
         // What Play will start, in the bottom-left corner where Minecraft shows its own version
-        String playing = last == null ? "No instances yet" : "Play: " + last.summary();
+        String playing = last == null ? t("No instances yet") : t("Play: {0}", last.summary());
         font.draw(g, playing, 2 * GUI, h - 10 * GUI, GUI, 0xFFFFFF);
         // The Squid Count of whoever is playing, read again about once a second
         if (panel.getTime() - countReadAt > 1 || countReadAt < 0) {
             count = SquidCount.points(Accounts.active().id());
             countReadAt = panel.getTime();
         }
-        font.draw(g, "Squid Count: " + count, 2 * GUI, h - 20 * GUI, GUI, 0xFFAA00);
+        font.draw(g, t("Squid Count: {0}", count), 2 * GUI, h - 20 * GUI, GUI, 0xFFAA00);
 
         // Mojang's rules ask projects like Kelp to say this clearly, so it's always on the title screen
-        String[] notice = {"NOT AN OFFICIAL MINECRAFT PRODUCT.", "NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT."};
+        String[] notice = {t("NOT AN OFFICIAL MINECRAFT PRODUCT."), t("NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.")};
         int noticeW = Math.max(font.width(notice[0], 1), font.width(notice[1], 1)) + 8;
         g.setColor(new java.awt.Color(0, 0, 0, 150)); // a dark backing so kelp and bubbles never cover it
         g.fillRect(w - noticeW, h - notice.length * 10 - 5, noticeW, notice.length * 10 + 5);

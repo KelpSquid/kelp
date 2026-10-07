@@ -25,7 +25,7 @@ public class OceanPanel extends JPanel {
     private final BufferedImage[] kelpTop = Textures.frames(Textures.load("kelp_top.png"));
     private final BufferedImage[] kelpStem = Textures.frames(Textures.load("kelp_stem.png"));
     private final BufferedImage bubble = Textures.load("bubble.png");
-    private final McFont font = new McFont(Textures.load("font.png"));
+    private final McFont font = new McFont(Textures.load("font.png"), Textures.load("font-extra.png"));
 
     private final Random random = new Random();
     private final int[] kelpHeights = new int[20]; // how many pieces tall the kelp is in each column (0 = none)

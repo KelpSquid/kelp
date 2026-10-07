@@ -53,6 +53,7 @@ public class KelpTest {
         rules();
         folders();
         settings();
+        languages();
         instances();
         gameOptions();
         mods();
@@ -130,6 +131,44 @@ public class KelpTest {
         Settings.setMemoryGb(4);
         check("memory is remembered", Settings.memoryGb(), 4);
         Settings.setMemoryGb(0);
+    }
+
+    // ---- Languages ----
+
+    static void languages() throws Exception {
+        check("a language line is read", Lang.parse("# a note\nPlay => Jugar\nDone => \n").toString(), "{Play=Jugar}");
+        Settings.setLanguage("es");
+        Lang.reload();
+        check("text is translated", Lang.t("Play"), "Jugar");
+        check("values are filled in", Lang.t("Added {0}!", "X-Ray"), "¡Añadido X-Ray!");
+        check("missing text stays English", Lang.t("Not in any file"), "Not in any file");
+        Settings.setLanguage("en");
+        Lang.reload();
+        check("English is English", Lang.t("Play"), "Play");
+
+        List<String> english = Files.readAllLines(Path.of("lang/es.txt")).stream()
+                .filter(line -> !line.startsWith("#") && line.contains(" => ")).map(line -> line.substring(0, line.indexOf(" => "))).toList();
+        for (Lang.Language language : Lang.ALL) {
+            String drawable = language.name().chars().allMatch(KelpTest::drawable) ? "yes" : language.name();
+            check(language.name() + "'s name can be drawn", drawable, "yes");
+            if (language.code().equals("en")) continue;
+            Map<String, String> table = Lang.parse(Files.readString(Path.of("lang/" + language.code() + ".txt")));
+            List<String> missing = english.stream().filter(key -> !table.containsKey(key)).toList();
+            check(language.name() + " has every text", missing, List.of());
+            List<String> bad = table.entrySet().stream().filter(e -> !e.getValue().chars().allMatch(KelpTest::drawable)
+                    || !placeholders(e.getKey()).equals(placeholders(e.getValue()))).map(Map.Entry::getValue).toList();
+            check(language.name() + " can be drawn and keeps {0}", bad, List.of());
+        }
+    }
+
+    /** Whether Kelp's font has this letter. */
+    static boolean drawable(int c) {
+        return (c >= 32 && c <= 126) || McFont.EXTRA.indexOf(c) >= 0;
+    }
+
+    /** The {0}, {1}... in a text, sorted. */
+    static List<String> placeholders(String text) {
+        return java.util.regex.Pattern.compile("\\{\\d}").matcher(text).results().map(r -> r.group()).sorted().distinct().toList();
     }
 
     // ---- Instances ----

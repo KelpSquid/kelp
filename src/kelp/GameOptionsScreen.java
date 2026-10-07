@@ -1,5 +1,7 @@
 package kelp;
 
+import static kelp.Lang.t;
+
 import java.awt.Graphics2D;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,7 +10,7 @@ import java.util.function.DoubleFunction;
 
 /** Changes one instance's Minecraft settings, the same ones as in the game's own Options screen. */
 public class GameOptionsScreen extends Screen {
-    private static final String[] GUI_SCALES = {"Auto", "1", "2", "3", "4"};
+    private static final String[] GUI_SCALES = {"Auto", "1", "2", "3", "4"}; // "Auto" is translated where it's shown
 
     private final Screen parent;
     private final Instance instance;
@@ -23,7 +25,7 @@ public class GameOptionsScreen extends Screen {
         super(panel);
         this.parent = parent;
         this.instance = instance;
-        doneButton = new McButton("Done", () -> panel.setScreen(parent));
+        doneButton = new McButton(t("Done"), () -> panel.setScreen(parent));
         buttons.add(doneButton);
         try {
             options = GameOptions.load(instance);
@@ -34,27 +36,27 @@ public class GameOptionsScreen extends Screen {
 
         // FOV is saved as -1 to 1, where 0 means 70
         slider("fov", 30, 110, 1, 70 + 40 * options.getDouble("fov", 0),
-                v -> "FOV: " + (int) v, v -> String.valueOf((v - 70) / 40));
+                v -> t("FOV: {0}", (int) v), v -> String.valueOf((v - 70) / 40));
         slider("renderDistance", 2, 32, 1, options.getDouble("renderDistance", 12),
-                v -> "Render Distance: " + (int) v, v -> String.valueOf((int) v));
+                v -> t("Render Distance: {0}", (int) v), v -> String.valueOf((int) v));
         slider("simulationDistance", 5, 32, 1, options.getDouble("simulationDistance", 12),
-                v -> "Simulation: " + (int) v, v -> String.valueOf((int) v));
+                v -> t("Simulation: {0}", (int) v), v -> String.valueOf((int) v));
         slider("maxFps", 10, 260, 10, options.getDouble("maxFps", 120),
-                v -> "Max FPS: " + (v >= 260 ? "Unlimited" : String.valueOf((int) v)), v -> String.valueOf((int) v));
+                v -> t("Max FPS: {0}", v >= 260 ? t("Unlimited") : String.valueOf((int) v)), v -> String.valueOf((int) v));
         slider("gamma", 0, 1, 0.01, options.getDouble("gamma", 0.5),
-                v -> "Brightness: " + percent(v), String::valueOf);
+                v -> t("Brightness: {0}", percent(v)), String::valueOf);
         slider("mouseSensitivity", 0, 1, 0.005, options.getDouble("mouseSensitivity", 0.5),
-                v -> "Sensitivity: " + percent(v * 2), String::valueOf); // the game shows 0.5 as 100%
+                v -> t("Sensitivity: {0}", percent(v * 2)), String::valueOf); // the game shows 0.5 as 100%
         slider("soundCategory_master", 0, 1, 0.01, options.getDouble("soundCategory_master", 1),
-                v -> "Master Volume: " + percent(v), String::valueOf);
+                v -> t("Master Volume: {0}", percent(v)), String::valueOf);
         slider("soundCategory_music", 0, 1, 0.01, options.getDouble("soundCategory_music", 1),
-                v -> "Music: " + percent(v), String::valueOf);
+                v -> t("Music: {0}", percent(v)), String::valueOf);
         guiScaleButton();
         toggle("VSync", "enableVsync", true);
         toggle("Fullscreen", "fullscreen", false);
         toggle("View Bobbing", "bobView", true);
         toggle("Auto-Jump", "autoJump", false);
-        add(new McButton("Make It Faster", this::makeFaster));
+        add(new McButton(t("Make It Faster"), this::makeFaster));
     }
 
     /** Minecraft's own Fast graphics: shorter render distance, simpler clouds, leaves and particles, no shadows. */
@@ -62,10 +64,10 @@ public class GameOptionsScreen extends Screen {
         try {
             options.useFastPreset();
             GameOptionsScreen fresh = new GameOptionsScreen(panel, parent, instance); // so the sliders show the new values
-            fresh.notice = "Fast graphics on! Render distance is now 8.";
+            fresh.notice = t("Fast graphics on! Render distance is now 8.");
             panel.setScreen(fresh);
         } catch (IOException e) {
-            problem = "Couldn't save: " + e.getMessage();
+            problem = t("Couldn't save: {0}", e.getMessage());
         }
     }
 
@@ -82,13 +84,17 @@ public class GameOptionsScreen extends Screen {
         layout.add(slider);
     }
 
+    private static String guiScaleLabel(int scale) {
+        return t("GUI Scale: {0}", scale == 0 ? t("Auto") : GUI_SCALES[scale]);
+    }
+
     private void guiScaleButton() {
         int[] scale = {Math.max(0, Math.min(4, (int) options.getDouble("guiScale", 0)))};
         McButton[] button = new McButton[1]; // so the button's action can change its own label
-        button[0] = new McButton("GUI Scale: " + GUI_SCALES[scale[0]], () -> {
+        button[0] = new McButton(guiScaleLabel(scale[0]), () -> {
             scale[0] = (scale[0] + 1) % GUI_SCALES.length;
             write("guiScale", String.valueOf(scale[0]));
-            button[0].setLabel("GUI Scale: " + GUI_SCALES[scale[0]]);
+            button[0].setLabel(guiScaleLabel(scale[0]));
         });
         add(button[0]);
     }
@@ -97,10 +103,10 @@ public class GameOptionsScreen extends Screen {
     private void toggle(String name, String key, boolean fallback) {
         boolean[] on = {options.getBoolean(key, fallback)};
         McButton[] button = new McButton[1];
-        button[0] = new McButton(name + ": " + (on[0] ? "ON" : "OFF"), () -> {
+        button[0] = new McButton(t(name) + ": " + (on[0] ? t("ON") : t("OFF")), () -> {
             on[0] = !on[0];
             write(key, String.valueOf(on[0]));
-            button[0].setLabel(name + ": " + (on[0] ? "ON" : "OFF"));
+            button[0].setLabel(t(name) + ": " + (on[0] ? t("ON") : t("OFF")));
         });
         add(button[0]);
     }
@@ -115,14 +121,14 @@ public class GameOptionsScreen extends Screen {
             options.set(key, value);
             problem = null;
         } catch (IOException e) {
-            problem = "Couldn't save: " + e.getMessage();
+            problem = t("Couldn't save: {0}", e.getMessage());
         }
     }
 
     @Override
     public void draw(Graphics2D g, int w, int h) {
         McFont font = panel.getMcFont();
-        centered(g, "Game Options: " + instance.name(), w, 12 * GUI, 0xFFFFFF);
+        centered(g, t("Game Options: {0}", instance.name()), w, 12 * GUI, 0xFFFFFF);
 
         // Two columns of 150, like the game's own options screen
         int top = 32 * GUI;
@@ -145,9 +151,9 @@ public class GameOptionsScreen extends Screen {
             centered(g, notice, w, bottom - 14 * GUI, 0x55FF55);
         } else if (RunningGames.isRunning(instance)) {
             // Minecraft saves its own options when it closes, which would undo changes made now
-            centered(g, "Close the game first, or it will undo these.", w, bottom - 14 * GUI, 0xFFFF55);
+            centered(g, t("Close the game first, or it will undo these."), w, bottom - 14 * GUI, 0xFFFF55);
         } else {
-            centered(g, "Changes are used the next time this instance starts.", w, bottom - 14 * GUI, 0x808080);
+            centered(g, t("Changes are used the next time this instance starts."), w, bottom - 14 * GUI, 0x808080);
         }
         doneButton.setBounds(w / 2 - 100 * GUI, bottom, 200 * GUI, 20 * GUI);
         doneButton.draw(g, font, GUI);

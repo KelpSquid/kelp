@@ -1,5 +1,7 @@
 package kelp;
 
+import static kelp.Lang.t;
+
 import java.awt.Desktop;
 import java.awt.Graphics2D;
 import java.io.IOException;
@@ -14,15 +16,16 @@ public class ModsScreen extends Screen {
     private final Screen parent;
     private final Instance instance;
     private final McList<InstalledMod> list = new McList<>(220);
-    private final McButton newButton = new McButton("New Mod", this::newMod);
-    private final McButton openButton = new McButton("Open Folder", this::openFolder);
-    private final McButton shaderButton = new McButton("Shader Packs", this::openShaderPacks);
-    private final McButton addButton = new McButton("Add Mod...", this::pickMods);
-    private final McButton doneButton = new McButton("Done", this::back);
+    private final McButton newButton = new McButton(t("New Mod"), this::newMod);
+    private final McButton openButton = new McButton(t("Open Folder"), this::openFolder);
+    private final McButton shaderButton = new McButton(t("Shader Packs"), this::openShaderPacks);
+    private final McButton addButton = new McButton(t("Add Mod..."), this::pickMods);
+    private final McButton doneButton = new McButton(t("Done"), this::back);
 
     private double listedAt = -1; // the folder is checked again every second, in case mods were added
     private String problem;
     private String notice; // good news, like "Added X!"; problems take its place
+    private boolean wrongLoader; // the notice is a heads-up (yellow), not good news (green)
     private int mouseX = -1;
     private int mouseY = -1;
     private int editLeft; // where the "Edit" on the rows of .java mods is, to tell clicks on it apart
@@ -52,7 +55,7 @@ public class ModsScreen extends Screen {
             Files.createDirectories(instance.mods());
             Desktop.getDesktop().open(instance.mods().toFile());
         } catch (IOException e) {
-            problem = "Couldn't open the folder: " + e.getMessage();
+            problem = t("Couldn't open the folder: {0}", e.getMessage());
         }
     }
 
@@ -63,17 +66,17 @@ public class ModsScreen extends Screen {
             Files.createDirectories(folder);
             Desktop.getDesktop().open(folder.toFile());
         } catch (IOException e) {
-            problem = "Couldn't open the folder: " + e.getMessage();
+            problem = t("Couldn't open the folder: {0}", e.getMessage());
         }
     }
 
     /** Asks which mod files to add, with the computer's own file window. */
     private void pickMods() {
         javax.swing.JFileChooser chooser = new javax.swing.JFileChooser(downloads());
-        chooser.setDialogTitle("Pick mods to add");
+        chooser.setDialogTitle(t("Pick mods to add"));
         chooser.setMultiSelectionEnabled(true);
-        chooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Mods (.jar, .java)", "jar", "java"));
-        if (chooser.showDialog(javax.swing.SwingUtilities.getWindowAncestor(panel), "Add") != javax.swing.JFileChooser.APPROVE_OPTION) return;
+        chooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(t("Mods (.jar, .java)"), "jar", "java"));
+        if (chooser.showDialog(javax.swing.SwingUtilities.getWindowAncestor(panel), t("Add")) != javax.swing.JFileChooser.APPROVE_OPTION) return;
         filesDropped(java.util.Arrays.stream(chooser.getSelectedFiles()).map(java.io.File::toPath).toList());
     }
 
@@ -90,30 +93,32 @@ public class ModsScreen extends Screen {
     @Override
     public void filesDropped(java.util.List<Path> files) {
         java.util.List<String> added = new java.util.ArrayList<>();
+        wrongLoader = false;
         try {
             Files.createDirectories(instance.mods());
             for (Path file : files) {
                 String name = file.getFileName().toString();
                 if (!name.endsWith(".jar") && !name.endsWith(".java")) {
-                    problem = name + " isn't a mod. Mods are .jar files (or .java for your own).";
+                    problem = t("{0} isn't a mod. Mods are .jar files (or .java for your own).", name);
                     continue;
                 }
                 Files.copy(file, instance.mods().resolve(name), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
                 added.add(name);
             }
         } catch (IOException e) {
-            problem = "Couldn't add it: " + e.getMessage();
+            problem = t("Couldn't add it: {0}", e.getMessage());
         }
         listedAt = -1; // show them right away
         if (!added.isEmpty()) {
             problem = null;
-            notice = added.size() == 1 ? "Added " + added.get(0) + "!" : "Added " + added.size() + " mods!";
+            notice = added.size() == 1 ? t("Added {0}!", added.get(0)) : t("Added {0} mods!", added.size());
             // A mod for another loader still goes in, but say so, so nobody wonders why it doesn't load
             for (String name : added) {
                 InstalledMod mod = InstalledMod.list(instance.mods()).stream()
                         .filter(m -> m.file().getFileName().toString().equals(name)).findFirst().orElse(null);
                 if (mod != null && mod.kind() != null && !instance.loader().runs(mod.kind())) {
-                    notice = name + " is a " + mod.kind().label() + " mod, so it won't load in this " + instance.loader().label() + " instance.";
+                    notice = t("{0} is a {1} mod, so it won't load in this {2} instance.", name, mod.kind().label(), instance.loader().label());
+                    wrongLoader = true;
                 }
             }
         }
@@ -131,35 +136,35 @@ public class ModsScreen extends Screen {
     public void draw(Graphics2D g, int w, int h) {
         McFont font = panel.getMcFont();
         refresh();
-        centered(g, "Mods for " + instance.name(), w, 12 * GUI, 0xFFFFFF);
+        centered(g, t("Mods for {0}", instance.name()), w, 12 * GUI, 0xFFFFFF);
 
         int listBottom = h - 84 * GUI;
         // New Mod makes Squid mods, so only Squid (and Vanilla) instances point people to it
         boolean canMakeMods = instance.loader() == Loader.SQUID || instance.loader() == Loader.VANILLA;
-        String empty = !list.getItems().isEmpty() ? null : canMakeMods ? "No mods yet. Click New Mod!" : "No mods yet. Click Open Folder!";
+        String empty = !list.getItems().isEmpty() ? null : canMakeMods ? t("No mods yet. Click New Mod!") : t("No mods yet. Click Open Folder!");
         list.draw(g, font, w, 32 * GUI, listBottom, empty, (gg, mod, x, y, width) -> {
             String name = mod.version().isEmpty() ? mod.name() : mod.name() + " " + mod.version();
             font.draw(gg, name, x, y, GUI, mod.enabled() ? 0xFFFFFF : 0x808080);
             // On the right: ON or OFF, like a Minecraft options button. Mods for another loader say which one.
-            String state = mod.enabled() ? "ON" : "OFF";
+            String state = mod.enabled() ? t("ON") : t("OFF");
             int color = mod.enabled() ? 0x55FF55 : 0xFF5555;
             if (mod.kind() == null) {
-                state = "Not a mod";
+                state = t("Not a mod");
                 color = 0xA0A0A0;
             } else if (!instance.loader().runs(mod.kind())) {
-                state = "For " + mod.kind().label();
+                state = t("For {0}", mod.kind().label());
                 color = 0xA0A0A0;
             }
             if (mod.squidMod() && mod.enabled() && !mod.worksOn(minecraftVersion())) {
-                state = "Wrong version";
+                state = t("Wrong version");
                 color = 0xFFFF55;
             }
             font.draw(gg, state, x + width - font.width(state, GUI), y, GUI, color);
             if (mod.source()) {
-                editRight = x + width - font.width("OFF", GUI) - 10 * GUI;
-                editLeft = editRight - font.width("Edit", GUI);
+                editRight = x + width - font.width(t("OFF"), GUI) - 10 * GUI;
+                editLeft = editRight - font.width(t("Edit"), GUI);
                 boolean over = mouseX >= editLeft && mouseX < editRight && list.itemAt(mouseX, mouseY) == mod;
-                font.draw(gg, "Edit", editLeft, y, GUI, over ? 0xFFFFA0 : 0x55FFFF);
+                font.draw(gg, t("Edit"), editLeft, y, GUI, over ? 0xFFFFA0 : 0x55FFFF);
             }
         });
 
@@ -169,19 +174,18 @@ public class ModsScreen extends Screen {
         if (info == null && hovered != null) {
             info = hovered.description();
             if (!hovered.authors().isEmpty()) {
-                info = "By " + String.join(", ", hovered.authors()) + (info.isEmpty() ? "" : ". " + info);
+                info = t("By {0}", String.join(", ", hovered.authors())) + (info.isEmpty() ? "" : ". " + info);
             }
             if (hovered.kind() != null && !instance.loader().runs(hovered.kind())) {
-                info = "This is a " + hovered.kind().label() + " mod, so it only loads in a " + hovered.kind().label() + " instance.";
+                info = t("This is a {0} mod, so it only loads in a {0} instance.", hovered.kind().label());
             } else if (hovered.squidMod() && !hovered.worksOn(minecraftVersion())) {
-                info = "Made for Minecraft " + String.join(" or ", hovered.minecraft()) + ", so Squid will skip it on "
-                        + minecraftVersion() + ".";
+                info = t("Made for Minecraft {0}, so Squid will skip it on {1}.", String.join(" / ", hovered.minecraft()), minecraftVersion());
             }
         }
         boolean good = false;
         if ((info == null || info.isEmpty()) && notice != null) {
             info = notice;
-            good = !notice.contains("won't load");
+            good = !wrongLoader;
         }
         if (info != null && !info.isEmpty()) {
             while (info.length() > 3 && font.width(info, GUI) > w - 8 * GUI) info = info.substring(0, info.length() - 4) + "...";
@@ -190,9 +194,9 @@ public class ModsScreen extends Screen {
         }
 
         if (instance.loader() == Loader.VANILLA) {
-            centered(g, "Vanilla doesn't load mods. Pick Squid in Instances.", w, listBottom + 18 * GUI, 0xFFFF55);
+            centered(g, t("Vanilla doesn't load mods. Pick Squid in Instances."), w, listBottom + 18 * GUI, 0xFFFF55);
         } else if (RunningGames.isRunning(instance)) {
-            centered(g, "Changes are used the next time the game starts.", w, listBottom + 18 * GUI, 0xFFFF55);
+            centered(g, t("Changes are used the next time the game starts."), w, listBottom + 18 * GUI, 0xFFFF55);
         }
 
         // Your own mods are Squid mods, so New Mod is for Squid instances (and Vanilla ones, which it switches to Squid).
@@ -231,7 +235,7 @@ public class ModsScreen extends Screen {
             return;
         }
         if (mod.kind() == null) {
-            problem = "Kelp can't tell what this jar is, so no loader will load it.";
+            problem = t("Kelp can't tell what this jar is, so no loader will load it.");
             return;
         }
         if (mod.source() && x >= editLeft && x < editRight) {
@@ -239,7 +243,7 @@ public class ModsScreen extends Screen {
                 Editors.open(mod.file());
                 problem = null;
             } catch (IOException e) {
-                problem = "Couldn't open it: " + e.getMessage();
+                problem = t("Couldn't open it: {0}", e.getMessage());
             }
             return;
         }
@@ -248,7 +252,7 @@ public class ModsScreen extends Screen {
             listedAt = -1; // read the folder again now, to show the change
             problem = null;
         } catch (IOException e) {
-            problem = "Couldn't switch it. Is the game still running? (" + e.getMessage() + ")";
+            problem = t("Couldn't switch it. Is the game still running? ({0})", e.getMessage());
         }
     }
 

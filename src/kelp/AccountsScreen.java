@@ -1,16 +1,18 @@
 package kelp;
 
+import static kelp.Lang.t;
+
 import java.awt.Graphics2D;
 
 /** Every account added to Kelp. Pick one to play as, add a new one, or remove one. */
 public class AccountsScreen extends Screen {
     private final Screen parent;
     private final McList<Account> list = new McList<>(220);
-    private final McButton useButton = new McButton("Use Account", this::use);
-    private final McButton removeButton = new McButton("Remove", this::remove);
-    private final McButton microsoftButton = new McButton("Add Microsoft", () -> panel.setScreen(new SignInScreen(panel, this)));
-    private final McButton offlineButton = new McButton("Add Offline", this::addOffline);
-    private final McButton doneButton = new McButton("Done", this::done);
+    private final McButton useButton = new McButton(t("Use Account"), this::use);
+    private final McButton removeButton = new McButton(t("Remove"), this::remove);
+    private final McButton microsoftButton = new McButton(t("Add Microsoft"), () -> panel.setScreen(new SignInScreen(panel, this)));
+    private final McButton offlineButton = new McButton(t("Add Offline"), this::addOffline);
+    private final McButton doneButton = new McButton(t("Done"), this::done);
     private String problem;
 
     public AccountsScreen(OceanPanel panel, Screen parent) {
@@ -40,8 +42,8 @@ public class AccountsScreen extends Screen {
 
     private void remove() {
         Account account = list.getSelected();
-        String warning = account.microsoft() ? "You can sign in again any time." : "You can add the name again any time.";
-        panel.setScreen(new ConfirmScreen(panel, "Remove " + account.name() + "?", warning, () -> {
+        String warning = account.microsoft() ? t("You can sign in again any time.") : t("You can add the name again any time.");
+        panel.setScreen(new ConfirmScreen(panel, t("Remove {0}?", account.name()), warning, () -> {
             Accounts.remove(account);
             panel.setScreen(this);
         }, () -> panel.setScreen(this)));
@@ -50,7 +52,7 @@ public class AccountsScreen extends Screen {
     private void addOffline() {
         // Offline names are for people who own Minecraft, so once sign-in works, one Microsoft account comes first
         if (MicrosoftLogin.ready() && !Accounts.hasMicrosoft()) {
-            problem = "Add a Microsoft account that owns Minecraft first.";
+            problem = t("Add a Microsoft account that owns Minecraft first.");
             return;
         }
         panel.setScreen(new AddOfflineScreen(panel, this));
@@ -59,20 +61,20 @@ public class AccountsScreen extends Screen {
     @Override
     public void draw(Graphics2D g, int w, int h) {
         McFont font = panel.getMcFont();
-        centered(g, "Accounts", w, 12 * GUI, 0xFFFFFF);
+        centered(g, t("Accounts"), w, 12 * GUI, 0xFFFFFF);
 
         Account active = Accounts.active();
         int listBottom = h - 92 * GUI;
         list.draw(g, font, w, 32 * GUI, listBottom, null, (gg, account, x, y, width) -> {
             boolean playing = account.id().equals(active.id());
             font.draw(gg, account.name(), x, y, GUI, playing ? 0x55FF55 : 0xFFFFFF);
-            String kind = (playing ? "Playing - " : "") + (account.microsoft() ? "Microsoft" : "Offline");
+            String kind = (playing ? t("Playing") + " - " : "") + (account.microsoft() ? "Microsoft" : t("Offline"));
             font.draw(gg, kind, x + width - font.width(kind, GUI), y, GUI, playing ? 0x55FF55 : 0xA0A0A0);
         });
         if (problem != null) {
             centered(g, problem, w, listBottom + 4 * GUI, 0xFF5555);
         } else if (!MicrosoftLogin.ready()) {
-            centered(g, "Microsoft sign-in turns on once Mojang approves Kelp.", w, listBottom + 4 * GUI, 0x808080);
+            centered(g, t("Microsoft sign-in turns on once Mojang approves Kelp."), w, listBottom + 4 * GUI, 0x808080);
         }
 
         Account selected = list.getSelected();

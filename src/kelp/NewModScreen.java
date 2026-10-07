@@ -1,5 +1,7 @@
 package kelp;
 
+import static kelp.Lang.t;
+
 import java.awt.Graphics2D;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -9,8 +11,8 @@ public class NewModScreen extends Screen {
     private final Screen parent;
     private final Instance instance;
     private final McTextField nameField = new McTextField(32);
-    private final McButton createButton = new McButton("Create", this::create);
-    private final McButton cancelButton = new McButton("Cancel", this::back);
+    private final McButton createButton = new McButton(t("Create"), this::create);
+    private final McButton cancelButton = new McButton(t("Cancel"), this::back);
     private String problem;
 
     public NewModScreen(OceanPanel panel, Screen parent, Instance instance) {
@@ -38,7 +40,7 @@ public class NewModScreen extends Screen {
             }
             back();
         } catch (IOException e) {
-            problem = "Couldn't make it: " + e.getMessage();
+            problem = t("Couldn't make it: {0}", e.getMessage());
         }
     }
 
@@ -47,14 +49,14 @@ public class NewModScreen extends Screen {
         McFont font = panel.getMcFont();
         int left = w / 2 - 100 * GUI;
         int top = h / 4;
-        centered(g, "New Mod", w, 12 * GUI, 0xFFFFFF);
+        centered(g, t("New Mod"), w, 12 * GUI, 0xFFFFFF);
 
-        font.draw(g, "Mod name", left, top, GUI, 0xA0A0A0);
+        font.draw(g, t("Mod name"), left, top, GUI, 0xA0A0A0);
         nameField.setBounds(left, top + 11 * GUI, 200 * GUI, 20 * GUI);
         nameField.draw(g, font, GUI, panel.getTime());
         String file = ModTemplate.className(nameField.getText()) + ".java";
-        centered(g, "Kelp makes " + file + " and opens it.", w, top + 38 * GUI, 0x808080);
-        centered(g, "Change it, save it, then play!", w, top + 50 * GUI, 0x808080);
+        centered(g, t("Kelp makes {0} and opens it.", file), w, top + 38 * GUI, 0x808080);
+        centered(g, t("Change it, save it, then play!"), w, top + 50 * GUI, 0x808080);
         if (problem != null) centered(g, problem, w, top + 66 * GUI, 0xFF5555);
 
         createButton.setActive(!nameField.getText().isBlank());

@@ -1,5 +1,7 @@
 package kelp;
 
+import static kelp.Lang.t;
+
 import java.awt.Graphics2D;
 import java.io.IOException;
 
@@ -9,8 +11,8 @@ public class NewInstanceScreen extends Screen {
     private final McTextField nameField = new McTextField(32);
     private final McButton versionButton = new McButton("", this::pickVersion);
     private final McButton loaderButton = new McButton("", this::nextLoader);
-    private final McButton createButton = new McButton("Create", this::create);
-    private final McButton cancelButton = new McButton("Cancel", this::back);
+    private final McButton createButton = new McButton(t("Create"), this::create);
+    private final McButton cancelButton = new McButton(t("Cancel"), this::back);
 
     private VersionManifest.Version version;
     private Loader loader = Loader.SQUID;
@@ -49,7 +51,7 @@ public class NewInstanceScreen extends Screen {
             parent.select(instance);
             panel.setScreen(parent);
         } catch (IOException e) {
-            problem = "Couldn't make it: " + e.getMessage();
+            problem = t("Couldn't make it: {0}", e.getMessage());
         }
     }
 
@@ -58,18 +60,18 @@ public class NewInstanceScreen extends Screen {
         McFont font = panel.getMcFont();
         int left = w / 2 - 100 * GUI;
         int top = h / 4;
-        centered(g, "New Instance", w, 12 * GUI, 0xFFFFFF);
+        centered(g, t("New Instance"), w, 12 * GUI, 0xFFFFFF);
 
-        font.draw(g, "Name", left, top, GUI, 0xA0A0A0);
+        font.draw(g, t("Name"), left, top, GUI, 0xA0A0A0);
         nameField.setBounds(left, top + 11 * GUI, 200 * GUI, 20 * GUI);
         nameField.draw(g, font, GUI, panel.getTime());
 
-        versionButton.setLabel(version == null ? "Version: Pick one" : "Version: " + version.id());
-        loaderButton.setLabel("Loader: " + loader.label() + (loader.recommended() ? " (best)" : ""));
+        versionButton.setLabel(version == null ? t("Version: Pick one") : t("Version: {0}", version.id()));
+        loaderButton.setLabel(loader.recommended() ? t("Loader: {0} (best)", loader.label()) : t("Loader: {0}", loader.label()));
         versionButton.setBounds(left, top + 40 * GUI, 200 * GUI, 20 * GUI);
         loaderButton.setBounds(left, top + 64 * GUI, 200 * GUI, 20 * GUI);
         int aboutColor = !loader.ready() ? 0xFFFF55 : loader.recommended() ? 0x55FF55 : 0xA0A0A0;
-        centered(g, loader.about(), w, top + 88 * GUI, aboutColor);
+        centered(g, t(loader.about()), w, top + 88 * GUI, aboutColor);
         if (problem != null) centered(g, problem, w, top + 102 * GUI, 0xFF5555);
 
         createButton.setActive(version != null && !nameField.getText().isBlank() && loader.ready());

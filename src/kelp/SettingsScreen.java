@@ -1,5 +1,7 @@
 package kelp;
 
+import static kelp.Lang.t;
+
 import java.awt.Desktop;
 import java.awt.Graphics2D;
 import java.io.IOException;
@@ -8,16 +10,18 @@ import java.nio.file.Files;
 /** The Options screen: who you play as, and how much memory the game gets. */
 public class SettingsScreen extends Screen {
     private final Screen parent;
+    private final McButton languageButton = new McButton("", this::nextLanguage);
     private final McButton accountButton = new McButton("", () -> panel.setScreen(new AccountsScreen(panel, this)));
     private final McButton memoryButton = new McButton("", this::nextMemory);
-    private final McButton folderButton = new McButton("Open Kelp Folder", this::openFolder);
-    private final McButton doneButton = new McButton("Done", this::done);
+    private final McButton folderButton = new McButton(t("Open Kelp Folder"), this::openFolder);
+    private final McButton doneButton = new McButton(t("Done"), this::done);
 
     public SettingsScreen(OceanPanel panel, Screen parent) {
         super(panel);
         this.parent = parent;
         buttons.add(accountButton);
         buttons.add(memoryButton);
+        buttons.add(languageButton);
         buttons.add(folderButton);
         buttons.add(doneButton);
     }
@@ -27,6 +31,12 @@ public class SettingsScreen extends Screen {
         int current = 0;
         for (int i = 0; i < choices.length; i++) if (choices[i] == Settings.memoryGb()) current = i;
         Settings.setMemoryGb(choices[(current + 1) % choices.length]);
+    }
+
+    /** Switches to the next language. The title screen is made again, so its buttons change too. */
+    private void nextLanguage() {
+        Settings.setLanguage(Lang.next().code());
+        panel.setScreen(new SettingsScreen(panel, new TitleScreen(panel)));
     }
 
     private void openFolder() {
@@ -47,18 +57,20 @@ public class SettingsScreen extends Screen {
         McFont font = panel.getMcFont();
         int left = w / 2 - 100 * GUI;
         int top = h / 4;
-        centered(g, "Options", w, 12 * GUI, 0xFFFFFF);
+        centered(g, t("Options"), w, 12 * GUI, 0xFFFFFF);
 
         Account account = Accounts.active();
-        accountButton.setLabel("Account: " + account.name());
+        accountButton.setLabel(t("Account: {0}", account.name()));
         accountButton.setBounds(left, top + 6 * GUI, 200 * GUI, 20 * GUI);
-        String kind = account.microsoft() ? "Signed in with Microsoft." : "Offline names show in single player and LAN.";
+        String kind = account.microsoft() ? t("Signed in with Microsoft.") : t("Offline names show in single player and LAN.");
         centered(g, kind, w, top + 30 * GUI, 0x808080);
 
         int gb = Settings.memoryGb();
-        memoryButton.setLabel("Memory: " + (gb == 0 ? "Minecraft's choice" : gb + " GB"));
+        memoryButton.setLabel(gb == 0 ? t("Memory: Minecraft's choice") : t("Memory: {0} GB", gb));
         memoryButton.setBounds(left, top + 52 * GUI, 200 * GUI, 20 * GUI);
-        folderButton.setBounds(left, top + 76 * GUI, 200 * GUI, 20 * GUI);
+        languageButton.setLabel(t("Language: {0}", Lang.current().name()));
+        languageButton.setBounds(left, top + 76 * GUI, 200 * GUI, 20 * GUI);
+        folderButton.setBounds(left, top + 100 * GUI, 200 * GUI, 20 * GUI);
         doneButton.setBounds(left, h - 28 * GUI, 200 * GUI, 20 * GUI);
         for (McButton b : buttons) b.draw(g, font, GUI);
     }

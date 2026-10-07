@@ -1,13 +1,15 @@
 package kelp;
 
+import static kelp.Lang.t;
+
 import java.awt.Graphics2D;
 
 /** Adds an offline name. It only shows up in single player and on LAN, since there's no Microsoft sign-in behind it. */
 public class AddOfflineScreen extends Screen {
     private final Screen parent;
     private final McTextField nameField = new McTextField(16);
-    private final McButton addButton = new McButton("Add", this::add);
-    private final McButton cancelButton = new McButton("Cancel", this::back);
+    private final McButton addButton = new McButton(t("Add"), this::add);
+    private final McButton cancelButton = new McButton(t("Cancel"), this::back);
 
     public AddOfflineScreen(OceanPanel panel, Screen parent) {
         super(panel);
@@ -32,16 +34,16 @@ public class AddOfflineScreen extends Screen {
         McFont font = panel.getMcFont();
         int left = w / 2 - 100 * GUI;
         int top = h / 4;
-        centered(g, "Add Offline", w, 12 * GUI, 0xFFFFFF);
+        centered(g, t("Add Offline"), w, 12 * GUI, 0xFFFFFF);
 
-        font.draw(g, "Player name", left, top, GUI, 0xA0A0A0);
+        font.draw(g, t("Player name"), left, top, GUI, 0xA0A0A0);
         nameField.setBounds(left, top + 11 * GUI, 200 * GUI, 20 * GUI);
         nameField.draw(g, font, GUI, panel.getTime());
         boolean valid = Settings.isValidName(nameField.getText());
         if (valid || nameField.getText().isEmpty()) {
-            centered(g, "Offline names show in single player and LAN.", w, top + 35 * GUI, 0x808080);
+            centered(g, t("Offline names show in single player and LAN."), w, top + 35 * GUI, 0x808080);
         } else {
-            centered(g, "Use 3-16 letters, numbers or _", w, top + 35 * GUI, 0xFF5555);
+            centered(g, t("Use 3-16 letters, numbers or _"), w, top + 35 * GUI, 0xFF5555);
         }
 
         addButton.setActive(valid);

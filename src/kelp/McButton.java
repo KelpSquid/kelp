@@ -63,6 +63,15 @@ public class McButton {
 
         // The text turns yellow when you hover, and gray when the button is off
         int color = !active ? 0xA0A0A0 : hovered ? 0xFFFFA0 : 0xE0E0E0;
-        font.draw(g, label, x + (w - font.width(label, scale)) / 2, y + (h - 8 * scale) / 2, scale, color);
+        // Some languages have long words: a label that doesn't fit is shortened with "..." instead of spilling out
+        String text = label;
+        int room = w - 6 * scale;
+        if (font.width(text, scale) > room) {
+            while (text.length() > 1 && font.width(text.stripTrailing() + "...", scale) > room) {
+                text = text.substring(0, text.length() - 1);
+            }
+            text = text.stripTrailing() + "...";
+        }
+        font.draw(g, text, x + (w - font.width(text, scale)) / 2, y + (h - 8 * scale) / 2, scale, color);
     }
 }

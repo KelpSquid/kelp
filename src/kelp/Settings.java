@@ -41,6 +41,15 @@ public final class Settings {
         set("memoryGb", String.valueOf(gb));
     }
 
+    /** Kelp's language code, like "en" or "es". English until one is picked in Options. */
+    public static String language() {
+        return VALUES.getProperty("language", "en");
+    }
+
+    public static void setLanguage(String code) {
+        set("language", code);
+    }
+
     /** The id of the instance played last, which the title screen's Play button starts. Null if none yet. */
     public static String lastInstance() {
         return VALUES.getProperty("lastInstance");
