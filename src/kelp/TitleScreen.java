@@ -1,15 +1,16 @@
 package kelp;
 
 import java.awt.Graphics2D;
+import java.util.List;
 
 /** The first thing you see: the Kelp title, a splash and the main buttons. */
 public class TitleScreen extends Screen {
-    private final McButton play = new McButton("Play", () -> panel.setScreen(new VersionScreen(panel, this)));
-    private final McButton instances = new McButton("Instances", () -> { });
-    private final McButton settings = new McButton("Settings", () -> { });
+    private final McButton play = new McButton("Play", this::play);
+    private final McButton instances = new McButton("Instances", () -> panel.setScreen(new InstancesScreen(panel, this)));
+    private final McButton settings = new McButton("Options...", () -> panel.setScreen(new SettingsScreen(panel, this)));
     private final McButton quit = new McButton("Quit", () -> System.exit(0));
 
-    private VersionManifest.Version version; // the version picked on the version screen, or null
+    private Instance last; // the instance played last, which Play starts
 
     public TitleScreen(OceanPanel panel) {
         super(panel);
@@ -19,12 +20,20 @@ public class TitleScreen extends Screen {
         buttons.add(quit);
     }
 
-    public VersionManifest.Version getVersion() {
-        return version;
+    @Override
+    public void shown() {
+        last = Instance.find(Settings.lastInstance());
+        if (last == null) {
+            // Nothing played yet (or it was deleted): use the newest instance, if there is one
+            List<Instance> all = Instance.all();
+            if (!all.isEmpty()) last = all.get(0);
+        }
     }
 
-    public void setVersion(VersionManifest.Version version) {
-        this.version = version;
+    /** Plays the last instance again, or opens the instance list if there isn't one yet. */
+    private void play() {
+        if (last != null) panel.setScreen(new DownloadScreen(panel, this, last));
+        else panel.setScreen(new InstancesScreen(panel, this));
     }
 
     @Override
@@ -59,8 +68,9 @@ public class TitleScreen extends Screen {
         font.draw(s, splash, -font.width(splash, 1) / 2, -4, 1, 0xFFFF00);
         s.dispose();
 
-        // The picked version in the bottom-left corner, where Minecraft shows its own version
-        String versionText = version == null ? "No version picked" : "Minecraft " + version.id();
-        font.draw(g, versionText, 2 * GUI, h - 10 * GUI, GUI, 0xFFFFFF);
+        // What Play will start, in the bottom-left corner where Minecraft shows its own version
+        String playing = last == null ? "No instances yet" : last.name() + " - Minecraft " + last.version().id()
+                + (last.squid() ? " + Squid" : "");
+        font.draw(g, playing, 2 * GUI, h - 10 * GUI, GUI, 0xFFFFFF);
     }
 }

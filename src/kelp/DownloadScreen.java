@@ -5,13 +5,12 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Downloads a Minecraft version with a progress bar, then starts it and keeps an eye on it. */
+/** Downloads what an instance's version needs with a progress bar, then starts it and keeps an eye on it. */
 public class DownloadScreen extends Screen {
-    private static final String PLAYER_NAME = "Player"; // offline name until Kelp has settings
-
     private enum Phase { DOWNLOADING, STARTING, RUNNING, CLOSED, CRASHED, FAILED }
 
-    private final TitleScreen parent;
+    private final Screen parent;
+    private final Instance instance;
     private final VersionManifest.Version version;
     private final boolean withSquid;
     private final GameInstaller installer = new GameInstaller();
@@ -24,18 +23,22 @@ public class DownloadScreen extends Screen {
     private SquidReport report;        // what Squid last said, checked about once a second
     private double reportCheckedAt = -1;
 
-    public DownloadScreen(OceanPanel panel, TitleScreen parent, VersionManifest.Version version, boolean withSquid) {
+    public DownloadScreen(OceanPanel panel, Screen parent, Instance instance) {
         super(panel);
         this.parent = parent;
-        this.version = version;
-        this.withSquid = withSquid;
+        this.instance = instance;
+        this.version = instance.version();
+        this.withSquid = instance.squid();
         buttons.add(button);
+        Settings.setLastInstance(instance.id()); // so the title screen's Play button starts this one next time
 
         Thread worker = new Thread(() -> {
             try {
-                installer.install(version);
+                installer.install(findDetails(version));
                 phase = Phase.STARTING;
-                Process game = Launcher.launch(version.id(), PLAYER_NAME, withSquid);
+                Process game = Launcher.launch(version.id(), instance.folder(), Settings.playerName(), withSquid,
+                        Settings.memoryGb());
+                instance.markPlayed();
                 phase = Phase.RUNNING;
                 exitCode = game.waitFor();
                 phase = exitCode == 0 ? Phase.CLOSED : Phase.CRASHED;
@@ -46,6 +49,18 @@ public class DownloadScreen extends Screen {
         }, "download and launch");
         worker.setDaemon(true); // don't keep Kelp open just for this (the game keeps running on its own)
         worker.start();
+    }
+
+    /** Instances from before Kelp had them don't know where their version's details live, so look it up once. */
+    private VersionManifest.Version findDetails(VersionManifest.Version version) throws Exception {
+        if (!version.url().isEmpty()) return version;
+        for (VersionManifest.Version v : VersionManifest.download()) {
+            if (v.id().equals(version.id())) {
+                instance.setVersion(v);
+                return v;
+            }
+        }
+        throw new IllegalStateException("Mojang doesn't list Minecraft " + version.id() + " anymore");
     }
 
     private void leave() {
@@ -59,7 +74,7 @@ public class DownloadScreen extends Screen {
         int centerY = h / 2;
         int titleY = centerY - 40 * GUI;
         int lineY = centerY - 16 * GUI;
-        String name = "Minecraft " + version.id() + (withSquid ? " + Squid" : "");
+        String name = instance.name();
 
         switch (phase) {
             case DOWNLOADING -> {
@@ -100,7 +115,7 @@ public class DownloadScreen extends Screen {
                 } else {
                     centered(g, font, name + " crashed (code " + exitCode + ")", w, titleY, 0xFF5555);
                     centered(g, font, "What it said is saved in:", w, lineY, 0xA0A0A0);
-                    centered(g, font, "Kelp\\instances\\" + version.id() + "\\kelp-output.log", w, lineY + 12 * GUI, 0xFFFFFF);
+                    centered(g, font, "Kelp\\instances\\" + instance.id() + "\\kelp-output.log", w, lineY + 12 * GUI, 0xFFFFFF);
                 }
                 button.setLabel("Back");
             }
@@ -120,7 +135,7 @@ public class DownloadScreen extends Screen {
         if (!withSquid) return null;
         double now = panel.getTime();
         if (reportCheckedAt < 0 || now - reportCheckedAt >= 1) {
-            report = SquidReport.read(version.id());
+            report = SquidReport.read(instance.folder());
             reportCheckedAt = now;
         }
         return report;

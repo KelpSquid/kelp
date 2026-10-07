@@ -1,52 +1,36 @@
 package kelp;
 
-import java.awt.Color;
-import java.awt.Desktop;
 import java.awt.Graphics2D;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
-/** A scrolling list of every Minecraft version, downloaded from Mojang. */
+/** A scrolling list of every Minecraft version, downloaded from Mojang, for picking one. */
 public class VersionScreen extends Screen {
     private static final String[] FILTERS = {"Releases", "Snapshots", "Everything"};
-    private static final int ROW = 14 * GUI;       // height of one row in the list
-    private static final int ROW_WIDTH = 220 * GUI;
 
-    private final TitleScreen parent;
-    private final McButton playButton = new McButton("Play Selected Version", this::play);
-    private final McButton squidButton = new McButton("", this::toggleSquid);
-    private final McButton modsButton = new McButton("Mods Folder", this::openMods);
+    private final Screen parent;
+    private final Consumer<VersionManifest.Version> onPick;
+    private final McList<VersionManifest.Version> list = new McList<>(220);
+    private final McButton useButton = new McButton("Use This Version", this::use);
     private final McButton filterButton = new McButton("", this::nextFilter);
-    private final McButton backButton = new McButton("Back", this::back);
+    private final McButton cancelButton = new McButton("Cancel", this::back);
 
     // The download happens on another thread, so these are volatile to be seen by the drawing thread
     private volatile List<VersionManifest.Version> allVersions;
     private volatile String status = "Loading versions...";
-
     private int filter = 0;
-    private VersionManifest.Version selected;
-    private double scroll = 0; // how far the list is scrolled down, in screen pixels
 
-    // Where the list was drawn last frame, so clicks can find the row under the mouse
-    private int listTop;
-    private int listBottom;
-    private int rowX;
-    private int mouseX = -1;
-    private int mouseY = -1;
-
-    public VersionScreen(OceanPanel panel, TitleScreen parent) {
+    /** current is the version picked before, or null. onPick gets the version chosen. */
+    public VersionScreen(OceanPanel panel, Screen parent, VersionManifest.Version current,
+                         Consumer<VersionManifest.Version> onPick) {
         super(panel);
         this.parent = parent;
-        this.selected = parent.getVersion();
-        buttons.add(playButton);
-        buttons.add(squidButton);
-        buttons.add(modsButton);
+        this.onPick = onPick;
+        list.setSelected(current);
+        buttons.add(useButton);
         buttons.add(filterButton);
-        buttons.add(backButton);
-        updateFilterLabel();
+        buttons.add(cancelButton);
 
         Thread download = new Thread(() -> {
             try {
@@ -60,42 +44,22 @@ public class VersionScreen extends Screen {
         download.start();
     }
 
-    private void nextFilter() {
-        filter = (filter + 1) % FILTERS.length;
-        updateFilterLabel();
-        scroll = 0;
-    }
-
-    private void updateFilterLabel() {
-        filterButton.setLabel("Show: " + FILTERS[filter]);
-    }
-
-    private void play() {
-        parent.setVersion(selected);
-        panel.setScreen(new DownloadScreen(panel, parent, selected, Settings.squid()));
-    }
-
-    private void toggleSquid() {
-        Settings.setSquid(!Settings.squid());
-    }
-
-    /** Opens the picked version's mods folder in File Explorer, making it first if needed. */
-    private void openMods() {
-        Path mods = Folders.instances().resolve(selected.id()).resolve("mods");
-        try {
-            Files.createDirectories(mods);
-            Desktop.getDesktop().open(mods.toFile());
-        } catch (IOException e) {
-            System.err.println("Couldn't open " + mods + ": " + e.getMessage());
-        }
-    }
-
     private void back() {
         panel.setScreen(parent);
     }
 
+    private void nextFilter() {
+        filter = (filter + 1) % FILTERS.length;
+        list.scrollToTop();
+    }
+
+    private void use() {
+        onPick.accept(list.getSelected());
+        panel.setScreen(parent);
+    }
+
     /** The versions that pass the current filter. */
-    private List<VersionManifest.Version> shown() {
+    private List<VersionManifest.Version> filtered() {
         List<VersionManifest.Version> result = new ArrayList<>();
         List<VersionManifest.Version> all = allVersions;
         if (all == null) return result;
@@ -107,100 +71,28 @@ public class VersionScreen extends Screen {
         return result;
     }
 
-    private double maxScroll(int count) {
-        return Math.max(0, count * ROW + 4 * GUI - (listBottom - listTop));
-    }
-
-    /** Which row the point is on, or -1 if it isn't on one. */
-    private int rowAt(int x, int y, int count) {
-        if (x < rowX || x >= rowX + ROW_WIDTH || y < listTop || y >= listBottom) return -1;
-        int row = (int) ((y - listTop - 2 * GUI + scroll) / ROW);
-        return row >= 0 && row < count ? row : -1;
-    }
-
     @Override
     public void draw(Graphics2D g, int w, int h) {
         McFont font = panel.getMcFont();
-        List<VersionManifest.Version> shown = shown();
+        centered(g, "Select Version", w, 12 * GUI, 0xFFFFFF);
 
-        listTop = 32 * GUI;
-        listBottom = h - 84 * GUI;
-        rowX = (w - ROW_WIDTH) / 2;
-        scroll = Math.max(0, Math.min(scroll, maxScroll(shown.size())));
-
-        // Header
-        String header = "Select Version";
-        font.draw(g, header, (w - font.width(header, GUI)) / 2, 12 * GUI, GUI, 0xFFFFFF);
-
-        // A dark see-through box behind the list
-        int boxX = rowX - 4 * GUI;
-        int boxW = ROW_WIDTH + 8 * GUI;
-        g.setColor(new Color(0, 0, 0, 140));
-        g.fillRect(boxX, listTop, boxW, listBottom - listTop);
-
-        String message = status;
-        if (message != null) {
-            font.draw(g, message, (w - font.width(message, GUI)) / 2, (listTop + listBottom) / 2 - 4 * GUI, GUI, 0xFFFFFF);
-        } else {
-            drawRows(g, font, shown, boxX, boxW);
-            drawScrollbar(g, shown.size(), boxX + boxW);
-        }
-
-        // Buttons along the bottom. Play and Mods Folder stay grayed out until a version is picked.
-        int buttonsY = h - 76 * GUI;
-        playButton.setActive(selected != null);
-        modsButton.setActive(selected != null);
-        squidButton.setLabel("Squid: " + (Settings.squid() ? "ON" : "OFF"));
-        playButton.setBounds(w / 2 - 100 * GUI, buttonsY, 200 * GUI, 20 * GUI);
-        squidButton.setBounds(w / 2 - 100 * GUI, buttonsY + 24 * GUI, 98 * GUI, 20 * GUI);
-        modsButton.setBounds(w / 2 + 2 * GUI, buttonsY + 24 * GUI, 98 * GUI, 20 * GUI);
-        filterButton.setBounds(w / 2 - 100 * GUI, buttonsY + 48 * GUI, 98 * GUI, 20 * GUI);
-        backButton.setBounds(w / 2 + 2 * GUI, buttonsY + 48 * GUI, 98 * GUI, 20 * GUI);
-        for (McButton b : buttons) b.draw(g, font, GUI);
-    }
-
-    private void drawRows(Graphics2D g, McFont font, List<VersionManifest.Version> shown, int boxX, int boxW) {
-        Graphics2D clip = (Graphics2D) g.create();
-        clip.clipRect(boxX, listTop, boxW, listBottom - listTop); // rows scrolled out of the box get cut off
-        int hovered = rowAt(mouseX, mouseY, shown.size());
-
-        for (int i = 0; i < shown.size(); i++) {
-            int y = (int) (listTop + 2 * GUI + i * ROW - scroll);
-            if (y + ROW < listTop || y > listBottom) continue; // off screen, skip it
-            VersionManifest.Version v = shown.get(i);
-
-            if (v.equals(selected)) {
-                // Minecraft's selection look: a white outline around a black row
-                clip.setColor(Color.WHITE);
-                clip.fillRect(rowX, y, ROW_WIDTH, ROW - GUI);
-                clip.setColor(Color.BLACK);
-                clip.fillRect(rowX + GUI, y + GUI, ROW_WIDTH - 2 * GUI, ROW - 3 * GUI);
-            } else if (i == hovered) {
-                clip.setColor(new Color(255, 255, 255, 40));
-                clip.fillRect(rowX, y, ROW_WIDTH, ROW - GUI);
-            }
-
-            int textY = y + 3 * GUI;
-            font.draw(clip, v.id(), rowX + 4 * GUI, textY, GUI, 0xFFFFFF);
+        VersionManifest.Version selected = list.getSelected();
+        list.setItems(filtered());
+        if (selected != null && list.getSelected() == null) list.setSelected(selected); // keep it while it's filtered out
+        list.draw(g, font, w, 32 * GUI, h - 60 * GUI, status, (gg, v, x, y, width) -> {
+            font.draw(gg, v.id(), x, y, GUI, 0xFFFFFF);
             String details = typeName(v.type()) + "  " + v.releaseTime().substring(0, 10);
-            font.draw(clip, details, rowX + ROW_WIDTH - 4 * GUI - font.width(details, GUI), textY, GUI, 0xA0A0A0);
-        }
-        clip.dispose();
-    }
+            font.draw(gg, details, x + width - font.width(details, GUI), y, GUI, 0xA0A0A0);
+        });
 
-    private void drawScrollbar(Graphics2D g, int count, int x) {
-        double max = maxScroll(count);
-        if (max <= 0) return; // everything fits, no scrollbar needed
-        int trackH = listBottom - listTop;
-        int thumbH = Math.max(16 * GUI, (int) ((double) trackH * trackH / (trackH + max)));
-        int thumbY = listTop + (int) ((trackH - thumbH) * scroll / max);
-        int barW = 6 * GUI;
-        g.setColor(Color.BLACK);
-        g.fillRect(x, listTop, barW, trackH);
-        g.setColor(new Color(0x808080));
-        g.fillRect(x, thumbY, barW, thumbH);
-        g.setColor(new Color(0xC0C0C0));
-        g.fillRect(x, thumbY, barW - GUI, thumbH - GUI);
+        // Use This Version stays grayed out until a version is picked
+        int buttonsY = h - 52 * GUI;
+        useButton.setActive(list.getSelected() != null);
+        filterButton.setLabel("Show: " + FILTERS[filter]);
+        useButton.setBounds(w / 2 - 100 * GUI, buttonsY, 200 * GUI, 20 * GUI);
+        filterButton.setBounds(w / 2 - 100 * GUI, buttonsY + 24 * GUI, 98 * GUI, 20 * GUI);
+        cancelButton.setBounds(w / 2 + 2 * GUI, buttonsY + 24 * GUI, 98 * GUI, 20 * GUI);
+        for (McButton b : buttons) b.draw(g, font, GUI);
     }
 
     private static String typeName(String type) {
@@ -216,23 +108,16 @@ public class VersionScreen extends Screen {
     @Override
     public void mouseMoved(int x, int y) {
         super.mouseMoved(x, y);
-        mouseX = x;
-        mouseY = y;
+        list.mouseMoved(x, y);
     }
 
     @Override
     public void mousePressed(int x, int y) {
-        List<VersionManifest.Version> shown = shown();
-        int row = rowAt(x, y, shown.size());
-        if (row >= 0) {
-            selected = shown.get(row);
-            return;
-        }
-        super.mousePressed(x, y);
+        if (list.mousePressed(x, y) == null) super.mousePressed(x, y);
     }
 
     @Override
     public void mouseWheel(int x, int y, int notches) {
-        scroll += notches * ROW * 3; // three rows per notch
+        list.mouseWheel(notches);
     }
 }

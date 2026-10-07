@@ -14,14 +14,14 @@ import java.util.Map;
  * @param error    what went wrong, or null
  */
 public record SquidReport(String status, int modCount, String mod, String error) {
-    public static Path file(String versionId) {
-        return Folders.instances().resolve(versionId).resolve("squid-report.json");
+    public static Path file(Path gameFolder) {
+        return gameFolder.resolve("squid-report.json");
     }
 
-    /** Squid's latest report for this version, or null if there isn't one (yet). */
-    public static SquidReport read(String versionId) {
+    /** Squid's latest report for the game in this folder, or null if there isn't one (yet). */
+    public static SquidReport read(Path gameFolder) {
         try {
-            Map<String, Object> json = Json.object(Json.parse(Files.readString(file(versionId))));
+            Map<String, Object> json = Json.object(Json.parse(Files.readString(file(gameFolder))));
             return new SquidReport((String) json.get("status"), Json.array(json.get("mods")).size(),
                     (String) json.get("mod"), (String) json.get("error"));
         } catch (IOException | RuntimeException e) {

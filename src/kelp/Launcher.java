@@ -30,13 +30,14 @@ public final class Launcher {
     }
 
     /**
-     * Starts a downloaded version, through the Squid mod loader if withSquid is on.
-     * Everything the game prints goes into kelp-output.log in its folder.
+     * Starts a downloaded version in gameFolder (where its worlds, settings and mods go),
+     * through the Squid mod loader if withSquid is on. memoryGb is how much memory to give it, or 0 for Mojang's choice.
+     * Everything the game prints goes into kelp-output.log in the game folder.
      */
-    public static Process launch(String versionId, String playerName, boolean withSquid) throws IOException {
-        Path gameFolder = Folders.instances().resolve(versionId);
-        List<String> command = buildCommand(versionId, playerName, withSquid);
-        Files.deleteIfExists(SquidReport.file(versionId)); // so Kelp never shows last time's report
+    public static Process launch(String versionId, Path gameFolder, String playerName, boolean withSquid, int memoryGb)
+            throws IOException {
+        List<String> command = buildCommand(versionId, gameFolder, playerName, withSquid, memoryGb);
+        Files.deleteIfExists(SquidReport.file(gameFolder)); // so Kelp never shows last time's report
         return new ProcessBuilder(command)
                 .directory(gameFolder.toFile())
                 .redirectErrorStream(true)
@@ -45,10 +46,10 @@ public final class Launcher {
     }
 
     /** The full command that starts the game: java, its settings, then the game's own settings. */
-    public static List<String> buildCommand(String versionId, String playerName, boolean withSquid) throws IOException {
+    public static List<String> buildCommand(String versionId, Path gameFolder, String playerName, boolean withSquid,
+                                            int memoryGb) throws IOException {
         Path versionFolder = Folders.versions().resolve(versionId);
         Map<String, Object> details = Json.object(Json.parse(Files.readString(versionFolder.resolve(versionId + ".json"))));
-        Path gameFolder = Folders.instances().resolve(versionId); // saves, settings and screenshots go here
         Path natives = versionFolder.resolve("natives");
         Files.createDirectories(gameFolder);
         extractNatives(details, natives);
@@ -103,6 +104,12 @@ public final class Launcher {
             addArguments(command, arguments.get("default-user-jvm"), vars); // Mojang's suggested memory settings
         } else {
             command.add("-Xmx2G"); // older versions don't suggest any, so give the game 2 GB
+        }
+        if (memoryGb > 0) {
+            // The player picked an amount in Settings, so it replaces Mojang's
+            command.removeIf(arg -> arg.startsWith("-Xmx") || arg.startsWith("-Xms"));
+            command.add("-Xms" + Math.min(2, memoryGb) + "G");
+            command.add("-Xmx" + memoryGb + "G");
         }
         if (arguments != null) {
             addArguments(command, arguments.get("jvm"), vars);

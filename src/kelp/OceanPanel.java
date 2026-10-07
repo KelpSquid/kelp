@@ -3,6 +3,8 @@ package kelp;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
@@ -48,6 +50,7 @@ public class OceanPanel extends JPanel {
 
             @Override
             public void mousePressed(MouseEvent e) {
+                requestFocusInWindow(); // so typing goes to Kelp
                 if (e.getButton() == MouseEvent.BUTTON1) screen.mousePressed(e.getX(), e.getY());
             }
 
@@ -59,6 +62,22 @@ public class OceanPanel extends JPanel {
         addMouseListener(mouseHandler);
         addMouseMotionListener(mouseHandler);
         addMouseWheelListener(mouseHandler);
+
+        // Pass the keyboard along too, for typing in text boxes
+        setFocusable(true);
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                screen.keyTyped(e.getKeyChar());
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                screen.keyPressed(e.getKeyCode(), e.isControlDown());
+            }
+        });
+
+        screen.shown(); // the first screen appears without setScreen, so tell it here
 
         // Move everything about 60 times a second
         new Timer(16, e -> {
@@ -82,6 +101,7 @@ public class OceanPanel extends JPanel {
 
     public void setScreen(Screen screen) {
         this.screen = screen;
+        screen.shown();
         screen.mouseMoved(mouse.x, mouse.y); // so a button already under the mouse lights up right away
     }
 
