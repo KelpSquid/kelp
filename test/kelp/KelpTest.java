@@ -179,6 +179,18 @@ public class KelpTest {
                         + Accounts.all().stream().anyMatch(a -> a.id().equals(leaving.id())), "true 0 70 true false false");
         check("JSON is written back the way it was read", PlayerData.write(Json.parse("{\"a\": [1, 2.5, \"x\\\"y\"], \"b\": {\"c\": true, \"d\": null}}"), ""),
                 "{\n    \"a\": [1, 2.5, \"x\\\"y\"],\n    \"b\": {\n        \"c\": true,\n        \"d\": null\n    }\n}");
+        // Parent Controls: a PIN kept hashed, and Minecraft's own switches when something's off
+        check("without Parent Controls everything is allowed", ParentControls.hasPin() + " " + ParentControls.gameArguments(), "false []");
+        check("a PIN is 4 to 8 numbers", ParentControls.validPin("1234") + " " + ParentControls.validPin("123") + " " + ParentControls.validPin("12a4"), "true false false");
+        ParentControls.setPin("2468");
+        ParentControls.setMultiplayerAllowed(false);
+        ParentControls.setChatAllowed(false);
+        check("the PIN opens them, and isn't saved as itself", ParentControls.checkPin("2468") + " " + ParentControls.checkPin("1357") + " "
+                + Settings.get("parentPin", "").contains("2468"), "true false false");
+        check("multiplayer and chat off become Minecraft's own switches", ParentControls.gameArguments().toString(), "[--disableMultiplayer, --disableChat]");
+        ParentControls.remove();
+        check("turning Parent Controls off allows everything again", ParentControls.hasPin() + " " + ParentControls.gameArguments(), "false []");
+
         for (Emblem.Shape shape : Emblem.Shape.values()) {
             if (Emblem.outline(shape).getBounds2D().isEmpty()) throw new AssertionError("empty shape " + shape);
         }

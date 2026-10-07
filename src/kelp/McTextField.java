@@ -14,6 +14,7 @@ public class McTextField {
     private final Rectangle bounds = new Rectangle();
     private String text = "";
     private boolean focused;
+    private boolean hidden;
     private Consumer<String> onChange = text -> { };
 
     public McTextField(int maxLength) {
@@ -39,6 +40,11 @@ public class McTextField {
 
     public boolean contains(int x, int y) {
         return bounds.contains(x, y);
+    }
+
+    /** Shows * in place of each letter, for PINs. */
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
     }
 
     public void setFocused(boolean focused) {
@@ -75,7 +81,7 @@ public class McTextField {
         g.fillRect(bounds.x + scale, bounds.y + scale, bounds.width - 2 * scale, bounds.height - 2 * scale);
 
         // If the text is too long to fit, show its end, like Minecraft does while you type
-        String shown = text;
+        String shown = hidden ? "*".repeat(text.length()) : text;
         int room = bounds.width - 10 * scale;
         while (!shown.isEmpty() && font.width(shown, scale) > room) shown = shown.substring(1);
         boolean cursorOn = focused && (int) (time * 3) % 2 == 0; // blinks about three times a second

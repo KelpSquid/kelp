@@ -91,6 +91,19 @@ public final class Settings {
         }
     }
 
+    static String get(String key, String fallback) {
+        return VALUES.getProperty(key, fallback);
+    }
+
+    static void put(String key, String value) {
+        if (value == null) {
+            VALUES.remove(key);
+            save();
+        } else {
+            set(key, value);
+        }
+    }
+
     private static void set(String key, String value) {
         VALUES.setProperty(key, value);
         save();

@@ -147,6 +147,7 @@ public final class Launcher {
         } else {
             for (String part : ((String) details.get("minecraftArguments")).split(" ")) command.add(fill(part, vars));
         }
+        command.addAll(ParentControls.gameArguments()); // Minecraft's own switches for no multiplayer or no chat
         return command;
     }
 
