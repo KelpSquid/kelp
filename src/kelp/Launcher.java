@@ -98,6 +98,7 @@ public final class Launcher {
             vars.put("classpath", String.join(File.pathSeparator, squidJars()));
             squidSettings.add("-Dsquid.gameClasspath=" + gameClasspath);
             squidSettings.add("-Dsquid.mainClass=" + mainClass);
+            squidSettings.add("-Dsquid.home=" + Folders.home()); // where Squid keeps things shared by every instance, like the Squid Count
             mainClass = "squid.Main";
             Files.createDirectories(gameFolder.resolve("mods"));
         } else {

@@ -10,6 +10,8 @@ public class TitleScreen extends Screen {
     private final McButton quit = new McButton("Quit Game", () -> System.exit(0));
 
     private Instance last; // what Play starts: the default instance, or the one played last
+    private int count;
+    private double countReadAt = -1;
 
     public TitleScreen(OceanPanel panel) {
         super(panel);
@@ -65,6 +67,12 @@ public class TitleScreen extends Screen {
         // What Play will start, in the bottom-left corner where Minecraft shows its own version
         String playing = last == null ? "No instances yet" : "Play: " + last.summary();
         font.draw(g, playing, 2 * GUI, h - 10 * GUI, GUI, 0xFFFFFF);
+        // The Squid Count of whoever is playing, read again about once a second
+        if (panel.getTime() - countReadAt > 1 || countReadAt < 0) {
+            count = SquidCount.points(Accounts.active().id());
+            countReadAt = panel.getTime();
+        }
+        font.draw(g, "Squid Count: " + count, 2 * GUI, h - 20 * GUI, GUI, 0xFFAA00);
 
         // Mojang's rules ask projects like Kelp to say this clearly, so it's always on the title screen
         String[] notice = {"NOT AN OFFICIAL MINECRAFT PRODUCT.", "NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT."};
