@@ -18,8 +18,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 /**
- * An instance's screenshots (F2 in the game), newest first, as a grid of small pictures. Click one to see it big,
- * then go through them, open one, or delete it.
+ * An instance's screenshots (F2 in the game) and video clips (F8, with Squid), newest first, as a grid of small
+ * pictures. Click one to see it big, then go through them, open one (clips play in the computer's video player), or
+ * delete it.
  */
 public class GalleryScreen extends Screen {
     private static final int THUMB_W = 96;
@@ -45,7 +46,7 @@ public class GalleryScreen extends Screen {
         this.parent = parent;
         this.instance = instance;
         for (McButton b : new McButton[] {doneButton, folderButton, previousButton, nextButton, openButton, deleteButton}) buttons.add(b);
-        pictures = list(folder());
+        pictures = list(instance);
         Thread loader = new Thread(() -> {
             for (Path picture : new ArrayList<>(pictures)) thumbnails.computeIfAbsent(picture, GalleryScreen::thumbnail);
         }, "gallery thumbnails");
@@ -55,6 +56,32 @@ public class GalleryScreen extends Screen {
 
     private Path folder() {
         return instance.folder().resolve("screenshots");
+    }
+
+    /** An instance's screenshots and clips together, newest first. */
+    static List<Path> list(Instance instance) {
+        List<Path> all = list(instance.folder().resolve("screenshots"));
+        Path clips = instance.folder().resolve("clips");
+        if (Files.isDirectory(clips)) {
+            try (Stream<Path> files = Files.list(clips)) {
+                files.filter(GalleryScreen::isClip).forEach(all::add);
+            } catch (IOException e) {
+                // can't look: just the screenshots
+            }
+        }
+        all.sort(Comparator.comparingLong(GalleryScreen::modified).reversed());
+        return all;
+    }
+
+    static boolean isClip(Path file) {
+        return file.getFileName().toString().toLowerCase().endsWith(".avi");
+    }
+
+    /** A clip's picture, saved next to it with the same name. */
+    static Path still(Path file) {
+        if (!isClip(file)) return file;
+        String name = file.getFileName().toString();
+        return file.resolveSibling(name.substring(0, name.length() - 4) + ".jpg");
     }
 
     /** The pictures in a folder, newest first. */
@@ -79,7 +106,7 @@ public class GalleryScreen extends Screen {
     /** A small copy of a picture for the grid. */
     static BufferedImage thumbnail(Path picture) {
         try {
-            BufferedImage full = ImageIO.read(picture.toFile());
+            BufferedImage full = ImageIO.read(still(picture).toFile());
             if (full == null) return null;
             BufferedImage small = new BufferedImage(THUMB_W * 2, THUMB_H * 2, BufferedImage.TYPE_INT_RGB);
             Graphics2D g = small.createGraphics();
@@ -124,6 +151,7 @@ public class GalleryScreen extends Screen {
         panel.setScreen(new ConfirmScreen(panel, t("Delete {0}?", picture.getFileName()), t("It will be gone forever!"), () -> {
             try {
                 Files.deleteIfExists(picture);
+                if (isClip(picture)) Files.deleteIfExists(still(picture));
                 pictures.remove(picture);
                 viewing = pictures.isEmpty() ? -1 : Math.min(viewing, pictures.size() - 1);
             } catch (IOException e) {
@@ -149,7 +177,7 @@ public class GalleryScreen extends Screen {
         folderButton.setBounds(-1000, -1000, 0, 0);
         if (grid) {
             centered(g, t("Gallery of {0}", instance.name()), w, 12 * GUI, 0xFFFFFF);
-            if (pictures.isEmpty()) centered(g, t("No screenshots yet. Press F2 while playing!"), w, h / 2 - 10 * GUI, 0xA0A0A0);
+            if (pictures.isEmpty()) centered(g, t("No screenshots or clips yet. Press F2 (or F8 for a clip) while playing!"), w, h / 2 - 10 * GUI, 0xA0A0A0);
             int columns = columns(w);
             int perPage = columns * rows(h);
             page = Math.min(page, Math.max(0, (pictures.size() - 1) / perPage));
@@ -161,6 +189,7 @@ public class GalleryScreen extends Screen {
                 g.setColor(new java.awt.Color(0, 0, 0, 120));
                 g.fillRect(x, y, THUMB_W * GUI, THUMB_H * GUI);
                 if (thumb != null) g.drawImage(thumb, x, y, THUMB_W * GUI, THUMB_H * GUI, null);
+                if (isClip(pictures.get(i))) font.draw(g, t("CLIP"), x + 3 * GUI, y + 3 * GUI, GUI, 0xFFFF55);
             }
             if (pictures.size() > perPage) {
                 centered(g, (page + 1) + " / " + ((pictures.size() - 1) / perPage + 1) + "   " + t("Scroll for more"), w, h - 44 * GUI, 0xA0A0A0);
@@ -169,10 +198,11 @@ public class GalleryScreen extends Screen {
             doneButton.setBounds(w / 2 + 2 * GUI, h - 28 * GUI, 98 * GUI, 20 * GUI);
         } else {
             Path picture = pictures.get(viewing);
-            centered(g, picture.getFileName().toString(), w, 8 * GUI, 0xFFFFFF);
+            centered(g, isClip(picture) ? t("{0}: Open plays it", picture.getFileName()) : picture.getFileName().toString(), w, 8 * GUI, 0xFFFFFF);
             BufferedImage image = big.computeIfAbsent(picture, p -> {
                 try {
-                    return ImageIO.read(p.toFile());
+                    BufferedImage read = ImageIO.read(still(p).toFile());
+                    return read != null ? read : new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
                 } catch (IOException e) {
                     return new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
                 }

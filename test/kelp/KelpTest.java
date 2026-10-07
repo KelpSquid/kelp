@@ -884,6 +884,12 @@ public class KelpTest {
         Files.writeString(shots.resolve("notes.txt"), "not a picture");
         check("the gallery shows pictures, newest first", GalleryScreen.list(shots).stream().map(f -> f.getFileName().toString()).toList().toString(), "[new.png, old.png]");
         check("pictures get a small copy for the grid", GalleryScreen.thumbnail(shots.resolve("new.png")) != null, true);
+        Path clips = Files.createDirectories(instance.folder().resolve("clips"));
+        Files.writeString(clips.resolve("clip-1.avi"), "video");
+        javax.imageio.ImageIO.write(new java.awt.image.BufferedImage(64, 36, java.awt.image.BufferedImage.TYPE_INT_RGB), "jpg", clips.resolve("clip-1.jpg").toFile());
+        Files.setLastModifiedTime(clips.resolve("clip-1.avi"), java.nio.file.attribute.FileTime.fromMillis(System.currentTimeMillis() + 120_000));
+        check("clips show in the gallery too, by their picture", GalleryScreen.list(instance).stream().map(f -> f.getFileName().toString()).toList()
+                + " " + (GalleryScreen.thumbnail(clips.resolve("clip-1.avi")) != null), "[clip-1.avi, new.png, old.png] true");
     }
 
     /** A zip with these files (name, text) in it. */
