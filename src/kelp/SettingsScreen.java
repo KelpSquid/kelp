@@ -16,6 +16,7 @@ public class SettingsScreen extends Screen {
     private final McButton backupButton = new McButton("", () -> Settings.setAutoBackup(!Settings.autoBackup()));
     private final McButton folderButton = new McButton(t("Open Kelp Folder"), this::openFolder);
     private final McButton themeButton = new McButton("", () -> panel.setScreen(new ThemeScreen(panel, this)));
+    private final McButton emblemButton = new McButton(t("Emblem"), () -> panel.setScreen(new EmblemScreen(panel, this)));
     private final McButton doneButton = new McButton(t("Done"), this::done);
 
     public SettingsScreen(OceanPanel panel, Screen parent) {
@@ -27,6 +28,7 @@ public class SettingsScreen extends Screen {
         buttons.add(backupButton);
         buttons.add(folderButton);
         buttons.add(themeButton);
+        buttons.add(emblemButton);
         buttons.add(doneButton);
     }
 
@@ -64,7 +66,9 @@ public class SettingsScreen extends Screen {
 
         Account account = Accounts.active();
         accountButton.setLabel(t("Account: {0}", account.name()));
-        accountButton.setBounds(left, top + 6 * GUI, 200 * GUI, 20 * GUI);
+        accountButton.setBounds(left, top + 6 * GUI, 146 * GUI, 20 * GUI);
+        emblemButton.setBounds(left + 150 * GUI, top + 6 * GUI, 50 * GUI, 20 * GUI);
+        EmblemScreen.drawSmall(g, account.id(), left - 24 * GUI, top + 6 * GUI, 20 * GUI); // the emblem, next to the name
         String kind = account.microsoft() ? t("Signed in with Microsoft.") : t("Offline names show in single player and LAN.");
         centered(g, kind, w, top + 30 * GUI, 0x808080);
 

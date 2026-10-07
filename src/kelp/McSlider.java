@@ -33,6 +33,11 @@ public class McSlider {
         bounds.setBounds(x, y, width, height);
     }
 
+    /** Moves the handle without telling anyone, like when showing a different thing's value. */
+    public void setValue(double value) {
+        this.value = Math.max(min, Math.min(max, value));
+    }
+
     public void mouseMoved(int x, int y) {
         hovered = bounds.contains(x, y);
     }

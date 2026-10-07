@@ -54,6 +54,7 @@ public class KelpTest {
         folders();
         settings();
         languages();
+        emblems();
         instances();
         gameOptions();
         mods();
@@ -141,6 +142,31 @@ public class KelpTest {
     }
 
     // ---- Languages ----
+
+    static void emblems() throws Exception {
+        Emblem emblem = Emblem.starter();
+        emblem.layers.add(new Emblem.Layer(Emblem.Shape.SQUID, 0x202020, 0.25, 0.75, 0.4, 90, true, false));
+        emblem.save("test-account");
+        Emblem back = Emblem.load("test-account");
+        Emblem.Layer squid = back.layers.get(2);
+        check("an emblem is saved and read back, layer by layer", back.layers.size() + " " + squid.shape + " " + Integer.toHexString(squid.color)
+                + " " + squid.x + " " + squid.y + " " + squid.turn + " " + squid.flipX + " " + squid.flipY, "3 SQUID 202020 0.25 0.75 90.0 true false");
+        check("a broken emblem file is read as far as it makes sense", Emblem.parse("CIRCLE ff0000 9 0.5 1 0 0 0\nNOT_A_SHAPE 1 1 1 1 1 1 1\nhi").layers.size()
+                + " " + Emblem.parse("CIRCLE ff0000 9 0.5 1 0 0 0").layers.get(0).x, "1 1.5");
+        java.awt.image.BufferedImage picture = back.draw();
+        int filled = 0;
+        for (int x = 0; x < Emblem.SIZE; x++) {
+            for (int y = 0; y < Emblem.SIZE; y++) if ((picture.getRGB(x, y) >>> 24) != 0) filled++;
+        }
+        check("an emblem draws as a 64x64 picture, with its corners see-through", picture.getWidth() + " " + (filled > 1000) + " " + (picture.getRGB(0, 0) >>> 24),
+                "64 true 0");
+        check("more Squid Count unlocks more layers", Emblem.UNLOCKS.layers(0) + " " + Emblem.UNLOCKS.layers(49) + " " + Emblem.UNLOCKS.layers(50)
+                + " " + Emblem.UNLOCKS.layers(5000), "3 3 5 32");
+        check("someone without an emblem has none", Emblem.load("nobody") == null && Emblem.picture("nobody") == null, true);
+        for (Emblem.Shape shape : Emblem.Shape.values()) {
+            if (Emblem.outline(shape).getBounds2D().isEmpty()) throw new AssertionError("empty shape " + shape);
+        }
+    }
 
     static void languages() throws Exception {
         check("a language line is read", Lang.parse("# a note\nPlay => Jugar\nDone => \n").toString(), "{Play=Jugar}");
