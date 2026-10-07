@@ -66,6 +66,7 @@ public class KelpTest {
         worlds();
         addMods();
         projects();
+        updates();
         squidReport();
         accounts();
         microsoftLogin();
@@ -484,6 +485,10 @@ public class KelpTest {
         return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-1").digest(data));
     }
 
+    static String sha256(byte[] data) throws Exception {
+        return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(data));
+    }
+
     // ---- Building the command that starts the game, from a made-up version ----
 
     static void launcher() throws Exception {
@@ -705,6 +710,68 @@ public class KelpTest {
         InstalledMod off = listed.toggle();
         check("a project can be turned off", off.file().getFileName() + " " + InstalledMod.list(instance.mods()).stream()
                 .filter(m -> m.file().equals(off.file())).findFirst().map(InstalledMod::enabled).orElse(null), "MegaMod.disabled false");
+    }
+
+    static void updates() throws Exception {
+        check("newer versions", Updates.newer("0.2", "0.1") + " " + Updates.newer("0.10", "0.9") + " " + Updates.newer("1.0", "0.12")
+                + " " + Updates.newer("0.1", "0.1") + " " + Updates.newer("0.1", "0.2"), "true true true false false");
+
+        // A pretend GitHub release with a new kelp.jar and squid.zip
+        byte[] newKelp = "new kelp".getBytes();
+        java.io.ByteArrayOutputStream squidZip = new java.io.ByteArrayOutputStream();
+        try (ZipOutputStream zip = new ZipOutputStream(squidZip)) {
+            for (String[] file : new String[][] {{"squid.jar", "new squid"}, {"builtin/store.jar", "new store"}, {"library/squid-api.jar", "api"}}) {
+                zip.putNextEntry(new ZipEntry(file[0]));
+                zip.write(file[1].getBytes());
+                zip.closeEntry();
+            }
+        }
+        byte[] newSquid = squidZip.toByteArray();
+        HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        String base = "http://127.0.0.1:" + server.getAddress().getPort();
+        String[] json = {""};
+        server.createContext("/", exchange -> {
+            String path = exchange.getRequestURI().getPath();
+            byte[] body = path.equals("/update.json") ? json[0].getBytes() : path.equals("/kelp.jar") ? newKelp
+                    : path.equals("/squid.zip") ? newSquid : path.equals("/broken.jar") ? "tampered".getBytes() : new byte[0];
+            exchange.sendResponseHeaders(body.length == 0 ? 404 : 200, body.length == 0 ? -1 : body.length);
+            if (body.length > 0) exchange.getResponseBody().write(body);
+            exchange.close();
+        });
+        server.start();
+        try {
+            json[0] = "{\"version\": \"0.2\", \"notes\": \"Kelp 0.2\","
+                    + " \"kelp\": {\"url\": \"" + base + "/kelp.jar\", \"sha256\": \"" + sha256(newKelp) + "\", \"size\": " + newKelp.length + "},"
+                    + " \"squid\": {\"url\": \"" + base + "/squid.zip\", \"sha256\": \"" + sha256(newSquid) + "\", \"size\": " + newSquid.length + "}}";
+            Updates.manifest = base + "/update.json";
+            Updates.Release release = Updates.newest();
+            check("the newest release is read", release.version() + " " + release.kelp().size(), "0.2 " + newKelp.length);
+
+            // An old Kelp, with its own Squid next to it
+            Path app = Files.createDirectories(home.resolve("update-test-app"));
+            Files.writeString(app.resolve("kelp.jar"), "old kelp");
+            Files.createDirectories(app.resolve("squid/builtin"));
+            Files.writeString(app.resolve("squid/squid.jar"), "old squid");
+            Files.writeString(app.resolve("squid/builtin/gone.jar"), "a part the new Squid doesn't have");
+            Updates.download(release, Updates.folder(app));
+            check("an update downloads next to Kelp", Files.exists(Updates.folder(app).resolve("ready.txt")) + " "
+                    + Files.readString(Updates.folder(app).resolve("kelp.jar")), "true new kelp");
+            Updater.install(app);
+            check("putting it in replaces Kelp and Squid", Files.readString(app.resolve("kelp.jar")) + " | " + Files.readString(app.resolve("squid/squid.jar"))
+                    + " | " + Files.readString(app.resolve("squid/builtin/store.jar")) + " | " + Files.exists(app.resolve("squid/builtin/gone.jar"))
+                    + " | " + Files.exists(Updates.folder(app).resolve("ready.txt")), "new kelp | new squid | new store | false | false");
+
+            // A file that doesn't match its fingerprint is thrown away, and the old Kelp stays
+            Updates.Release tampered = new Updates.Release("0.3", "", new Updates.Download(base + "/broken.jar", sha256(newKelp), "tampered".length()),
+                    release.squid());
+            Path second = Files.createDirectories(home.resolve("update-test-app2"));
+            check("a damaged download isn't used", problem(() -> Updates.download(tampered, Updates.folder(second))) + " "
+                    + Files.exists(Updates.folder(second).resolve("kelp.jar")) + " " + Files.exists(Updates.folder(second).resolve("ready.txt")),
+                    "kelp.jar arrived damaged, so it wasn't used false false");
+            check("nothing to put in is explained", problem(() -> Updater.install(second)), "there's no finished download to put in");
+        } finally {
+            server.stop(0);
+        }
     }
 
     static void addMods() throws Exception {

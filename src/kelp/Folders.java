@@ -61,6 +61,15 @@ public final class Folders {
         return home().resolve("squid");
     }
 
+    /**
+     * The Squid Kelp plays with: a packaged Kelp brings its own in a squid folder next to kelp.jar; otherwise it's the
+     * one Squid's build.bat installs in Kelp's folder.
+     */
+    public static Path squidInUse() {
+        Path packaged = app().resolve("squid");
+        return java.nio.file.Files.exists(packaged.resolve("squid.jar")) ? packaged : squid();
+    }
+
     /** The Javas Mojang made for running the game, one folder each. */
     public static Path runtimes() {
         return home().resolve("runtimes");

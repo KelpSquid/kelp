@@ -10,6 +10,8 @@ public class TitleScreen extends Screen {
     private final McButton instances = new McButton(t("Instances"), () -> panel.setScreen(new InstancesScreen(panel, this)));
     private final McButton settings = new McButton(t("Options..."), () -> panel.setScreen(new SettingsScreen(panel, this)));
     private final McButton quit = new McButton(t("Quit Game"), () -> System.exit(0));
+    private final McButton update = new McButton("", this::update);
+    private String updateProblem;
 
     private Instance last; // what Play starts: the default instance, or the one played last
     private int count;
@@ -21,6 +23,16 @@ public class TitleScreen extends Screen {
         buttons.add(instances);
         buttons.add(settings);
         buttons.add(quit);
+        buttons.add(update);
+    }
+
+    /** Closes Kelp and opens the new version (see {@link Updates}). Minecraft has to be closed, since Squid's files are in use. */
+    private void update() {
+        try {
+            Updates.installAndRestart();
+        } catch (java.io.IOException e) {
+            updateProblem = t("Couldn't update: {0}", e.getMessage());
+        }
     }
 
     @Override
@@ -45,6 +57,17 @@ public class TitleScreen extends Screen {
         instances.setBounds(left, buttonsY + 24 * GUI, 200 * GUI, 20 * GUI);
         settings.setBounds(left, buttonsY + 60 * GUI, 98 * GUI, 20 * GUI);
         quit.setBounds(left + 102 * GUI, buttonsY + 60 * GUI, 98 * GUI, 20 * GUI);
+        // A newer Kelp, once it's downloaded, waits in the top-right corner. It can't go in while Minecraft is open.
+        String ready = Updates.ready();
+        if (ready != null) {
+            update.setLabel(t("Update to {0}", ready));
+            update.setActive(!RunningGames.any());
+            update.setBounds(w - 104 * GUI, 4 * GUI, 100 * GUI, 20 * GUI);
+            String hint = updateProblem != null ? updateProblem : RunningGames.any() ? t("Close Minecraft first, then update.") : null;
+            if (hint != null) font.draw(g, hint, w - 4 * GUI - font.width(hint, GUI), 28 * GUI, GUI, updateProblem != null ? 0xFF5555 : 0xFFFF55);
+        } else {
+            update.setBounds(-1000, -1000, 0, 0); // out of sight until there's an update
+        }
         for (McButton b : buttons) b.draw(g, font, GUI);
 
         // The title, sitting above the buttons

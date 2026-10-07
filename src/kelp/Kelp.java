@@ -13,6 +13,7 @@ import java.util.List;
 /** Kelp starts here. */
 public class Kelp {
     public static void main(String[] args) {
+        Updates.checkInBackground(); // a newer Kelp is downloaded quietly, and the title screen offers it
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("Kelp");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

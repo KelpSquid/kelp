@@ -94,7 +94,7 @@ public final class ModProject {
      * Its code jar is where the editors read what each command does.
      */
     static void editorSettings(Path folder, String className, String minecraftVersion) throws IOException {
-        Path library = Folders.squid().resolve("library");
+        Path library = Folders.squidInUse().resolve("library");
         Path squidApi = library.resolve("squid-api.jar");
         Path squidSources = library.resolve("squid-api-sources.jar");
         List<String> minecraft = Launcher.gameClasspath(minecraftVersion);

@@ -155,8 +155,7 @@ public final class Launcher {
      * otherwise Kelp uses the one Squid's build.bat installs.
      */
     private static List<String> squidJars() throws IOException {
-        Path folder = Folders.app().resolve("squid");
-        if (!Files.exists(folder.resolve("squid.jar"))) folder = Folders.squid();
+        Path folder = Folders.squidInUse();
         if (!Files.exists(folder.resolve("squid.jar"))) {
             throw new IOException("Squid isn't installed. Run build.bat in the squid repo, or turn Squid off.");
         }

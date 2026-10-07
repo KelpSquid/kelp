@@ -22,6 +22,11 @@ public final class RunningGames {
         return game != null && game.isAlive() ? game : null;
     }
 
+    /** Whether any game Kelp started is still open. */
+    public static boolean any() {
+        return GAMES.values().stream().anyMatch(Process::isAlive);
+    }
+
     public static boolean isRunning(Instance instance) {
         return get(instance) != null;
     }

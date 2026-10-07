@@ -39,6 +39,9 @@ import java.util.zip.ZipOutputStream;
  *   build/Kelp-linux.tar.gz   unpack, then run start-kelp.sh
  *   build/Kelp-mac.tar.gz     unpack, then open Kelp.app (works on Apple Silicon and Intel Macs)
  *
+ * and build/release: the files a Kelp already out there updates itself from (kelp.jar, squid.zip and update.json).
+ * Upload all three to a GitHub release tagged v<VERSION>, and every Kelp offers the update the next time it opens.
+ *
  * Squid comes along too, from the squid folder next to this one (run Squid's build.bat first).
  * Run it with package.bat.
  */
@@ -57,6 +60,7 @@ public class Package {
         windows(kelpJar, squidJars, readme, asmLicense);
         linux(kelpJar, squidJars, readme, asmLicense);
         mac(kelpJar, squidJars, readme, asmLicense);
+        release(kelpJar, squidJars, asmLicense);
         System.out.println("Done. The packages are in the build folder.");
     }
 
@@ -129,6 +133,38 @@ public class Package {
             }
         }
         return jars;
+    }
+
+    // ---- The update files ----
+
+    /** Where update.json says the files are: the GitHub release for this version. */
+    static final String RELEASES = "https://github.com/SamuelArther/kelp/releases/download/v";
+
+    /**
+     * build/release: kelp.jar, squid.zip (everything in Kelp's squid folder) and update.json, which lists both with
+     * their fingerprints so a Kelp only ever uses files that arrive exactly as they were made.
+     */
+    static void release(Path kelpJar, Map<String, Path> squidJars, byte[] asmLicense) throws Exception {
+        Path folder = BUILD.resolve("release");
+        Files.createDirectories(folder);
+        Path kelp = folder.resolve("kelp.jar");
+        Files.copy(kelpJar, kelp, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+        Path squid = folder.resolve("squid.zip");
+        try (ZipOutputStream zip = new ZipOutputStream(Files.newOutputStream(squid))) {
+            for (Map.Entry<String, Path> jar : squidJars.entrySet()) putFile(zip, jar.getKey(), Files.readAllBytes(jar.getValue()));
+            putFile(zip, "ASM-LICENSE.txt", asmLicense);
+        }
+        String json = """
+                {
+                    "version": "%s",
+                    "notes": "Kelp %s",
+                    "kelp": {"url": "%s", "sha256": "%s", "size": %d},
+                    "squid": {"url": "%s", "sha256": "%s", "size": %d}
+                }
+                """.formatted(VERSION, VERSION, RELEASES + VERSION + "/kelp.jar", sha256(kelp), Files.size(kelp),
+                RELEASES + VERSION + "/squid.zip", sha256(squid), Files.size(squid));
+        Files.writeString(folder.resolve("update.json"), json);
+        System.out.println("Made the update files in " + folder);
     }
 
     // ---- Windows: a zip with a Start Kelp file ----
