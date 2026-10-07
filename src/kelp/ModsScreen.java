@@ -54,7 +54,7 @@ public class ModsScreen extends Screen {
         centered(g, "Mods for " + instance.name(), w, 12 * GUI, 0xFFFFFF);
 
         int listBottom = h - 60 * GUI;
-        String empty = list.getItems().isEmpty() ? "No mods yet. Put Squid mods in the mods folder." : null;
+        String empty = list.getItems().isEmpty() ? "No mods yet. Click Open Folder!" : null;
         list.draw(g, font, w, 32 * GUI, listBottom, empty, (gg, mod, x, y, width) -> {
             String name = mod.version().isEmpty() ? mod.name() : mod.name() + " " + mod.version();
             font.draw(gg, name, x, y, GUI, mod.enabled() ? 0xFFFFFF : 0x808080);

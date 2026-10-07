@@ -1,0 +1,65 @@
+# Pings Samuel when Mojang releases a new stable version of Minecraft: Java Edition, so Kelp and Squid
+# can be updated within 2-3 days. Snapshots are ignored: Kelp and Squid only support stable releases.
+#
+# Every hour it reads Mojang's official version list. When the newest release doesn't have an issue yet,
+# it opens one assigned to Samuel, which makes GitHub notify him by email and in the GitHub app.
+
+name: Minecraft release monitor
+
+on:
+  schedule:
+    - cron: "7 * * * *" # every hour, at 7 minutes past
+  workflow_dispatch:
+    inputs:
+      test:
+        description: "Send a test ping (opens and closes a test issue)"
+        type: boolean
+        default: false
+
+permissions:
+  issues: write
+
+env:
+  # Releases Kelp and Squid already support, so they don't get a ping
+  ALREADY_SUPPORTED: "26.3"
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Look for a new stable release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TEST: ${{ inputs.test }}
+        run: |
+          set -eu
+          if [ "${TEST:-false}" = "true" ]; then
+            url=$(gh issue create --title "Test: the release monitor works" --assignee SamuelArther \
+              --body "@SamuelArther This is a test ping from the Minecraft release monitor. If you got this, it works.")
+            gh issue close "$url" --comment "Test finished."
+            exit 0
+          fi
+
+          latest=$(curl -fsSL https://piston-meta.mojang.com/mc/game/version_manifest_v2.json | jq -r '.latest.release')
+          echo "Newest stable release: $latest"
+
+          for known in $ALREADY_SUPPORTED; do
+            if [ "$latest" = "$known" ]; then echo "Already supported."; exit 0; fi
+          done
+
+          title="Minecraft $latest is out"
+          if [ -n "$(gh issue list --state all --search "in:title \"$title\"" --json number --jq '.[].number')" ]; then
+            echo "Already pinged about $latest."
+            exit 0
+          fi
+
+          gh issue create --title "$title" --assignee SamuelArther --body "@SamuelArther Minecraft: Java Edition **$latest** just came out. Goal: Kelp and Squid updates out within 2-3 days.
+
+          - [ ] Try Kelp: download $latest, make an instance, play it
+          - [ ] Try Squid on it: does every hook still find its method?
+          - [ ] Fix and test every store mod
+          - [ ] Run \`build.bat test\` in Squid
+          - [ ] Add $latest to ALREADY_SUPPORTED in this workflow
+          - [ ] Build the downloads with \`package.bat\` and release"
+          echo "Pinged about $latest."

@@ -86,7 +86,7 @@ public class InstancesScreen extends Screen {
         centered(g, "Instances", w, 12 * GUI, 0xFFFFFF);
 
         int listBottom = h - 108 * GUI;
-        String empty = list.getItems().isEmpty() ? "No instances yet. Make one with New Instance!" : null;
+        String empty = list.getItems().isEmpty() ? "No instances yet. Click New Instance!" : null;
         list.draw(g, font, w, 32 * GUI, listBottom, empty, (gg, instance, x, y, width) -> {
             font.draw(gg, instance.name(), x, y, GUI, 0xFFFFFF);
             String details = "Minecraft " + instance.version().id() + (instance.squid() ? " + Squid" : "");
