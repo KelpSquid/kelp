@@ -15,6 +15,7 @@ public class SettingsScreen extends Screen {
     private final McButton memoryButton = new McButton("", this::nextMemory);
     private final McButton backupButton = new McButton("", () -> Settings.setAutoBackup(!Settings.autoBackup()));
     private final McButton folderButton = new McButton(t("Open Kelp Folder"), this::openFolder);
+    private final McButton themeButton = new McButton("", () -> panel.setScreen(new ThemeScreen(panel, this)));
     private final McButton doneButton = new McButton(t("Done"), this::done);
 
     public SettingsScreen(OceanPanel panel, Screen parent) {
@@ -25,6 +26,7 @@ public class SettingsScreen extends Screen {
         buttons.add(languageButton);
         buttons.add(backupButton);
         buttons.add(folderButton);
+        buttons.add(themeButton);
         buttons.add(doneButton);
     }
 
@@ -73,7 +75,9 @@ public class SettingsScreen extends Screen {
         languageButton.setBounds(left, top + 76 * GUI, 200 * GUI, 20 * GUI);
         backupButton.setLabel(Settings.autoBackup() ? t("World Backups: Every 15 min") : t("World Backups: Off"));
         backupButton.setBounds(left, top + 100 * GUI, 200 * GUI, 20 * GUI);
-        folderButton.setBounds(left, top + 124 * GUI, 200 * GUI, 20 * GUI);
+        themeButton.setLabel(t("Theme: {0}", Theme.current().name()));
+        themeButton.setBounds(left, top + 124 * GUI, 200 * GUI, 20 * GUI);
+        folderButton.setBounds(left, top + 148 * GUI, 200 * GUI, 20 * GUI);
         doneButton.setBounds(left, h - 28 * GUI, 200 * GUI, 20 * GUI);
         for (McButton b : buttons) b.draw(g, font, GUI);
     }

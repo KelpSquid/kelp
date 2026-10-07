@@ -18,10 +18,10 @@ import java.util.Random;
 public class OceanPanel extends JPanel {
     private static final int BLOCK = 128;             // water tiles and kelp pieces are 32 pixels, drawn at 4x
     private static final int BUBBLE = 48;             // bubbles are 16 pixels, drawn at 3x
-    private static final int OCEAN_COLOR = 0x3F76E4;  // the water texture is gray, so this makes it ocean blue
-    private static final Color DEEP = new Color(0x0B1633);
-
-    private final BufferedImage[] water = Textures.frames(Textures.tint(Textures.load("water.png"), OCEAN_COLOR));
+    private final BufferedImage waterGray = Textures.load("water.png"); // gray, so a theme can tint it any color
+    private BufferedImage[] water;      // the water tiles in the theme's color
+    private Theme drawn;                // the theme the tiles and picture were made for
+    private BufferedImage picture;      // the theme's own background picture, if it has one
     private final BufferedImage[] kelpTop = Textures.frames(Textures.load("kelp_top.png"));
     private final BufferedImage[] kelpStem = Textures.frames(Textures.load("kelp_stem.png"));
     private final BufferedImage bubble = Textures.load("bubble.png");
@@ -147,8 +147,13 @@ public class OceanPanel extends JPanel {
 
     private Bubble newBubble(boolean anywhere) {
         Bubble b = new Bubble();
+        Theme.Particles kind = Theme.current().scene().particles;
         b.x = random.nextDouble();
-        b.y = anywhere ? random.nextDouble() : 1.05; // new bubbles start below the bottom edge
+        b.y = anywhere ? random.nextDouble() : kind == Theme.Particles.ASH ? -0.05 : 1.05; // ash starts above the top
+        if (kind == Theme.Particles.CLOUDS) {
+            b.x = anywhere ? random.nextDouble() : -0.3; // clouds come in from the left
+            b.y = random.nextDouble() * 0.6;
+        }
         b.speed = 0.001 + random.nextDouble() * 0.002;
         b.wobble = random.nextDouble() * Math.PI * 2;
         return b;
@@ -156,11 +161,32 @@ public class OceanPanel extends JPanel {
 
     private void tick() {
         time += 0.016;
+        Theme.Particles kind = Theme.current().scene().particles;
         for (int i = 0; i < bubbles.size(); i++) {
             Bubble b = bubbles.get(i);
-            b.y -= b.speed;
-            if (b.y < -0.05) bubbles.set(i, newBubble(false)); // popped at the top, make a new one
+            switch (kind) {
+                case BUBBLES, EMBERS -> b.y -= b.speed;      // float up
+                case ASH -> b.y += b.speed * 0.5;            // drift down
+                case CLOUDS -> b.x += b.speed * 0.15;        // drift across
+                default -> {
+                }
+            }
+            if (b.y < -0.05 || b.y > 1.1 || b.x > 1.2) bubbles.set(i, newBubble(false)); // gone: a new one comes in
         }
+    }
+
+    /** Remakes the background's pieces when the theme changes. */
+    private void prepare(Theme theme) {
+        if (theme == drawn) return;
+        boolean particlesChanged = drawn == null || drawn.scene().particles != theme.scene().particles;
+        drawn = theme;
+        water = theme.water() < 0 ? null : Textures.frames(Textures.tint(waterGray, theme.water()));
+        picture = theme.picture() == null ? null : Textures.read(theme.picture().toFile());
+        if (particlesChanged) {
+            bubbles.clear();
+            for (int i = 0; i < 25; i++) bubbles.add(newBubble(true));
+        }
+        ThemeMusic.play(theme.music());
     }
 
     /** The water and kelp animations play at 10 frames a second. */
@@ -176,22 +202,40 @@ public class OceanPanel extends JPanel {
         int w = getWidth();
         int h = getHeight();
 
-        // 1. Water: the see-through water texture tiled over a deep blue
-        g.setColor(DEEP);
+        Theme theme = Theme.current();
+        prepare(theme);
+
+        // 1. The theme's base color, then its tiles (like the ocean's water), or its own picture
+        g.setColor(new Color(theme.base()));
         g.fillRect(0, 0, w, h);
-        BufferedImage waterFrame = frame(water);
-        for (int y = 0; y < h; y += BLOCK) {
-            for (int x = 0; x < w; x += BLOCK) {
-                g.drawImage(waterFrame, x, y, BLOCK, BLOCK, null);
+        if (picture != null) {
+            double cover = Math.max(w / (double) picture.getWidth(), h / (double) picture.getHeight());
+            int pw = (int) Math.ceil(picture.getWidth() * cover);
+            int ph = (int) Math.ceil(picture.getHeight() * cover);
+            Graphics2D smooth = (Graphics2D) g.create();
+            smooth.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            smooth.drawImage(picture, (w - pw) / 2, (h - ph) / 2, pw, ph, null);
+            smooth.dispose();
+        } else if (water != null) {
+            BufferedImage waterFrame = frame(water);
+            for (int y = 0; y < h; y += BLOCK) {
+                for (int x = 0; x < w; x += BLOCK) {
+                    g.drawImage(waterFrame, x, y, BLOCK, BLOCK, null);
+                }
             }
         }
 
-        // 2. Get darker the deeper you go
-        g.setPaint(new GradientPaint(0, 0, new Color(0, 0, 20, 0), 0, h, new Color(0, 0, 20, 150)));
+        // 2. Get darker toward the bottom (the sky gets a little lighter instead)
+        Theme.Particles kind = theme.scene().particles;
+        if (kind == Theme.Particles.CLOUDS) {
+            g.setPaint(new GradientPaint(0, 0, new Color(255, 255, 255, 0), 0, h, new Color(255, 255, 255, 90)));
+        } else {
+            g.setPaint(new GradientPaint(0, 0, new Color(0, 0, 20, 0), 0, h, new Color(0, 0, 20, 150)));
+        }
         g.fillRect(0, 0, w, h);
 
-        // 3. Kelp growing up from the bottom, one block at a time
-        for (int column = 0; column < kelpHeights.length; column++) {
+        // 3. Kelp growing up from the bottom, one block at a time (only under the sea)
+        for (int column = 0; theme.scene().kelp && column < kelpHeights.length; column++) {
             int height = kelpHeights[column];
             for (int i = 0; i < height; i++) {
                 BufferedImage block = i == height - 1 ? frame(kelpTop) : frame(kelpStem);
@@ -199,11 +243,38 @@ public class OceanPanel extends JPanel {
             }
         }
 
-        // 4. Bubbles
+        // 4. What floats around: bubbles, embers, ash, clouds or stars
         for (Bubble b : bubbles) {
             int x = (int) (b.x * w + Math.sin(time * 2 + b.wobble) * 6);
             int y = (int) (b.y * h);
-            g.drawImage(bubble, x, y, BUBBLE, BUBBLE, null);
+            switch (kind) {
+                case BUBBLES -> g.drawImage(bubble, x, y, BUBBLE, BUBBLE, null);
+                case EMBERS -> {
+                    int size = 6 + (int) (b.wobble * 2);
+                    int glow = (int) (180 + 75 * Math.sin(time * 6 + b.wobble * 3));
+                    g.setColor(new Color(255, 120 + (int) (b.wobble * 20), 20, Math.max(0, Math.min(255, glow))));
+                    g.fillRect(x, y, size, size);
+                }
+                case ASH -> {
+                    g.setColor(new Color(90, 80, 80, 170));
+                    g.fillRect(x, y, 6, 6);
+                }
+                case CLOUDS -> {
+                    int cx = (int) (b.x * w);
+                    int size = 24 + (int) (b.wobble * 4);
+                    g.setColor(new Color(255, 255, 255, 200));
+                    g.fillRect(cx, y, size * 6, size);
+                    g.fillRect(cx + size, y - size / 2, size * 3, size);
+                }
+                case STARS -> {
+                    int twinkle = (int) (130 + 125 * Math.sin(time * 2 + b.wobble * 5));
+                    g.setColor(new Color(255, 245, 255, Math.max(0, Math.min(255, twinkle))));
+                    int size = b.wobble > 3 ? 6 : 4;
+                    g.fillRect((int) (b.x * w), y, size, size);
+                }
+                default -> {
+                }
+            }
         }
 
         // 5. Whatever screen is showing, on top of the ocean

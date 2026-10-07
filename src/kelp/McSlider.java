@@ -8,9 +8,6 @@ import java.util.function.DoubleFunction;
 
 /** A slider for settings like volume: a dark bar with a handle you drag. Click anywhere on it to jump there. */
 public class McSlider {
-    private final BufferedImage track = Textures.load("button_disabled.png");
-    private final BufferedImage handle = Textures.load("button.png");
-    private final BufferedImage handleLit = Textures.load("button_highlighted.png");
 
     private final double min;
     private final double max;
@@ -72,6 +69,10 @@ public class McSlider {
         int y = bounds.y;
         int w = bounds.width;
         int h = bounds.height;
+        BufferedImage[] look = McButton.textures(Theme.current().buttons()); // the same colors as the theme's buttons
+        BufferedImage track = look[2];
+        BufferedImage handle = look[0];
+        BufferedImage handleLit = look[1];
         // The dark track, split in two halves like a button so both rounded ends show
         int left = w / 2;
         g.drawImage(track, x, y, x + left, y + h, 0, 0, left / scale, 20, null);

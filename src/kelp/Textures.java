@@ -73,6 +73,20 @@ public final class Textures {
     }
 
     /** Multiplies every pixel by a color. That's how the gray water texture turns blue. */
+    /** The same picture in another color: every pixel keeps how light and how colorful it is, with this hue (0-1). */
+    public static BufferedImage hue(BufferedImage image, float hue) {
+        BufferedImage out = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        float[] hsb = new float[3];
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                int p = image.getRGB(x, y);
+                java.awt.Color.RGBtoHSB(p >> 16 & 0xFF, p >> 8 & 0xFF, p & 0xFF, hsb);
+                out.setRGB(x, y, (p & 0xFF000000) | (java.awt.Color.HSBtoRGB(hue, hsb[1], hsb[2]) & 0xFFFFFF));
+            }
+        }
+        return out;
+    }
+
     public static BufferedImage tint(BufferedImage image, int rgb) {
         int tr = rgb >> 16 & 0xFF;
         int tg = rgb >> 8 & 0xFF;

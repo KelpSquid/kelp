@@ -41,6 +41,15 @@ public final class Settings {
         set("memoryGb", String.valueOf(gb));
     }
 
+    /** The id of Kelp's look (see {@link Theme}). Ocean until another is picked. */
+    public static String theme() {
+        return VALUES.getProperty("theme", "ocean");
+    }
+
+    public static void setTheme(String id) {
+        set("theme", id);
+    }
+
     /** Whether worlds are backed up every 15 minutes while they're played. On unless it's switched off in Options. */
     public static boolean autoBackup() {
         return !"false".equals(VALUES.getProperty("autoBackup"));

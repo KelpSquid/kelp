@@ -6,9 +6,9 @@ import java.awt.image.BufferedImage;
 
 /** A pixel-art button made of sea glass: it lights up when the mouse is over it and goes dark when it's off. */
 public class McButton {
-    private final BufferedImage normal = Textures.load("button.png");
-    private final BufferedImage highlighted = Textures.load("button_highlighted.png");
-    private final BufferedImage disabled = Textures.load("button_disabled.png");
+    private static final BufferedImage[] SEA_GLASS = {Textures.load("button.png"), Textures.load("button_highlighted.png"),
+            Textures.load("button_disabled.png")};
+    private static final java.util.Map<Integer, BufferedImage[]> THEMED = new java.util.concurrent.ConcurrentHashMap<>();
 
     private String label;
     private final Runnable action;
@@ -47,8 +47,19 @@ public class McButton {
         if (active) action.run();
     }
 
+    /** The sea-glass buttons recolored to the theme's hue (-1 keeps them teal), made once per hue. */
+    static BufferedImage[] textures(int hue) {
+        if (hue < 0) return SEA_GLASS;
+        return THEMED.computeIfAbsent(hue, h -> {
+            BufferedImage[] out = new BufferedImage[3];
+            for (int i = 0; i < 3; i++) out[i] = Textures.hue(SEA_GLASS[i], h / 360f);
+            return out;
+        });
+    }
+
     public void draw(Graphics2D g, McFont font, int scale) {
-        BufferedImage texture = !active ? disabled : hovered ? highlighted : normal;
+        BufferedImage[] look = textures(Theme.current().buttons());
+        BufferedImage texture = !active ? look[2] : hovered ? look[1] : look[0];
         int x = bounds.x;
         int y = bounds.y;
         int w = bounds.width;

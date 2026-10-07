@@ -71,6 +71,7 @@ public class KelpTest {
         backups();
         stats();
         modpacks();
+        themes();
         squidReport();
         accounts();
         microsoftLogin();
@@ -959,6 +960,55 @@ public class KelpTest {
             ModpackImport.ALLOWED_HOSTS.remove("127.0.0.1");
             server.stop(0);
         }
+    }
+
+    static void themes() throws Exception {
+        check("Kelp starts as the Ocean", Theme.current().id(), "ocean");
+        check("its own themes", Theme.BUILT_IN.stream().map(Theme::name).toList().toString(), "[Ocean, Lava, Sky, Nether, End]");
+        Path picture = home.resolve("my-picture.png");
+        javax.imageio.ImageIO.write(new java.awt.image.BufferedImage(64, 36, java.awt.image.BufferedImage.TYPE_INT_RGB), "png", picture.toFile());
+        Theme made = Theme.save("Purple Cave!", Theme.Scene.END, -1, 0x220033, 280, picture, null);
+        check("a made theme is saved with its picture", made.id() + " " + made.scene() + " " + Integer.toHexString(made.base()) + " " + made.buttons() + " "
+                + made.picture().getFileName(), "purple-cave END 220033 280 background.png");
+        Theme.use(made);
+        check("the picked theme is remembered", Settings.theme() + " " + Theme.find("purple-cave").name(), "purple-cave Purple Cave!");
+        check("themes list Kelp's own, then yours", Theme.all().stream().map(Theme::id).toList().toString(), "[ocean, lava, sky, nether, end, purple-cave]");
+        check("an unknown theme is the Ocean", Theme.find("nope").id(), "ocean");
+        java.awt.image.BufferedImage red = new java.awt.image.BufferedImage(1, 1, java.awt.image.BufferedImage.TYPE_INT_ARGB);
+        red.setRGB(0, 0, 0xFFFF0000);
+        int blue = Textures.hue(red, 240 / 360f).getRGB(0, 0);
+        check("buttons can take any color", Integer.toHexString(blue), "ff0000ff");
+
+        // The Store's themes: only "theme" items, checked against their fingerprints
+        java.io.ByteArrayOutputStream themeZip = new java.io.ByteArrayOutputStream();
+        try (ZipOutputStream zip = new ZipOutputStream(themeZip)) {
+            zip.putNextEntry(new ZipEntry("theme.properties"));
+            zip.write("name=Sunset\nscene=sky\nbase=#FF8844\nbuttons=20\n".getBytes());
+            zip.closeEntry();
+        }
+        byte[] themeBytes = themeZip.toByteArray();
+        HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        String base = "http://127.0.0.1:" + server.getAddress().getPort();
+        server.createContext("/", exchange -> {
+            byte[] body = exchange.getRequestURI().getPath().equals("/sunset.zip") ? themeBytes : new byte[0];
+            exchange.sendResponseHeaders(body.length == 0 ? 404 : 200, body.length == 0 ? -1 : body.length);
+            if (body.length > 0) exchange.getResponseBody().write(body);
+            exchange.close();
+        });
+        server.start();
+        try {
+            List<ThemeStoreScreen.Item> items = ThemeStoreScreen.parse("{\"items\": [{\"id\": \"xray\", \"type\": \"mod\", \"url\": \"u\", \"sha256\": \"a\"},"
+                    + "{\"id\": \"sunset\", \"type\": \"theme\", \"name\": \"Sunset\", \"author\": \"Samuel\", \"url\": \"" + base + "/sunset.zip\", \"sha256\": \"" + sha256(themeBytes) + "\"},"
+                    + "{\"id\": \"../evil\", \"type\": \"theme\", \"url\": \"u\", \"sha256\": \"a\"}]}");
+            check("the Store's themes, and only safe ones", items.stream().map(ThemeStoreScreen.Item::id).toList().toString(), "[sunset]");
+            Theme sunset = ThemeStoreScreen.install(items.get(0));
+            check("a Store theme installs", sunset.name() + " " + sunset.scene() + " " + Integer.toHexString(sunset.base()), "Sunset SKY ff8844");
+            ThemeStoreScreen.Item tampered = new ThemeStoreScreen.Item("tampered", "T", "", base + "/sunset.zip", "00");
+            check("a changed download isn't used", problem(() -> ThemeStoreScreen.install(tampered)), "it arrived damaged, so it wasn't installed");
+        } finally {
+            server.stop(0);
+        }
+        Theme.use(Theme.OCEAN);
     }
 
     static void addMods() throws Exception {
