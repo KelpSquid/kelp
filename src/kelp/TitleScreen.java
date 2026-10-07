@@ -8,7 +8,7 @@ public class TitleScreen extends Screen {
     private final McButton play = new McButton("Play", this::play);
     private final McButton instances = new McButton("Instances", () -> panel.setScreen(new InstancesScreen(panel, this)));
     private final McButton settings = new McButton("Options...", () -> panel.setScreen(new SettingsScreen(panel, this)));
-    private final McButton quit = new McButton("Quit", () -> System.exit(0));
+    private final McButton quit = new McButton("Quit Game", () -> System.exit(0));
 
     private Instance last; // the instance played last, which Play starts
 
