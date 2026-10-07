@@ -18,13 +18,9 @@ public final class Settings {
     private Settings() {
     }
 
-    /** The name you play as. Without a Microsoft login it only shows up in single player and on LAN. */
-    public static String playerName() {
+    /** The name Kelp played as before it had accounts. Accounts turns it into an offline account the first time. */
+    static String playerName() {
         return VALUES.getProperty("playerName", "Player");
-    }
-
-    public static void setPlayerName(String name) {
-        set("playerName", name);
     }
 
     /** Minecraft's rule for names: 3 to 16 letters, numbers or underscores. */

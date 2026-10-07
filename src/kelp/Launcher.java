@@ -3,7 +3,6 @@ package kelp;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -13,7 +12,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -34,9 +32,9 @@ public final class Launcher {
      * through the Squid mod loader if withSquid is on. memoryGb is how much memory to give it, or 0 for Mojang's choice.
      * Everything the game prints goes into kelp-output.log in the game folder.
      */
-    public static Process launch(String versionId, Path gameFolder, String playerName, boolean withSquid, int memoryGb)
+    public static Process launch(String versionId, Path gameFolder, Account account, boolean withSquid, int memoryGb)
             throws IOException {
-        List<String> command = buildCommand(versionId, gameFolder, playerName, withSquid, memoryGb);
+        List<String> command = buildCommand(versionId, gameFolder, account, withSquid, memoryGb);
         Files.deleteIfExists(SquidReport.file(gameFolder)); // so Kelp never shows last time's report
         return new ProcessBuilder(command)
                 .directory(gameFolder.toFile())
@@ -46,7 +44,7 @@ public final class Launcher {
     }
 
     /** The full command that starts the game: java, its settings, then the game's own settings. */
-    public static List<String> buildCommand(String versionId, Path gameFolder, String playerName, boolean withSquid,
+    public static List<String> buildCommand(String versionId, Path gameFolder, Account account, boolean withSquid,
                                             int memoryGb) throws IOException {
         Path versionFolder = Folders.versions().resolve(versionId);
         Map<String, Object> details = Json.object(Json.parse(Files.readString(versionFolder.resolve(versionId + ".json"))));
@@ -57,17 +55,16 @@ public final class Launcher {
         String assetsId = (String) Json.object(details.get("assetIndex")).get("id");
         Path gameAssets = prepareOldAssets(assetsId, gameFolder);
 
-        // Offline players get the same made-up ID that Minecraft itself would give them
-        UUID uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + playerName).getBytes(StandardCharsets.UTF_8));
-
+        // Who's playing. Offline names have no token, so the game only lets them into single player and LAN.
+        String token = account.accessToken() != null ? account.accessToken() : "0";
         Map<String, String> vars = new HashMap<>();
-        vars.put("auth_player_name", playerName);
-        vars.put("auth_uuid", uuid.toString().replace("-", ""));
-        vars.put("auth_access_token", "0"); // offline: there's no Microsoft login yet
-        vars.put("auth_session", "0");
+        vars.put("auth_player_name", account.name());
+        vars.put("auth_uuid", account.id());
+        vars.put("auth_access_token", token);
+        vars.put("auth_session", token);
         vars.put("auth_xuid", "0");
-        vars.put("clientid", "0");
-        vars.put("user_type", "legacy");
+        vars.put("clientid", account.microsoft() && MicrosoftLogin.ready() ? MicrosoftLogin.CLIENT_ID : "0");
+        vars.put("user_type", account.microsoft() ? "msa" : "legacy");
         vars.put("user_properties", "{}");
         vars.put("version_name", versionId);
         vars.put("version_type", (String) details.get("type"));

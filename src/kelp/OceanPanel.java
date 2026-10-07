@@ -1,6 +1,7 @@
 package kelp;
 
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
@@ -33,6 +34,7 @@ public class OceanPanel extends JPanel {
 
     private Screen screen = new TitleScreen(this);
     private Point mouse = new Point(-1, -1);
+    private int quietFrames;
 
     public OceanPanel() {
         for (int i = 0; i < kelpHeights.length; i++) {
@@ -93,6 +95,12 @@ public class OceanPanel extends JPanel {
         // Move everything about 60 times a second
         new Timer(16, e -> {
             tick();
+            // Kelp doesn't need to draw while it's minimized, and barely while it's behind another window
+            // (like the game), so it takes it easy then and saves the computer's effort
+            Window window = SwingUtilities.getWindowAncestor(this);
+            boolean minimized = window instanceof Frame frame && (frame.getExtendedState() & Frame.ICONIFIED) != 0;
+            boolean behind = window != null && !window.isActive();
+            if (minimized || behind && ++quietFrames % 4 != 0) return;
             repaint();
         }).start();
     }

@@ -5,10 +5,10 @@ import java.awt.Graphics2D;
 import java.io.IOException;
 import java.nio.file.Files;
 
-/** The Options screen: your player name and how much memory the game gets. */
+/** The Options screen: who you play as, and how much memory the game gets. */
 public class SettingsScreen extends Screen {
     private final Screen parent;
-    private final McTextField nameField = new McTextField(16);
+    private final McButton accountButton = new McButton("", () -> panel.setScreen(new AccountsScreen(panel, this)));
     private final McButton memoryButton = new McButton("", this::nextMemory);
     private final McButton folderButton = new McButton("Open Kelp Folder", this::openFolder);
     private final McButton doneButton = new McButton("Done", this::done);
@@ -16,14 +16,10 @@ public class SettingsScreen extends Screen {
     public SettingsScreen(OceanPanel panel, Screen parent) {
         super(panel);
         this.parent = parent;
+        buttons.add(accountButton);
         buttons.add(memoryButton);
         buttons.add(folderButton);
         buttons.add(doneButton);
-        nameField.setText(Settings.playerName());
-        // Save the name as soon as it's a real Minecraft name, so there's no Save button to forget
-        nameField.onChange(name -> {
-            if (Settings.isValidName(name)) Settings.setPlayerName(name);
-        });
     }
 
     private void nextMemory() {
@@ -53,14 +49,11 @@ public class SettingsScreen extends Screen {
         int top = h / 4;
         centered(g, "Options", w, 12 * GUI, 0xFFFFFF);
 
-        font.draw(g, "Player name", left, top, GUI, 0xA0A0A0);
-        nameField.setBounds(left, top + 11 * GUI, 200 * GUI, 20 * GUI);
-        nameField.draw(g, font, GUI, panel.getTime());
-        if (Settings.isValidName(nameField.getText())) {
-            centered(g, "Offline names show in single player and LAN.", w, top + 35 * GUI, 0x808080);
-        } else {
-            centered(g, "Use 3-16 letters, numbers or _", w, top + 35 * GUI, 0xFF5555);
-        }
+        Account account = Accounts.active();
+        accountButton.setLabel("Account: " + account.name());
+        accountButton.setBounds(left, top + 6 * GUI, 200 * GUI, 20 * GUI);
+        String kind = account.microsoft() ? "Signed in with Microsoft." : "Offline names show in single player and LAN.";
+        centered(g, kind, w, top + 30 * GUI, 0x808080);
 
         int gb = Settings.memoryGb();
         memoryButton.setLabel("Memory: " + (gb == 0 ? "Minecraft's choice" : gb + " GB"));
@@ -68,21 +61,5 @@ public class SettingsScreen extends Screen {
         folderButton.setBounds(left, top + 76 * GUI, 200 * GUI, 20 * GUI);
         doneButton.setBounds(left, h - 28 * GUI, 200 * GUI, 20 * GUI);
         for (McButton b : buttons) b.draw(g, font, GUI);
-    }
-
-    @Override
-    public void mousePressed(int x, int y) {
-        nameField.setFocused(nameField.contains(x, y));
-        super.mousePressed(x, y);
-    }
-
-    @Override
-    public void keyTyped(char c) {
-        nameField.keyTyped(c);
-    }
-
-    @Override
-    public void keyPressed(int keyCode, boolean ctrl) {
-        nameField.keyPressed(keyCode, ctrl);
     }
 }

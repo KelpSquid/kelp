@@ -68,6 +68,10 @@ public class InstancesScreen extends Screen {
 
     private void delete() {
         Instance instance = list.getSelected();
+        if (RunningGames.isRunning(instance)) {
+            problem = "Close the game first, then delete it.";
+            return;
+        }
         panel.setScreen(new ConfirmScreen(panel, "Delete " + instance.name() + "?",
                 "Its worlds, settings and mods will be gone forever!", () -> {
             try {

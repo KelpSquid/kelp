@@ -16,11 +16,25 @@ import java.util.zip.ZipFile;
  * A mod in a version's mods folder, described by the same squid.json Squid reads.
  * Turned-off mods end in ".jar.disabled", which Squid skips.
  *
- * @param squidMod false if the jar has no squid.json (so Squid will skip it anyway)
+ * @param squidMod  false if the jar has no squid.json (so Squid will skip it anyway)
+ * @param minecraft the Minecraft versions the mod says it works on, like "26.3.x". Empty means any.
  */
 public record InstalledMod(Path file, boolean enabled, boolean squidMod, String name, String version,
-                           List<String> authors, String description) {
+                           List<String> authors, String description, List<String> minecraft) {
     private static final String OFF = ".disabled";
+
+    /** Whether the mod says it works on this Minecraft version, the same way Squid checks. "26.3.x" means 26.3 and its updates. */
+    public boolean worksOn(String minecraftVersion) {
+        if (minecraft.isEmpty()) return true;
+        for (String wanted : minecraft) {
+            if (wanted.equals(minecraftVersion)) return true;
+            if (wanted.endsWith(".x")) {
+                String series = wanted.substring(0, wanted.length() - 2);
+                if (minecraftVersion.equals(series) || minecraftVersion.startsWith(series + ".")) return true;
+            }
+        }
+        return false;
+    }
 
     /** Every mod in the folder, sorted by name. */
     public static List<InstalledMod> list(Path folder) {
@@ -44,7 +58,7 @@ public record InstalledMod(Path file, boolean enabled, boolean squidMod, String 
         String fileName = file.getFileName().toString();
         Path renamed = file.resolveSibling(enabled ? fileName + OFF : fileName.substring(0, fileName.length() - OFF.length()));
         Files.move(file, renamed);
-        return new InstalledMod(renamed, !enabled, squidMod, name, version, authors, description);
+        return new InstalledMod(renamed, !enabled, squidMod, name, version, authors, description, minecraft);
     }
 
     private static InstalledMod read(Path file, boolean enabled) {
@@ -52,19 +66,26 @@ public record InstalledMod(Path file, boolean enabled, boolean squidMod, String 
         String plainName = fileName.substring(0, fileName.indexOf(".jar"));
         try (ZipFile zip = new ZipFile(file.toFile())) {
             ZipEntry entry = zip.getEntry("squid.json");
-            if (entry == null) return new InstalledMod(file, enabled, false, plainName, "", List.of(), "");
+            if (entry == null) return new InstalledMod(file, enabled, false, plainName, "", List.of(), "", List.of());
             Map<String, Object> json = Json.object(Json.parse(
                     new String(zip.getInputStream(entry).readAllBytes(), StandardCharsets.UTF_8)));
-            List<String> authors = new ArrayList<>();
-            if (json.get("authors") != null) {
-                for (Object author : Json.array(json.get("authors"))) authors.add(String.valueOf(author));
-            }
-            return new InstalledMod(file, enabled, true,
-                    text(json, "name", plainName), text(json, "version", ""), authors, text(json, "description", ""));
+            // "minecraft" can be one version ("26.3") or a list (["26.3", "26.4"])
+            List<String> minecraft = json.get("minecraft") instanceof String one ? List.of(one) : strings(json, "minecraft");
+            return new InstalledMod(file, enabled, true, text(json, "name", plainName), text(json, "version", ""),
+                    strings(json, "authors"), text(json, "description", ""), minecraft);
         } catch (IOException | RuntimeException e) {
             // Not a real jar, or a broken squid.json. Still list it, so it can be turned off or removed.
-            return new InstalledMod(file, enabled, false, plainName, "", List.of(), "Couldn't read this mod: " + e.getMessage());
+            return new InstalledMod(file, enabled, false, plainName, "", List.of(), "Couldn't read this mod: " + e.getMessage(),
+                    List.of());
         }
+    }
+
+    private static List<String> strings(Map<String, Object> json, String key) {
+        List<String> values = new ArrayList<>();
+        if (json.get(key) != null) {
+            for (Object value : Json.array(json.get(key))) values.add(String.valueOf(value));
+        }
+        return List.copyOf(values);
     }
 
     private static String text(Map<String, Object> json, String key, String fallback) {

@@ -32,13 +32,21 @@ public class DownloadScreen extends Screen {
         buttons.add(button);
         Settings.setLastInstance(instance.id()); // so the title screen's Play button starts this one next time
 
+        // If this instance's game is already open, just keep an eye on it instead of starting a second copy
+        Process alreadyOpen = RunningGames.get(instance);
+        if (alreadyOpen != null) phase = Phase.RUNNING;
+
         Thread worker = new Thread(() -> {
             try {
-                installer.install(findDetails(version));
-                phase = Phase.STARTING;
-                Process game = Launcher.launch(version.id(), instance.folder(), Settings.playerName(), withSquid,
-                        Settings.memoryGb());
-                instance.markPlayed();
+                Process game = alreadyOpen;
+                if (game == null) {
+                    installer.install(findDetails(version));
+                    phase = Phase.STARTING;
+                    game = Launcher.launch(version.id(), instance.folder(), Accounts.readyToPlay(), withSquid,
+                            Settings.memoryGb());
+                    RunningGames.add(instance, game);
+                    instance.markPlayed();
+                }
                 phase = Phase.RUNNING;
                 exitCode = game.waitFor();
                 phase = exitCode == 0 ? Phase.CLOSED : Phase.CRASHED;
@@ -95,6 +103,28 @@ public class DownloadScreen extends Screen {
                     line = "Squid loaded " + squid.modCount() + (squid.modCount() == 1 ? " mod." : " mods.") + " Have fun!";
                 }
                 centered(g, font, line, w, lineY, 0xA0A0A0);
+                int y = lineY + 12 * GUI;
+                if (squid != null && !squid.skipped().isEmpty()) {
+                    // Mods that couldn't work this time. The game still opened without them.
+                    List<SquidReport.Skipped> skipped = squid.skipped();
+                    if (skipped.size() == 1) {
+                        for (String part : wrap(font, "Squid skipped " + skipped.get(0).mod() + ": " + skipped.get(0).reason(), 300 * GUI)) {
+                            centered(g, font, part, w, y, 0xFFFF55);
+                            y += 12 * GUI;
+                        }
+                    } else {
+                        List<String> names = skipped.stream().map(SquidReport.Skipped::mod).toList();
+                        centered(g, font, "Squid skipped " + skipped.size() + " mods: " + String.join(", ", names), w, y, 0xFFFF55);
+                        centered(g, font, "The Mods screen says why.", w, y + 12 * GUI, 0xFFFF55);
+                        y += 24 * GUI;
+                    }
+                }
+                if (squid != null && !squid.problems().isEmpty()) {
+                    // A mod's hook kept breaking, so Squid switched it off. The game is fine, but that mod may not work.
+                    List<String> names = squid.problems();
+                    String who = names.size() == 1 ? names.get(0) + " had a problem" : String.join(", ", names) + " had problems";
+                    centered(g, font, who + ", so Squid turned part of it off.", w, y, 0xFFFF55);
+                }
                 button.setLabel("Back");
             }
             case CLOSED -> {

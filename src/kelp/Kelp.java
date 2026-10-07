@@ -3,6 +3,7 @@ package kelp;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Taskbar;
 import java.awt.image.BufferedImage;
@@ -29,6 +30,7 @@ public class Kelp {
                 System.exit(1);
             }
             frame.setSize(1000, 640);
+            frame.setMinimumSize(new Dimension(900, 600)); // smaller and the menus would run into each other
             frame.setLocationRelativeTo(null); // center on screen
             frame.setVisible(true);
         });

@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HexFormat;
 import java.util.List;
@@ -35,7 +36,11 @@ public class Downloader {
     private static final int THREADS = 8; // how many files download at the same time
     private static final int TRIES = 3;
 
-    private final HttpClient client = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NORMAL).build();
+    // Give up connecting after 15 seconds, so a bad connection fails instead of waiting forever
+    private final HttpClient client = HttpClient.newBuilder()
+            .followRedirects(HttpClient.Redirect.NORMAL)
+            .connectTimeout(Duration.ofSeconds(15))
+            .build();
     private final AtomicInteger filesDone = new AtomicInteger();
     private final AtomicLong bytesDone = new AtomicLong();
     private volatile int filesTotal;
@@ -58,14 +63,27 @@ public class Downloader {
         return bytesTotal;
     }
 
-    /** Downloads a small text file (like a JSON list), saves a copy, and returns the text. */
+    /**
+     * Downloads a small text file (like a JSON list), saves a copy, and returns the text.
+     * Without internet it uses the copy saved last time, so games that are already downloaded still start.
+     */
     public String fetchText(String url, Path saveTo) throws IOException, InterruptedException {
-        HttpResponse<String> response = client.send(HttpRequest.newBuilder(URI.create(url)).build(),
-                HttpResponse.BodyHandlers.ofString());
-        if (response.statusCode() != 200) throw new IOException("Got error " + response.statusCode() + " for " + url);
+        String text;
+        try {
+            HttpRequest request = HttpRequest.newBuilder(URI.create(url)).timeout(Duration.ofSeconds(30)).build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() != 200) throw new IOException("Got error " + response.statusCode() + " for " + url);
+            text = response.body();
+        } catch (IOException offline) {
+            if (Files.exists(saveTo)) return Files.readString(saveTo); // no internet: last time's copy is fine
+            throw new IOException("Couldn't download " + saveTo.getFileName() + ": " + explain(offline), offline);
+        }
+        // Write to a .part file first, so a half-written file never replaces a good copy
         Files.createDirectories(saveTo.getParent());
-        Files.writeString(saveTo, response.body());
-        return response.body();
+        Path part = saveTo.resolveSibling(saveTo.getFileName() + ".part");
+        Files.writeString(part, text);
+        Files.move(part, saveTo, StandardCopyOption.REPLACE_EXISTING);
+        return text;
     }
 
     /** Downloads every job, 8 at a time. Files that are already there are skipped. */
@@ -121,10 +139,21 @@ public class Downloader {
                 return;
             } catch (IOException e) {
                 problem = e;
+                if (attempt < TRIES) Thread.sleep(attempt == 1 ? 1000 : 3000); // give a hiccup time to pass
             }
         }
         Files.deleteIfExists(part);
-        throw new IOException("Couldn't download " + file.getFileName() + ": " + problem.getMessage(), problem);
+        throw new IOException("Couldn't download " + file.getFileName() + ": " + explain(problem), problem);
+    }
+
+    /** A connection problem in plain words. Java's own messages are often empty or technical. */
+    static String explain(IOException e) {
+        if (e instanceof java.net.ConnectException || e instanceof java.net.UnknownHostException
+                || e instanceof java.net.http.HttpConnectTimeoutException) {
+            return "no internet connection";
+        }
+        if (e instanceof java.net.http.HttpTimeoutException) return "the connection is too slow";
+        return e.getMessage() != null ? e.getMessage() : "the connection failed";
     }
 
     private void finished(Job job) {

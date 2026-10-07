@@ -123,8 +123,14 @@ public class GameOptionsScreen extends Screen {
         }
 
         int bottom = h - 28 * GUI;
-        if (problem != null) centered(g, problem, w, bottom - 14 * GUI, 0xFF5555);
-        else centered(g, "Changes are used the next time this instance starts.", w, bottom - 14 * GUI, 0x808080);
+        if (problem != null) {
+            centered(g, problem, w, bottom - 14 * GUI, 0xFF5555);
+        } else if (RunningGames.isRunning(instance)) {
+            // Minecraft saves its own options when it closes, which would undo changes made now
+            centered(g, "Close the game first, or it will undo these.", w, bottom - 14 * GUI, 0xFFFF55);
+        } else {
+            centered(g, "Changes are used the next time this instance starts.", w, bottom - 14 * GUI, 0x808080);
+        }
         doneButton.setBounds(w / 2 - 100 * GUI, bottom, 200 * GUI, 20 * GUI);
         doneButton.draw(g, font, GUI);
     }

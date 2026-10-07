@@ -61,6 +61,10 @@ public class ModsScreen extends Screen {
             // On the right: ON or OFF, like a Minecraft options button
             String state = !mod.squidMod() ? "Not a Squid mod" : mod.enabled() ? "ON" : "OFF";
             int color = !mod.squidMod() ? 0xA0A0A0 : mod.enabled() ? 0x55FF55 : 0xFF5555;
+            if (mod.squidMod() && mod.enabled() && !mod.worksOn(minecraftVersion())) {
+                state = "Wrong version";
+                color = 0xFFFF55;
+            }
             font.draw(gg, state, x + width - font.width(state, GUI), y, GUI, color);
         });
 
@@ -72,6 +76,10 @@ public class ModsScreen extends Screen {
             if (!hovered.authors().isEmpty()) {
                 info = "By " + String.join(", ", hovered.authors()) + (info.isEmpty() ? "" : ". " + info);
             }
+            if (hovered.squidMod() && !hovered.worksOn(minecraftVersion())) {
+                info = "Made for Minecraft " + String.join(" or ", hovered.minecraft()) + ", so Squid will skip it on "
+                        + minecraftVersion() + ".";
+            }
         }
         if (info != null && !info.isEmpty()) {
             while (info.length() > 3 && font.width(info, GUI) > w - 8 * GUI) info = info.substring(0, info.length() - 4) + "...";
@@ -80,12 +88,18 @@ public class ModsScreen extends Screen {
 
         if (!instance.squid()) {
             centered(g, "Squid is off for this instance, so these won't load.", w, listBottom + 18 * GUI, 0xFFFF55);
+        } else if (RunningGames.isRunning(instance)) {
+            centered(g, "Changes are used the next time the game starts.", w, listBottom + 18 * GUI, 0xFFFF55);
         }
 
         int buttonsY = h - 28 * GUI;
         openButton.setBounds(w / 2 - 100 * GUI, buttonsY, 98 * GUI, 20 * GUI);
         doneButton.setBounds(w / 2 + 2 * GUI, buttonsY, 98 * GUI, 20 * GUI);
         for (McButton b : buttons) b.draw(g, font, GUI);
+    }
+
+    private String minecraftVersion() {
+        return instance.version().id();
     }
 
     @Override
