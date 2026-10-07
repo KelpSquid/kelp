@@ -13,6 +13,7 @@ public class NewInstanceScreen extends Screen {
     private final McButton loaderButton = new McButton("", this::nextLoader);
     private final McButton createButton = new McButton(t("Create"), this::create);
     private final McButton cancelButton = new McButton(t("Cancel"), this::back);
+    private final McButton importButton = new McButton(t("Import Modpack..."), this::pickModpack);
 
     private VersionManifest.Version version;
     private Loader loader = Loader.SQUID;
@@ -26,6 +27,7 @@ public class NewInstanceScreen extends Screen {
         buttons.add(loaderButton);
         buttons.add(createButton);
         buttons.add(cancelButton);
+        buttons.add(importButton);
         nameField.setFocused(true);
         nameField.onChange(text -> nameTyped = true);
     }
@@ -77,6 +79,7 @@ public class NewInstanceScreen extends Screen {
         createButton.setActive(version != null && !nameField.getText().isBlank() && loader.ready());
         createButton.setBounds(left, h - 28 * GUI, 98 * GUI, 20 * GUI);
         cancelButton.setBounds(w / 2 + 2 * GUI, h - 28 * GUI, 98 * GUI, 20 * GUI);
+        importButton.setBounds(left, h - 52 * GUI, 200 * GUI, 20 * GUI);
         for (McButton b : buttons) b.draw(g, font, GUI);
     }
 
@@ -94,5 +97,20 @@ public class NewInstanceScreen extends Screen {
     @Override
     public void keyPressed(int keyCode, boolean ctrl) {
         nameField.keyPressed(keyCode, ctrl);
+    }
+
+    /** A Modrinth (.mrpack), CurseForge or Prism Launcher pack becomes a new instance. */
+    private void pickModpack() {
+        javax.swing.JFileChooser chooser = new javax.swing.JFileChooser(new java.io.File(System.getProperty("user.home"), "Downloads"));
+        chooser.setDialogTitle(t("Pick a modpack"));
+        chooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(t("Modpacks (.mrpack, .zip)"), "mrpack", "zip"));
+        if (chooser.showDialog(javax.swing.SwingUtilities.getWindowAncestor(panel), t("Import")) != javax.swing.JFileChooser.APPROVE_OPTION) return;
+        panel.setScreen(new ImportScreen(panel, parent, chooser.getSelectedFile().toPath()));
+    }
+
+    /** A modpack dropped onto the window is imported too. */
+    @Override
+    public void filesDropped(java.util.List<java.nio.file.Path> files) {
+        if (!files.isEmpty()) panel.setScreen(new ImportScreen(panel, parent, files.get(0)));
     }
 }

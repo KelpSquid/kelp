@@ -70,6 +70,7 @@ public class KelpTest {
         crashHelper();
         backups();
         stats();
+        modpacks();
         squidReport();
         accounts();
         microsoftLogin();
@@ -882,6 +883,82 @@ public class KelpTest {
         Files.writeString(shots.resolve("notes.txt"), "not a picture");
         check("the gallery shows pictures, newest first", GalleryScreen.list(shots).stream().map(f -> f.getFileName().toString()).toList().toString(), "[new.png, old.png]");
         check("pictures get a small copy for the grid", GalleryScreen.thumbnail(shots.resolve("new.png")) != null, true);
+    }
+
+    /** A zip with these files (name, text) in it. */
+    static void zip(Path file, String... namesAndTexts) throws IOException {
+        try (ZipOutputStream zip = new ZipOutputStream(Files.newOutputStream(file))) {
+            for (int i = 0; i < namesAndTexts.length; i += 2) {
+                zip.putNextEntry(new ZipEntry(namesAndTexts[i]));
+                zip.write(namesAndTexts[i + 1].getBytes(StandardCharsets.UTF_8));
+                zip.closeEntry();
+            }
+        }
+    }
+
+    static void modpacks() throws Exception {
+        byte[] modBytes = "a fabric mod".getBytes();
+        HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        String base = "http://127.0.0.1:" + server.getAddress().getPort();
+        server.createContext("/", exchange -> {
+            String path = exchange.getRequestURI().getPath();
+            byte[] body = path.equals("/versions.json")
+                    ? "{\"versions\": [{\"id\": \"26.3\", \"type\": \"release\", \"url\": \"x\", \"releaseTime\": \"2026-09-01T00:00:00+00:00\"}]}".getBytes()
+                    : path.equals("/sodium.jar") ? modBytes : path.startsWith("/cf/1/") ? "curseforge mod".getBytes() : new byte[0];
+            exchange.sendResponseHeaders(body.length == 0 ? 404 : 200, body.length == 0 ? -1 : body.length);
+            if (body.length > 0) exchange.getResponseBody().write(body);
+            exchange.close();
+        });
+        server.start();
+        String realVersions = VersionManifest.url;
+        String realCurseForge = ModpackImport.curseForgeDownload;
+        VersionManifest.url = base + "/versions.json";
+        ModpackImport.curseForgeDownload = base + "/cf/%d/%d";
+        ModpackImport.ALLOWED_HOSTS.add("127.0.0.1");
+        try {
+            Path packs = Files.createDirectories(home.resolve("modpacks"));
+            Path mrpack = packs.resolve("Cool Pack.mrpack");
+            zip(mrpack, "modrinth.index.json", "{\"formatVersion\": 1, \"game\": \"minecraft\", \"name\": \"Cool Pack\", \"files\": ["
+                    + "{\"path\": \"mods/sodium.jar\", \"hashes\": {\"sha1\": \"" + sha1(modBytes) + "\"}, \"downloads\": [\"" + base + "/sodium.jar\"], \"fileSize\": " + modBytes.length + "},"
+                    + "{\"path\": \"mods/server-only.jar\", \"env\": {\"client\": \"unsupported\", \"server\": \"required\"}, \"hashes\": {}, \"downloads\": [\"" + base + "/x.jar\"]},"
+                    + "{\"path\": \"mods/sneaky.jar\", \"hashes\": {\"sha1\": \"aa\"}, \"downloads\": [\"https://evil.example.com/x.jar\"]}],"
+                    + " \"dependencies\": {\"minecraft\": \"26.3\", \"fabric-loader\": \"0.19.5\"}}",
+                    "overrides/options.txt", "renderDistance:6", "overrides/config/sodium.json", "{}");
+            Downloader downloader = new Downloader();
+            ModpackImport.Result modrinth = ModpackImport.importPack(mrpack, downloader, stage -> { });
+            Instance cool = modrinth.instance();
+            check("a Modrinth pack becomes an instance with its version and loader", cool.name() + " | " + cool.version().id() + " | " + cool.loader(),
+                    "Cool Pack | 26.3 | FABRIC");
+            check("its mods download, server-only and off-site ones don't", Files.readString(cool.mods().resolve("sodium.jar")) + " "
+                    + Files.exists(cool.mods().resolve("server-only.jar")) + " " + Files.exists(cool.mods().resolve("sneaky.jar")), "a fabric mod false false");
+            check("its own files are copied in", Files.readString(cool.folder().resolve("options.txt")) + " " + Files.exists(cool.folder().resolve("config/sodium.json")),
+                    "renderDistance:6 true");
+
+            Path curse = packs.resolve("curse.zip");
+            zip(curse, "manifest.json", "{\"name\": \"Curse Pack\", \"minecraft\": {\"version\": \"26.3\", \"modLoaders\": [{\"id\": \"neoforge-26.3.0.55-beta\", \"primary\": true}]},"
+                    + " \"files\": [{\"projectID\": 1, \"fileID\": 10, \"required\": true}, {\"projectID\": 2, \"fileID\": 20, \"required\": true}], \"overrides\": \"overrides\"}");
+            ModpackImport.Result curseForge = ModpackImport.importPack(curse, new Downloader(), stage -> { });
+            check("a CurseForge pack: the mods that can be downloaded are, the others are listed", curseForge.instance().loader() + " "
+                    + Files.exists(curseForge.instance().mods().resolve("curseforge-1-10.jar")) + " " + curseForge.missing().size(), "NEOFORGE true 1");
+
+            Path prism = packs.resolve("prism.zip");
+            zip(prism, "My Prism/mmc-pack.json", "{\"components\": [{\"uid\": \"net.minecraft\", \"version\": \"26.3\"}, {\"uid\": \"org.quiltmc.quilt-loader\", \"version\": \"0.30.1\"}]}",
+                    "My Prism/.minecraft/mods/thing.jar", "a quilt mod", "My Prism/.minecraft/saves/World/level.dat", "x");
+            ModpackImport.Result fromPrism = ModpackImport.importPack(prism, new Downloader(), stage -> { });
+            check("a Prism Launcher instance comes over with its mods and worlds", fromPrism.instance().name() + " " + fromPrism.instance().loader() + " "
+                    + Files.exists(fromPrism.instance().mods().resolve("thing.jar")) + " " + Files.exists(fromPrism.instance().folder().resolve("saves/World/level.dat")),
+                    "My Prism QUILT true true");
+
+            Path notPack = packs.resolve("photo.zip");
+            zip(notPack, "photo.png", "x");
+            check("something that isn't a modpack is explained", problem(() -> ModpackImport.importPack(notPack, new Downloader(), stage -> { })),
+                    "That file isn't a modpack Kelp can read.");
+        } finally {
+            VersionManifest.url = realVersions;
+            ModpackImport.curseForgeDownload = realCurseForge;
+            ModpackImport.ALLOWED_HOSTS.remove("127.0.0.1");
+            server.stop(0);
+        }
     }
 
     static void addMods() throws Exception {

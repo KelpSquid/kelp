@@ -11,7 +11,8 @@ import java.util.Map;
 
 /** Mojang's official list of every Minecraft version, newest first. */
 public final class VersionManifest {
-    private static final String URL = "https://piston-meta.mojang.com/mc/game/version_manifest_v2.json";
+    /** Mojang's list of every version. Tests point it at a pretend server. */
+    static String url = "https://piston-meta.mojang.com/mc/game/version_manifest_v2.json";
 
     /**
      * One version from the list.
@@ -27,7 +28,7 @@ public final class VersionManifest {
 
     public static List<Version> download() throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder(URI.create(URL)).build();
+        HttpRequest request = HttpRequest.newBuilder(URI.create(url)).build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         if (response.statusCode() != 200) throw new IOException("Mojang answered with error " + response.statusCode());
 
