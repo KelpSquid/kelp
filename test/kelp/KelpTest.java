@@ -69,6 +69,7 @@ public class KelpTest {
         updates();
         crashHelper();
         backups();
+        stats();
         squidReport();
         accounts();
         microsoftLogin();
@@ -851,6 +852,36 @@ public class KelpTest {
         check("restoring adds a new world and keeps the original", restored.getFileName().toString().startsWith("My Base (backup ") + " "
                 + Files.readString(restored.resolve("level.dat")) + " | " + Files.readString(world.resolve("level.dat")),
                 "true the world, changed | the world, changed");
+    }
+
+    static void stats() throws Exception {
+        VersionManifest.Version v = new VersionManifest.Version("26.3", "release", "", "");
+        Instance instance = Instance.create("Stats Test", v, Loader.VANILLA);
+        instance.markPlayed();
+        instance.addPlayTime(90 * 60_000);
+        instance.addPlayTime(30 * 60_000);
+        Instance read = Instance.find(instance.id());
+        check("play time and times played add up", GameStats.duration(read.playMillis()) + " " + read.timesPlayed(), "2h 0m 1");
+
+        for (String world : new String[] {"A", "B"}) {
+            Path stats = Files.createDirectories(Worlds.saves(instance).resolve(world).resolve("stats"));
+            Files.writeString(stats.getParent().resolve("level.dat"), "x");
+            Files.writeString(stats.resolve("player.json"), "{\"stats\": {\"minecraft:custom\": {\"minecraft:play_time\": 72000, "
+                    + "\"minecraft:deaths\": 2, \"minecraft:mob_kills\": 10, \"minecraft:jump\": 300, \"minecraft:walk_one_cm\": 150000, "
+                    + "\"minecraft:sprint_one_cm\": 50000}, \"minecraft:mined\": {\"minecraft:stone\": 100, \"minecraft:dirt\": 25}, "
+                    + "\"minecraft:crafted\": {\"minecraft:torch\": 8}}}");
+        }
+        GameStats total = GameStats.read(instance);
+        check("Minecraft's stats add up over every world", GameStats.duration(total.ticksPlayed() * 50) + " " + total.blocksMined() + " " + total.itemsCrafted()
+                + " " + total.mobsKilled() + " " + total.deaths() + " " + total.jumps() + " " + total.walkedCm(), "2h 0m 250 16 20 4 600 400000");
+
+        Path shots = Files.createDirectories(instance.folder().resolve("screenshots"));
+        javax.imageio.ImageIO.write(new java.awt.image.BufferedImage(320, 180, java.awt.image.BufferedImage.TYPE_INT_RGB), "png", shots.resolve("old.png").toFile());
+        javax.imageio.ImageIO.write(new java.awt.image.BufferedImage(320, 180, java.awt.image.BufferedImage.TYPE_INT_RGB), "png", shots.resolve("new.png").toFile());
+        Files.setLastModifiedTime(shots.resolve("new.png"), java.nio.file.attribute.FileTime.fromMillis(System.currentTimeMillis() + 60_000));
+        Files.writeString(shots.resolve("notes.txt"), "not a picture");
+        check("the gallery shows pictures, newest first", GalleryScreen.list(shots).stream().map(f -> f.getFileName().toString()).toList().toString(), "[new.png, old.png]");
+        check("pictures get a small copy for the grid", GalleryScreen.thumbnail(shots.resolve("new.png")) != null, true);
     }
 
     static void addMods() throws Exception {

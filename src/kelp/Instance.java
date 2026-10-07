@@ -26,6 +26,8 @@ public final class Instance {
     private Loader loader;
     private String loaderVersion; // like "fabric-loader-0.19.5-26.3", once it's installed (Fabric and Quilt only)
     private long lastPlayed;
+    private long playMillis; // how long its game has been open, all together
+    private int timesPlayed;
 
     private Instance(Path folder) {
         this.folder = folder;
@@ -134,6 +136,8 @@ public final class Instance {
                 : Boolean.parseBoolean(values.getProperty("squid", "false")) ? Loader.SQUID : Loader.VANILLA;
         instance.loaderVersion = values.getProperty("loaderVersion");
         instance.lastPlayed = Long.parseLong(values.getProperty("lastPlayed", "0"));
+        instance.playMillis = Long.parseLong(values.getProperty("playMillis", "0"));
+        instance.timesPlayed = Integer.parseInt(values.getProperty("timesPlayed", "0"));
         return instance;
     }
 
@@ -146,6 +150,8 @@ public final class Instance {
         values.setProperty("loader", loader.name());
         if (loaderVersion != null) values.setProperty("loaderVersion", loaderVersion);
         values.setProperty("lastPlayed", String.valueOf(lastPlayed));
+        values.setProperty("playMillis", String.valueOf(playMillis));
+        values.setProperty("timesPlayed", String.valueOf(timesPlayed));
         try (Writer out = Files.newBufferedWriter(folder.resolve(FILE))) {
             values.store(out, "Kelp instance");
         }
@@ -217,7 +223,27 @@ public final class Instance {
 
     public void markPlayed() throws IOException {
         lastPlayed = System.currentTimeMillis();
+        timesPlayed++;
         save();
+    }
+
+    /** How long this instance's game has been open, all together, in milliseconds. */
+    public long playMillis() {
+        return playMillis;
+    }
+
+    public int timesPlayed() {
+        return timesPlayed;
+    }
+
+    /** Adds a play session's length (when its game closes). Read fresh first, so two sessions can't undo each other. */
+    public void addPlayTime(long millis) throws IOException {
+        synchronized (Instance.class) {
+            Instance latest = load(folder);
+            latest.playMillis += millis;
+            latest.save();
+            playMillis = latest.playMillis;
+        }
     }
 
     /** Deletes the instance's folder, with its worlds, settings and mods. */

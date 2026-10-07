@@ -14,6 +14,14 @@ public final class RunningGames {
     public static void add(Instance instance, Process game) {
         GAMES.put(instance.id(), game);
         Backups.watch(instance, game); // worlds get backed up while it's played
+        long started = System.currentTimeMillis();
+        game.onExit().thenRun(() -> {
+            try {
+                instance.addPlayTime(System.currentTimeMillis() - started);
+            } catch (java.io.IOException e) {
+                System.err.println("Couldn't save the play time: " + e.getMessage());
+            }
+        });
         game.onExit().thenRun(() -> GAMES.remove(instance.id(), game));
     }
 

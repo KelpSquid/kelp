@@ -17,6 +17,8 @@ public class InstancesScreen extends Screen {
     private final McButton deleteButton = new McButton(t("Delete"), this::delete);
     private final McButton defaultButton = new McButton("", this::toggleDefault);
     private final McButton worldsButton = new McButton(t("Worlds"), this::openWorlds);
+    private final McButton statsButton = new McButton(t("Stats"), () -> panel.setScreen(new StatsScreen(panel, this, list.getSelected())));
+    private final McButton galleryButton = new McButton(t("Gallery"), () -> panel.setScreen(new GalleryScreen(panel, this, list.getSelected())));
     private final McButton backButton = new McButton(t("Back"), this::back);
     private String problem;
 
@@ -31,6 +33,8 @@ public class InstancesScreen extends Screen {
         buttons.add(deleteButton);
         buttons.add(defaultButton);
         buttons.add(worldsButton);
+        buttons.add(statsButton);
+        buttons.add(galleryButton);
         buttons.add(backButton);
     }
 
@@ -110,7 +114,7 @@ public class InstancesScreen extends Screen {
         McFont font = panel.getMcFont();
         centered(g, t("Instances"), w, 12 * GUI, 0xFFFFFF);
 
-        int listBottom = h - 132 * GUI;
+        int listBottom = h - 156 * GUI;
         String empty = list.getItems().isEmpty() ? t("No instances yet. Click New Instance!") : null;
         list.draw(g, font, w, 32 * GUI, listBottom, empty, (gg, instance, x, y, width) -> {
             // Like Minecraft's world list: the name, and under it in grey, its version and loader.
@@ -125,12 +129,12 @@ public class InstancesScreen extends Screen {
 
         // Buttons: everything but New Instance and Back is for one instance, so they only show once one is picked
         Instance selected = list.getSelected();
-        McButton[] forOne = {playButton, loaderButton, modsButton, optionsButton, deleteButton, defaultButton, worldsButton};
+        McButton[] forOne = {playButton, loaderButton, modsButton, optionsButton, deleteButton, defaultButton, worldsButton, statsButton, galleryButton};
         for (McButton b : forOne) b.setActive(selected != null);
         if (selected == null) centered(g, t("Click an instance to play it or change it."), w, h - 112 * GUI, 0xA0A0A0);
         loaderButton.setLabel(selected == null ? t("Loader") : selected.loader().label());
         defaultButton.setLabel(selected != null && selected.isDefault() ? t("Not Default") : t("Make Default"));
-        int y = h - 124 * GUI;
+        int y = h - 148 * GUI;
         int left = w / 2 - 100 * GUI;
         int right = w / 2 + 2 * GUI;
         playButton.setBounds(left, y, 98 * GUI, 20 * GUI);
@@ -141,8 +145,10 @@ public class InstancesScreen extends Screen {
         deleteButton.setBounds(right, y + 48 * GUI, 98 * GUI, 20 * GUI);
         defaultButton.setBounds(left, y + 72 * GUI, 98 * GUI, 20 * GUI);
         worldsButton.setBounds(right, y + 72 * GUI, 98 * GUI, 20 * GUI);
-        backButton.setBounds(left, y + 96 * GUI, 200 * GUI, 20 * GUI);
-        if (selected == null) newButton.setBounds(left, y + 72 * GUI, 200 * GUI, 20 * GUI); // on its own, above Back
+        statsButton.setBounds(left, y + 96 * GUI, 98 * GUI, 20 * GUI);
+        galleryButton.setBounds(right, y + 96 * GUI, 98 * GUI, 20 * GUI);
+        backButton.setBounds(left, y + 120 * GUI, 200 * GUI, 20 * GUI);
+        if (selected == null) newButton.setBounds(left, y + 96 * GUI, 200 * GUI, 20 * GUI); // on its own, above Back
         for (McButton b : buttons) {
             if (selected != null || !java.util.Arrays.asList(forOne).contains(b)) b.draw(g, font, GUI);
         }
