@@ -5,11 +5,15 @@ import java.awt.Graphics2D;
 import java.io.IOException;
 import java.nio.file.Files;
 
-/** The mods installed in one instance, with a switch for each. Click a mod to turn it on or off. */
+/**
+ * The mods installed in one instance, with a switch for each. Click a mod to turn it on or off.
+ * New Mod makes a mod of your own, and Edit opens it again.
+ */
 public class ModsScreen extends Screen {
     private final Screen parent;
     private final Instance instance;
     private final McList<InstalledMod> list = new McList<>(220);
+    private final McButton newButton = new McButton("New Mod", this::newMod);
     private final McButton openButton = new McButton("Open Folder", this::openFolder);
     private final McButton doneButton = new McButton("Done", this::back);
 
@@ -17,13 +21,20 @@ public class ModsScreen extends Screen {
     private String problem;
     private int mouseX = -1;
     private int mouseY = -1;
+    private int editLeft; // where the "Edit" on the rows of .java mods is, to tell clicks on it apart
+    private int editRight;
 
     public ModsScreen(OceanPanel panel, Screen parent, Instance instance) {
         super(panel);
         this.parent = parent;
         this.instance = instance;
+        buttons.add(newButton);
         buttons.add(openButton);
         buttons.add(doneButton);
+    }
+
+    private void newMod() {
+        panel.setScreen(new NewModScreen(panel, this, instance));
     }
 
     private void back() {
@@ -53,8 +64,8 @@ public class ModsScreen extends Screen {
         refresh();
         centered(g, "Mods for " + instance.name(), w, 12 * GUI, 0xFFFFFF);
 
-        int listBottom = h - 60 * GUI;
-        String empty = list.getItems().isEmpty() ? "No mods yet. Click Open Folder!" : null;
+        int listBottom = h - 84 * GUI;
+        String empty = list.getItems().isEmpty() ? "No mods yet. Click New Mod!" : null;
         list.draw(g, font, w, 32 * GUI, listBottom, empty, (gg, mod, x, y, width) -> {
             String name = mod.version().isEmpty() ? mod.name() : mod.name() + " " + mod.version();
             font.draw(gg, name, x, y, GUI, mod.enabled() ? 0xFFFFFF : 0x808080);
@@ -66,6 +77,12 @@ public class ModsScreen extends Screen {
                 color = 0xFFFF55;
             }
             font.draw(gg, state, x + width - font.width(state, GUI), y, GUI, color);
+            if (mod.source()) {
+                editRight = x + width - font.width("OFF", GUI) - 10 * GUI;
+                editLeft = editRight - font.width("Edit", GUI);
+                boolean over = mouseX >= editLeft && mouseX < editRight && list.itemAt(mouseX, mouseY) == mod;
+                font.draw(gg, "Edit", editLeft, y, GUI, over ? 0xFFFFA0 : 0x55FFFF);
+            }
         });
 
         // Under the list: who made the mod under the mouse and what it does, or a problem
@@ -92,9 +109,10 @@ public class ModsScreen extends Screen {
             centered(g, "Changes are used the next time the game starts.", w, listBottom + 18 * GUI, 0xFFFF55);
         }
 
-        int buttonsY = h - 28 * GUI;
-        openButton.setBounds(w / 2 - 100 * GUI, buttonsY, 98 * GUI, 20 * GUI);
-        doneButton.setBounds(w / 2 + 2 * GUI, buttonsY, 98 * GUI, 20 * GUI);
+        int buttonsY = h - 52 * GUI;
+        newButton.setBounds(w / 2 - 100 * GUI, buttonsY, 98 * GUI, 20 * GUI);
+        openButton.setBounds(w / 2 + 2 * GUI, buttonsY, 98 * GUI, 20 * GUI);
+        doneButton.setBounds(w / 2 - 100 * GUI, buttonsY + 24 * GUI, 200 * GUI, 20 * GUI);
         for (McButton b : buttons) b.draw(g, font, GUI);
     }
 
@@ -119,6 +137,15 @@ public class ModsScreen extends Screen {
         }
         if (!mod.squidMod()) {
             problem = "That jar has no squid.json, so Squid skips it either way.";
+            return;
+        }
+        if (mod.source() && x >= editLeft && x < editRight) {
+            try {
+                Editors.open(mod.file());
+                problem = null;
+            } catch (IOException e) {
+                problem = "Couldn't open it: " + e.getMessage();
+            }
             return;
         }
         try {

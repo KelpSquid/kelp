@@ -196,6 +196,24 @@ public class KelpTest {
         check("turning a mod off renames it", Files.exists(folder.resolve("zoom.jar.disabled")) && !off.enabled(), true);
         InstalledMod on = off.toggle();
         check("turning it back on renames it back", Files.exists(folder.resolve("zoom.jar")) && on.enabled(), true);
+
+        // Your own mods: New Mod writes a working .java file
+        check("mod names become class names", ModTemplate.className("my cool mod!") + " " + ModTemplate.className("  ")
+                + " " + ModTemplate.className("3D Arrows"), "MyCoolMod MyMod Mod3DArrows");
+        Path first = ModTemplate.create(folder, "Rainbow Sheep");
+        Path second = ModTemplate.create(folder, "Rainbow Sheep");
+        check("a taken name gets a number", first.getFileName() + " " + second.getFileName(), "RainbowSheep.java RainbowSheep2.java");
+        String code = Files.readString(first);
+        check("the new mod is ready to play", code.contains("public class RainbowSheep extends EasyMod")
+                && code.contains("say(\"Rainbow Sheep is working!\");") && code.contains("onKey(\"G\""), true);
+        check("a quote in the name can't break the code", ModTemplate.text("Bob's \"Mod\"", "BobSMod").contains("say(\"Bob's 'Mod' is working!\");"), true);
+        InstalledMod sheep = InstalledMod.list(folder).stream().filter(m -> m.file().equals(first)).findFirst().orElseThrow();
+        check("a .java mod is listed as your own Squid mod", sheep.name() + " | " + sheep.squidMod() + " | " + sheep.source(),
+                "Rainbow Sheep | true | true");
+        InstalledMod sheepOff = sheep.toggle();
+        check("a .java mod can be turned off", Files.exists(folder.resolve("RainbowSheep.java.disabled")) && !sheepOff.enabled()
+                && InstalledMod.list(folder).stream().anyMatch(m -> m.name().equals("Rainbow Sheep") && !m.enabled()), true);
+        check("jars aren't .java mods", zoom.source(), false);
     }
 
     // ---- Accounts ----

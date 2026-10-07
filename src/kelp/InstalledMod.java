@@ -13,8 +13,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 /**
- * A mod in a version's mods folder, described by the same squid.json Squid reads.
- * Turned-off mods end in ".jar.disabled", which Squid skips.
+ * A mod in a version's mods folder, described by the same squid.json Squid reads,
+ * or a mod written as one .java file, which Squid compiles by itself.
+ * Turned-off mods end in ".disabled", which Squid skips.
  *
  * @param squidMod  false if the jar has no squid.json (so Squid will skip it anyway)
  * @param minecraft the Minecraft versions the mod says it works on, like "26.3.x". Empty means any.
@@ -22,6 +23,11 @@ import java.util.zip.ZipFile;
 public record InstalledMod(Path file, boolean enabled, boolean squidMod, String name, String version,
                            List<String> authors, String description, List<String> minecraft) {
     private static final String OFF = ".disabled";
+
+    /** Whether it's a mod written as a .java file, which can be opened and changed. */
+    public boolean source() {
+        return file.getFileName().toString().contains(".java");
+    }
 
     /** Whether the mod says it works on this Minecraft version, the same way Squid checks. "26.3.x" means 26.3 and its updates. */
     public boolean worksOn(String minecraftVersion) {
@@ -45,6 +51,8 @@ public record InstalledMod(Path file, boolean enabled, boolean squidMod, String 
                 String fileName = file.getFileName().toString();
                 if (fileName.endsWith(".jar")) mods.add(read(file, true));
                 else if (fileName.endsWith(".jar" + OFF)) mods.add(read(file, false));
+                else if (fileName.endsWith(".java")) mods.add(readSource(file, true));
+                else if (fileName.endsWith(".java" + OFF)) mods.add(readSource(file, false));
             }
         } catch (IOException e) {
             System.err.println("Couldn't list " + folder + ": " + e.getMessage());
@@ -59,6 +67,17 @@ public record InstalledMod(Path file, boolean enabled, boolean squidMod, String 
         Path renamed = file.resolveSibling(enabled ? fileName + OFF : fileName.substring(0, fileName.length() - OFF.length()));
         Files.move(file, renamed);
         return new InstalledMod(renamed, !enabled, squidMod, name, version, authors, description, minecraft);
+    }
+
+    /** A .java mod: its name comes from the file name, like MyCoolMod.java becoming "My Cool Mod". */
+    private static InstalledMod readSource(Path file, boolean enabled) {
+        String fileName = file.getFileName().toString();
+        String className = fileName.substring(0, fileName.indexOf(".java"));
+        String name = className.replace('_', ' ')
+                .replaceAll("(?<=[a-z0-9])(?=[A-Z])", " ")
+                .replaceAll("(?<=[A-Z])(?=[A-Z][a-z])", " ").trim();
+        return new InstalledMod(file, enabled, true, name, "", List.of(),
+                "Your own mod, in " + fileName + ". Click Edit to change it, then play!", List.of());
     }
 
     private static InstalledMod read(Path file, boolean enabled) {
