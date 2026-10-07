@@ -14,6 +14,7 @@ public class InstancesScreen extends Screen {
     private final McButton optionsButton = new McButton("Game Options", this::openOptions);
     private final McButton deleteButton = new McButton("Delete", this::delete);
     private final McButton defaultButton = new McButton("", this::toggleDefault);
+    private final McButton worldsButton = new McButton("Worlds", this::openWorlds);
     private final McButton backButton = new McButton("Back", this::back);
     private String problem;
 
@@ -27,6 +28,7 @@ public class InstancesScreen extends Screen {
         buttons.add(optionsButton);
         buttons.add(deleteButton);
         buttons.add(defaultButton);
+        buttons.add(worldsButton);
         buttons.add(backButton);
     }
 
@@ -68,6 +70,10 @@ public class InstancesScreen extends Screen {
     private void toggleDefault() {
         Instance instance = list.getSelected();
         Settings.setDefaultInstance(instance.isDefault() ? null : instance.id());
+    }
+
+    private void openWorlds() {
+        panel.setScreen(new WorldsScreen(panel, this, list.getSelected()));
     }
 
     private void openMods() {
@@ -115,7 +121,7 @@ public class InstancesScreen extends Screen {
 
         // Buttons: everything but New Instance and Back needs an instance picked first
         Instance selected = list.getSelected();
-        for (McButton b : new McButton[] {playButton, loaderButton, modsButton, optionsButton, deleteButton, defaultButton}) {
+        for (McButton b : new McButton[] {playButton, loaderButton, modsButton, optionsButton, deleteButton, defaultButton, worldsButton}) {
             b.setActive(selected != null);
         }
         loaderButton.setLabel(selected == null ? "Loader" : selected.loader().label());
@@ -129,7 +135,8 @@ public class InstancesScreen extends Screen {
         modsButton.setBounds(right, y + 24 * GUI, 98 * GUI, 20 * GUI);
         optionsButton.setBounds(left, y + 48 * GUI, 98 * GUI, 20 * GUI);
         deleteButton.setBounds(right, y + 48 * GUI, 98 * GUI, 20 * GUI);
-        defaultButton.setBounds(left, y + 72 * GUI, 200 * GUI, 20 * GUI);
+        defaultButton.setBounds(left, y + 72 * GUI, 98 * GUI, 20 * GUI);
+        worldsButton.setBounds(right, y + 72 * GUI, 98 * GUI, 20 * GUI);
         backButton.setBounds(left, y + 96 * GUI, 200 * GUI, 20 * GUI);
         for (McButton b : buttons) b.draw(g, font, GUI);
     }

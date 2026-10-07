@@ -62,6 +62,7 @@ public class KelpTest {
         defaultInstance();
         shaders();
         forge();
+        worlds();
         squidReport();
         accounts();
         microsoftLogin();
@@ -602,6 +603,56 @@ public class KelpTest {
         jar(installer, "install_profile.json", "{\"version\": \"../../escape\"}");
         check("an installer with a strange version name is refused", problem(() -> ForgeInstallers.profileId(installer)),
                 "fake-installer.jar doesn't say which version it makes.");
+    }
+
+    /** Bringing in worlds from a folder or a .zip. */
+    static void worlds() throws Exception {
+        Path saves = home.resolve("worlds-test/saves");
+        Path elsewhere = Files.createDirectories(home.resolve("worlds-test/elsewhere"));
+        Path plain = Files.createDirectories(elsewhere.resolve("My World"));
+        Files.writeString(plain.resolve("level.dat"), "pretend level");
+        Files.createDirectories(plain.resolve("region"));
+        Files.writeString(plain.resolve("region/r.0.0.mca"), "pretend chunks");
+        Files.writeString(plain.resolve("session.lock"), "in use");
+        Path imported = Worlds.importWorld(plain, saves);
+        check("a world folder is copied in, without the game's lock file", imported.getFileName() + " " + Files.readString(imported.resolve("region/r.0.0.mca"))
+                + " " + Files.exists(imported.resolve("session.lock")), "My World pretend chunks false");
+        check("importing it again keeps both", Worlds.importWorld(plain, saves).getFileName().toString(), "My World (2)");
+
+        Path wrapper = Files.createDirectories(elsewhere.resolve("Download"));
+        Files.createDirectories(wrapper.resolve("Skyblock"));
+        Files.writeString(wrapper.resolve("Skyblock/level.dat"), "x");
+        check("a world one folder deep is found", Worlds.importWorld(wrapper, saves).getFileName().toString(), "Skyblock");
+        Path notAWorld = Files.createDirectories(elsewhere.resolve("Homework"));
+        check("something that isn't a world is explained", problem(() -> Worlds.importWorld(notAWorld, saves)),
+                "That isn't a Minecraft world: there's no level.dat in it.");
+        check("the saves folder itself is refused", problem(() -> Worlds.importWorld(saves, saves)).startsWith("That folder has")
+                || problem(() -> Worlds.importWorld(saves, saves)).startsWith("That's the instance's own saves folder"), true);
+
+        Path zipRoot = elsewhere.resolve("Parkour Map.zip");
+        try (ZipOutputStream zip = new ZipOutputStream(Files.newOutputStream(zipRoot))) {
+            zip.putNextEntry(new ZipEntry("level.dat"));
+            zip.write("x".getBytes(StandardCharsets.UTF_8));
+            zip.closeEntry();
+        }
+        check("a zip with the world right inside is named after the zip", Worlds.importWorld(zipRoot, saves).getFileName().toString(), "Parkour Map");
+        Path zipNested = elsewhere.resolve("download-123.zip");
+        try (ZipOutputStream zip = new ZipOutputStream(Files.newOutputStream(zipNested))) {
+            zip.putNextEntry(new ZipEntry("Castle/level.dat"));
+            zip.write("x".getBytes(StandardCharsets.UTF_8));
+            zip.closeEntry();
+        }
+        check("a zip with a world folder inside keeps the world's name", Worlds.importWorld(zipNested, saves).getFileName().toString(), "Castle");
+        Path sneaky = elsewhere.resolve("sneaky.zip");
+        try (ZipOutputStream zip = new ZipOutputStream(Files.newOutputStream(sneaky))) {
+            zip.putNextEntry(new ZipEntry("../../escaped.txt"));
+            zip.write("x".getBytes(StandardCharsets.UTF_8));
+            zip.closeEntry();
+        }
+        check("a zip that tries to put files outside is refused", problem(() -> Worlds.importWorld(sneaky, saves)),
+                "That zip has a file that would go outside the world, so it wasn't imported.");
+        check("and nothing escaped or was left behind", Files.exists(home.resolve("worlds-test/escaped.txt")) + " "
+                + Worlds.list(saves).stream().map(Worlds.World::name).sorted().toList(), "false [Castle, My World, My World (2), Parkour Map, Skyblock]");
     }
 
     static void defaultInstance() throws Exception {
