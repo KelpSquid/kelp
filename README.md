@@ -1,10 +1,12 @@
 <p align="center"><img src="branding/kelp.png" width="160" alt="Kelp logo"></p>
 
+ > **NOT AN OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.**
+  > Minecraft is a trademark of Microsoft Corporation.
+
 # Kelp
 
 A launcher for Minecraft: Java Edition, made from scratch, with an animated underwater look and the [Squid](https://github.com/SamuelArther/squid) mod loader built in.
 
-**NOT AN OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.**
 
 ## What it does
 
