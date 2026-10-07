@@ -67,6 +67,7 @@ public class KelpTest {
         addMods();
         projects();
         updates();
+        crashHelper();
         squidReport();
         accounts();
         microsoftLogin();
@@ -772,6 +773,47 @@ public class KelpTest {
         } finally {
             server.stop(0);
         }
+    }
+
+    static void crashHelper() throws Exception {
+        Path mods = Files.createDirectories(home.resolve("crash-test-mods"));
+        jar(mods.resolve("xray.jar"), "fabric.mod.json", "{\"id\": \"xray\", \"name\": \"X-Ray\"}");
+        try (ZipOutputStream zip = new ZipOutputStream(Files.newOutputStream(mods.resolve("minimap.jar")))) {
+            zip.putNextEntry(new ZipEntry("fabric.mod.json"));
+            zip.write("{\"id\": \"minimap\", \"name\": \"Minimap\"}".getBytes());
+            zip.putNextEntry(new ZipEntry("com/example/minimap/Map.class"));
+            zip.write(new byte[] {1});
+            zip.closeEntry();
+        }
+        List<InstalledMod> installed = InstalledMod.list(mods);
+
+        CrashHelper.Diagnosis memory = CrashHelper.diagnose("java.lang.OutOfMemoryError: Java heap space", "", installed, 1, "26.3");
+        check("out of memory", memory.what() + " | " + memory.fix(), "Minecraft ran out of memory. | Give it more in Kelp's Options > Memory, or play with fewer mods.");
+
+        CrashHelper.Diagnosis fabric = CrashHelper.diagnose("Incompatible mods found!\n\t - Mod 'X-Ray' (xray) 1.0.0 requires any version of mod fabric-api, which is missing!",
+                "", installed, 1, "26.3");
+        check("a Fabric mod missing what it needs", fabric.what() + " | " + fabric.fix() + " | " + fabric.culprit().name(),
+                "X-Ray needs fabric-api, which isn't installed. | Add fabric-api for Minecraft 26.3, or turn X-Ray off. | X-Ray");
+
+        CrashHelper.Diagnosis neoforge = CrashHelper.diagnose("Missing or unsupported mandatory dependencies:\n\tMod ID: 'geckolib', Requested by: 'mowzies', "
+                + "Expected range: '[4.0,)', Actual version: '[MISSING]'", "", installed, 1, "26.3");
+        check("a NeoForge mod missing what it needs", neoforge.what(), "mowzies needs geckolib, which isn't installed.");
+
+        CrashHelper.Diagnosis oldMod = CrashHelper.diagnose("java.lang.NoSuchMethodError: 'void net.minecraft.client.Gui.render()'\n"
+                + "\tat com.example.minimap.Map.draw(Map.java:12)\n\tat net.minecraft.client.Gui.render(Gui.java:5)", "", installed, 1, "26.3");
+        check("a mod made for another version is found from the stack", oldMod.what() + " | " + oldMod.culprit().name(),
+                "Minimap was made for a different Minecraft version. | Minimap");
+
+        CrashHelper.Diagnosis driver = CrashHelper.diagnose("GLFW error 65542: WGL: The driver does not appear to support OpenGL", "", installed, 1, "26.3");
+        check("a graphics driver problem", driver.what(), "Your graphics driver had a problem.");
+
+        CrashHelper.Diagnosis suspected = CrashHelper.diagnose("", "---- Minecraft Crash Report ----\nDescription: Rendering overlay\nSuspected Mods: Minimap (minimap)\n",
+                installed, 1, "26.3");
+        check("the crash report's suspected mod", suspected.what() + " | " + suspected.culprit().name(), "It looks like Minimap caused the crash. | Minimap");
+
+        CrashHelper.Diagnosis unknown = CrashHelper.diagnose("", "---- Minecraft Crash Report ----\nDescription: Ticking entity\n", List.of(), 1, "26.3");
+        check("anything else says what Minecraft said", unknown.what() + " | " + unknown.fix(),
+                "Minecraft crashed: Ticking entity | Try again. If it keeps happening, copy the report and ask for help.");
     }
 
     static void addMods() throws Exception {

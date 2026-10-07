@@ -17,6 +17,13 @@ public class DownloadScreen extends Screen {
     private final boolean withSquid;
     private final GameInstaller installer = new GameInstaller();
     private final McButton button = new McButton(t("Cancel"), this::leave);
+    // After a crash: what to do about it
+    private final McButton copyButton = new McButton(t("Copy Report"), this::copyReport);
+    private final McButton logButton = new McButton(t("Open Log"), this::openLog);
+    private final McButton turnOffButton = new McButton("", this::turnOffCulprit);
+    private volatile long startedAt = System.currentTimeMillis();
+    private CrashHelper.Diagnosis diagnosis; // worked out once, the first time the crash is shown
+    private String crashNote; // what happened after pressing one of the crash buttons
 
     // Set by the background thread, read while drawing
     private volatile Phase phase = Phase.DOWNLOADING;
@@ -33,6 +40,9 @@ public class DownloadScreen extends Screen {
         this.version = instance.version();
         this.withSquid = instance.squid();
         buttons.add(button);
+        buttons.add(copyButton);
+        buttons.add(logButton);
+        buttons.add(turnOffButton);
         Settings.setLastInstance(instance.id()); // so the title screen's Play button starts this one next time
 
         // If this instance's game is already open, just keep an eye on it instead of starting a second copy
@@ -47,6 +57,7 @@ public class DownloadScreen extends Screen {
                     if (installer.getLoaderVersion() != null) instance.setLoaderVersion(installer.getLoaderVersion());
                     if (cancelled) return;
                     phase = Phase.STARTING;
+                    startedAt = System.currentTimeMillis();
                     Account account = Accounts.readyToPlay();
                     if (cancelled) return;
                     game = Launcher.launch(version.id(), instance.folder(), account, instance.loader(),
@@ -81,6 +92,39 @@ public class DownloadScreen extends Screen {
             }
         }
         throw new IllegalStateException(t("Mojang doesn't list Minecraft {0} anymore", version.id()));
+    }
+
+    /** Copies what went wrong, with the important part of the log, so it can be pasted when asking for help. */
+    private void copyReport() {
+        if (diagnosis == null) return;
+        String report = "Kelp " + (Updates.current() == null ? "dev" : Updates.current()) + ", Minecraft " + version.id() + ", "
+                + instance.loader().label() + "\n" + diagnosis.what() + "\n" + diagnosis.fix() + "\n\n" + diagnosis.details();
+        try {
+            java.awt.Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new java.awt.datatransfer.StringSelection(report), null);
+            crashNote = t("Copied! Paste it wherever you're asking for help.");
+        } catch (RuntimeException e) {
+            crashNote = t("Couldn't copy it: {0}", e.getMessage());
+        }
+    }
+
+    private void openLog() {
+        try {
+            java.awt.Desktop.getDesktop().open(instance.folder().resolve("kelp-output.log").toFile());
+        } catch (Exception e) {
+            crashNote = t("Couldn't open it: {0}", e.getMessage());
+        }
+    }
+
+    /** Turns off the mod the crash helper blamed, so the game can be tried again without it. */
+    private void turnOffCulprit() {
+        if (diagnosis == null || diagnosis.culprit() == null) return;
+        try {
+            diagnosis.culprit().toggle();
+            crashNote = t("Turned off {0}. Try playing again!", diagnosis.culprit().name());
+            diagnosis = new CrashHelper.Diagnosis(diagnosis.what(), diagnosis.fix(), null, diagnosis.details());
+        } catch (java.io.IOException e) {
+            crashNote = t("Couldn't switch it. Is the game still running? ({0})", e.getMessage());
+        }
     }
 
     private void leave() {
@@ -163,9 +207,35 @@ public class DownloadScreen extends Screen {
                         y += 12 * GUI;
                     }
                 } else {
-                    centered(g, font, t("{0} crashed (code {1})", name, exitCode), w, titleY, 0xFF5555);
-                    centered(g, font, t("What it said is saved in:"), w, lineY, 0xA0A0A0);
-                    centered(g, font, "Kelp\\instances\\" + instance.id() + "\\kelp-output.log", w, lineY + 12 * GUI, 0xFFFFFF);
+                    // The crash helper says why, in plain words, and what to try
+                    if (diagnosis == null) diagnosis = CrashHelper.diagnose(instance, exitCode, startedAt);
+                    centered(g, font, t("{0} crashed.", name), w, titleY, 0xFF5555);
+                    int y = lineY;
+                    for (String part : firstTwo(wrap(font, diagnosis.what(), 300 * GUI))) {
+                        centered(g, font, part, w, y, 0xFFFFFF);
+                        y += 12 * GUI;
+                    }
+                    for (String part : firstTwo(wrap(font, diagnosis.fix(), 300 * GUI))) {
+                        centered(g, font, part, w, y, 0xFFFF55);
+                        y += 12 * GUI;
+                    }
+                    if (crashNote != null) centered(g, font, crashNote, w, y + 2 * GUI, 0x55FF55);
+                    int buttonsY = centerY + 40 * GUI;
+                    copyButton.setBounds(w / 2 - 100 * GUI, buttonsY, 98 * GUI, 20 * GUI);
+                    logButton.setBounds(w / 2 + 2 * GUI, buttonsY, 98 * GUI, 20 * GUI);
+                    copyButton.draw(g, font, GUI);
+                    logButton.draw(g, font, GUI);
+                    if (diagnosis.culprit() != null && diagnosis.culprit().enabled()) {
+                        turnOffButton.setLabel(t("Turn Off {0}", diagnosis.culprit().name()));
+                        turnOffButton.setBounds(w / 2 - 100 * GUI, buttonsY + 24 * GUI, 200 * GUI, 20 * GUI);
+                        turnOffButton.draw(g, font, GUI);
+                    } else {
+                        turnOffButton.setBounds(-1000, -1000, 0, 0);
+                    }
+                    button.setLabel(t("Back"));
+                    button.setBounds(w / 2 - 100 * GUI, buttonsY + 48 * GUI, 200 * GUI, 20 * GUI);
+                    button.draw(g, font, GUI);
+                    return;
                 }
                 button.setLabel(t("Back"));
             }
@@ -176,8 +246,13 @@ public class DownloadScreen extends Screen {
             }
         }
 
+        for (McButton b : new McButton[] {copyButton, logButton, turnOffButton}) b.setBounds(-1000, -1000, 0, 0); // only after a crash
         button.setBounds(w / 2 - 100 * GUI, centerY + 30 * GUI, 200 * GUI, 20 * GUI);
         button.draw(g, font, GUI);
+    }
+
+    private static List<String> firstTwo(List<String> lines) {
+        return lines.subList(0, Math.min(2, lines.size()));
     }
 
     /** For a loader that only has a beta for this Minecraft version yet. */
