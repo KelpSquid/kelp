@@ -12,6 +12,7 @@ public class GameInstaller {
 
     private final Downloader downloader = new Downloader();
     private volatile String stage = "Starting";
+    private String loaderVersion;
 
     public Downloader getDownloader() {
         return downloader;
@@ -22,7 +23,17 @@ public class GameInstaller {
         return stage;
     }
 
+    /** The Fabric or Quilt version id that was installed, or null for Vanilla and Squid. */
+    public String getLoaderVersion() {
+        return loaderVersion;
+    }
+
     public void install(VersionManifest.Version version) throws IOException, InterruptedException {
+        install(version, Loader.VANILLA);
+    }
+
+    /** Installs the Minecraft version, plus Fabric or Quilt if the loader is one of them. */
+    public void install(VersionManifest.Version version, Loader loader) throws IOException, InterruptedException {
         stage = "Getting version details";
         Path versionFolder = Folders.versions().resolve(version.id());
         Map<String, Object> details = Json.object(Json.parse(
@@ -74,7 +85,15 @@ public class GameInstaller {
             jobs.put(file, new Downloader.Job(ASSETS_URL + path, file, hash, size(asset)));
         }
 
-        // 5. The Java this version runs on
+        // 5. Fabric or Quilt, with their own libraries
+        if (loader == Loader.FABRIC || loader == Loader.QUILT) {
+            stage = "Getting " + loader.label();
+            loaderVersion = LoaderProfiles.install(loader, version.id(), downloader, jobs);
+        } else if (!loader.ready()) {
+            throw new IOException(loader.label() + " is coming soon. Pick another loader for now.");
+        }
+
+        // 6. The Java this version runs on
         stage = "Getting the Java list";
         String java = JavaRuntime.componentFor(details);
         for (Downloader.Job job : JavaRuntime.jobs(java, downloader)) jobs.put(job.file(), job);

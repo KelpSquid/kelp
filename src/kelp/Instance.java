@@ -12,7 +12,7 @@ import java.util.Properties;
 import java.util.stream.Stream;
 
 /**
- * One setup of Minecraft, like an instance in Prism: a name, a version, Squid on or off,
+ * One setup of Minecraft, like an instance in Prism: a name, a version, a {@link Loader} (Vanilla, Squid, Fabric...),
  * and its own folder for worlds, settings, screenshots and mods. Its details live in instance.properties.
  */
 public final class Instance {
@@ -23,7 +23,8 @@ public final class Instance {
     private String versionId;
     private String versionType;
     private String versionUrl;
-    private boolean squid;
+    private Loader loader;
+    private String loaderVersion; // like "fabric-loader-0.19.5-26.3", once it's installed (Fabric and Quilt only)
     private long lastPlayed;
 
     private Instance(Path folder) {
@@ -43,6 +44,25 @@ public final class Instance {
         return instances;
     }
 
+    /**
+     * What the title screen's Play button starts: the default instance if one is set, else the one played last,
+     * else the newest. Null when there are no instances yet.
+     */
+    public static Instance toPlay() {
+        Instance chosen = find(Settings.defaultInstance());
+        if (chosen == null) chosen = find(Settings.lastInstance());
+        if (chosen == null) {
+            List<Instance> all = all();
+            if (!all.isEmpty()) chosen = all.get(0);
+        }
+        return chosen;
+    }
+
+    /** Whether the title screen's Play button always starts this one. */
+    public boolean isDefault() {
+        return id().equals(Settings.defaultInstance());
+    }
+
     /** The instance in this folder (by folder name), or null if there isn't one. */
     public static Instance find(String folderName) {
         if (folderName == null) return null;
@@ -52,6 +72,11 @@ public final class Instance {
 
     /** Makes a new instance with its own folder. */
     public static Instance create(String name, VersionManifest.Version version, boolean squid) throws IOException {
+        return create(name, version, squid ? Loader.SQUID : Loader.VANILLA);
+    }
+
+    /** Makes a new instance with its own folder. */
+    public static Instance create(String name, VersionManifest.Version version, Loader loader) throws IOException {
         // The folder is named after the instance, made safe for every operating system, and never reused
         String base = name.trim().replaceAll("[^A-Za-z0-9 ._-]", "").replaceAll("[ .]+$", "");
         if (base.isEmpty()) base = "instance";
@@ -65,7 +90,7 @@ public final class Instance {
         instance.versionId = version.id();
         instance.versionType = version.type();
         instance.versionUrl = version.url();
-        instance.squid = squid;
+        instance.loader = loader;
         instance.save();
         return instance;
     }
@@ -87,7 +112,10 @@ public final class Instance {
         instance.versionId = values.getProperty("version", folderName);
         instance.versionType = values.getProperty("versionType", "release");
         instance.versionUrl = values.getProperty("versionUrl", "");
-        instance.squid = Boolean.parseBoolean(values.getProperty("squid", "false"));
+        // Before Kelp had loaders, instances only said whether Squid was on
+        instance.loader = values.getProperty("loader") != null ? Loader.parse(values.getProperty("loader"))
+                : Boolean.parseBoolean(values.getProperty("squid", "false")) ? Loader.SQUID : Loader.VANILLA;
+        instance.loaderVersion = values.getProperty("loaderVersion");
         instance.lastPlayed = Long.parseLong(values.getProperty("lastPlayed", "0"));
         return instance;
     }
@@ -98,7 +126,8 @@ public final class Instance {
         values.setProperty("version", versionId);
         values.setProperty("versionType", versionType);
         values.setProperty("versionUrl", versionUrl);
-        values.setProperty("squid", String.valueOf(squid));
+        values.setProperty("loader", loader.name());
+        if (loaderVersion != null) values.setProperty("loaderVersion", loaderVersion);
         values.setProperty("lastPlayed", String.valueOf(lastPlayed));
         try (Writer out = Files.newBufferedWriter(folder.resolve(FILE))) {
             values.store(out, "Kelp instance");
@@ -122,8 +151,18 @@ public final class Instance {
         return folder.resolve("mods");
     }
 
+    /** Whether this instance runs Squid. */
     public boolean squid() {
-        return squid;
+        return loader == Loader.SQUID;
+    }
+
+    public Loader loader() {
+        return loader;
+    }
+
+    /** The installed Fabric or Quilt version id, or null. */
+    public String loaderVersion() {
+        return loaderVersion;
     }
 
     public long lastPlayed() {
@@ -136,7 +175,18 @@ public final class Instance {
     }
 
     public void setSquid(boolean squid) throws IOException {
-        this.squid = squid;
+        setLoader(squid ? Loader.SQUID : Loader.VANILLA);
+    }
+
+    public void setLoader(Loader loader) throws IOException {
+        if (loader != this.loader) loaderVersion = null; // a different loader gets installed next time
+        this.loader = loader;
+        save();
+    }
+
+    /** Remembers which Fabric or Quilt version got installed, so the game can start without internet next time. */
+    public void setLoaderVersion(String loaderVersion) throws IOException {
+        this.loaderVersion = loaderVersion;
         save();
     }
 

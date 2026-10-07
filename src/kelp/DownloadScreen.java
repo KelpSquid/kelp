@@ -40,10 +40,11 @@ public class DownloadScreen extends Screen {
             try {
                 Process game = alreadyOpen;
                 if (game == null) {
-                    installer.install(findDetails(version));
+                    installer.install(findDetails(version), instance.loader());
+                    if (installer.getLoaderVersion() != null) instance.setLoaderVersion(installer.getLoaderVersion());
                     phase = Phase.STARTING;
-                    game = Launcher.launch(version.id(), instance.folder(), Accounts.readyToPlay(), withSquid,
-                            Settings.memoryGb());
+                    game = Launcher.launch(version.id(), instance.folder(), Accounts.readyToPlay(), instance.loader(),
+                            instance.loaderVersion(), Settings.memoryGb());
                     RunningGames.add(instance, game);
                     instance.markPlayed();
                 }

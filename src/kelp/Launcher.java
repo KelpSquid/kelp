@@ -28,13 +28,13 @@ public final class Launcher {
     }
 
     /**
-     * Starts a downloaded version in gameFolder (where its worlds, settings and mods go),
-     * through the Squid mod loader if withSquid is on. memoryGb is how much memory to give it, or 0 for Mojang's choice.
-     * Everything the game prints goes into kelp-output.log in the game folder.
+     * Starts a downloaded version in gameFolder (where its worlds, settings and mods go), with its loader:
+     * Squid, or Fabric or Quilt from their version id (loaderVersion). memoryGb is how much memory to give it,
+     * or 0 for Mojang's choice. Everything the game prints goes into kelp-output.log in the game folder.
      */
-    public static Process launch(String versionId, Path gameFolder, Account account, boolean withSquid, int memoryGb)
-            throws IOException {
-        List<String> command = buildCommand(versionId, gameFolder, account, withSquid, memoryGb);
+    public static Process launch(String versionId, Path gameFolder, Account account, Loader loader, String loaderVersion,
+                                 int memoryGb) throws IOException {
+        List<String> command = buildCommand(versionId, gameFolder, account, loader, loaderVersion, memoryGb);
         Files.deleteIfExists(SquidReport.file(gameFolder)); // so Kelp never shows last time's report
         return new ProcessBuilder(command)
                 .directory(gameFolder.toFile())
@@ -43,11 +43,24 @@ public final class Launcher {
                 .start();
     }
 
-    /** The full command that starts the game: java, its settings, then the game's own settings. */
+    /** The command for Vanilla (withSquid false) or Squid (true). */
     public static List<String> buildCommand(String versionId, Path gameFolder, Account account, boolean withSquid,
                                             int memoryGb) throws IOException {
+        return buildCommand(versionId, gameFolder, account, withSquid ? Loader.SQUID : Loader.VANILLA, null, memoryGb);
+    }
+
+    /** The full command that starts the game: java, its settings, then the game's own settings. */
+    public static List<String> buildCommand(String versionId, Path gameFolder, Account account, Loader loader,
+                                            String loaderVersion, int memoryGb) throws IOException {
+        boolean withSquid = loader == Loader.SQUID;
         Path versionFolder = Folders.versions().resolve(versionId);
         Map<String, Object> details = Json.object(Json.parse(Files.readString(versionFolder.resolve(versionId + ".json"))));
+        if (loaderVersion != null) {
+            // Fabric and Quilt: their version file goes on top of Minecraft's
+            Path loaderFile = Folders.versions().resolve(loaderVersion).resolve(loaderVersion + ".json");
+            if (!Files.exists(loaderFile)) throw new IOException(loader.label() + " isn't downloaded yet. Play again with internet.");
+            details = LoaderProfiles.merge(details, Json.object(Json.parse(Files.readString(loaderFile))));
+        }
         Path natives = versionFolder.resolve("natives");
         Files.createDirectories(gameFolder);
         extractNatives(details, natives);
@@ -157,7 +170,7 @@ public final class Launcher {
         int java = javaVersion == null ? 8 : ((Number) javaVersion.get("majorVersion")).intValue();
         if (java < 21) {
             throw new IOException("Squid needs Java 21, but Minecraft " + versionId + " runs on Java " + java
-                    + ". Turn Squid off to play it.");
+                    + ". Pick the Vanilla loader to play it.");
         }
     }
 

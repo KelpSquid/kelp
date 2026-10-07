@@ -58,6 +58,8 @@ public class KelpTest {
         mods();
         downloader();
         launcher();
+        loaders();
+        defaultInstance();
         squidReport();
         accounts();
         microsoftLogin();
@@ -211,6 +213,13 @@ public class KelpTest {
         check("a .java mod is listed as your own Squid mod", sheep.name() + " | " + sheep.squidMod() + " | " + sheep.source(),
                 "Rainbow Sheep | true | true");
         InstalledMod sheepOff = sheep.toggle();
+        jar(folder.resolve("quilty.jar"), "quilt.mod.json", "{\"quilt_loader\": {\"version\": \"2.0\", \"metadata\": {\"name\": \"Quilty\"}}}");
+        jar(folder.resolve("neo.jar"), "META-INF/neoforge.mods.toml", "[[mods]]\nmodId=\"neo\"\nversion=\"${file.jarVersion}\"\ndisplayName=\"Neo Thing\"\n");
+        Map<String, String> kinds = new java.util.TreeMap<>();
+        for (InstalledMod m : InstalledMod.list(folder)) kinds.put(m.name(), m.kind() == null ? "none" : m.kind().label() + " " + m.version());
+        check("Kelp tells which loader each mod is for", kinds.toString(),
+                "{Neo Thing=NeoForge , Quilty=Quilt 2.0, Rainbow Sheep=Squid , Rainbow Sheep 2=Squid , Zoom=Squid 1.0.0, broken=none, fabric-thing=Fabric }");
+        check("Quilt runs Fabric mods, Fabric doesn't run Quilt mods", Loader.QUILT.runs(Loader.FABRIC) + " " + Loader.FABRIC.runs(Loader.QUILT), "true false");
         check("a .java mod can be turned off", Files.exists(folder.resolve("RainbowSheep.java.disabled")) && !sheepOff.enabled()
                 && InstalledMod.list(folder).stream().anyMatch(m -> m.name().equals("Rainbow Sheep") && !m.enabled()), true);
         check("jars aren't .java mods", zoom.source(), false);
@@ -471,7 +480,7 @@ public class KelpTest {
                 oldCmd.get(oldCmd.indexOf("--uuid") + 1), "a01e3843e5213998958af459800e4d11");
         check("Squid can't start versions older than Java 21",
                 problem(() -> Launcher.buildCommand("test-old", home.resolve("game-old"), Account.offline("Player"), true, 0)),
-                "Squid needs Java 21, but Minecraft test-old runs on Java 8. Turn Squid off to play it.");
+                "Squid needs Java 21, but Minecraft test-old runs on Java 8. Pick the Vanilla loader to play it.");
         Account signedIn = new Account("0123456789abcdef0123456789abcdef", "Samuel", true, "refresh", "mc-token", Long.MAX_VALUE);
         List<String> msCmd = Launcher.buildCommand("test-old", home.resolve("game-old"), signedIn, false, 0);
         check("a Microsoft account plays with its own name and ID", msCmd.get(msCmd.indexOf("--username") + 1) + " "
@@ -481,6 +490,111 @@ public class KelpTest {
     static void deleteFolder(Path folder) throws IOException {
         try (var walk = Files.walk(folder)) {
             for (Path p : walk.sorted(java.util.Comparator.reverseOrder()).toList()) Files.deleteIfExists(p);
+        }
+    }
+
+    static void defaultInstance() throws Exception {
+        VersionManifest.Version v = new VersionManifest.Version("26.3", "release", "", "");
+        Instance first = Instance.create("Default Test A", v, Loader.SQUID);
+        Instance second = Instance.create("Default Test B", v, Loader.VANILLA);
+        Settings.setLastInstance(second.id());
+        check("without a default, Play starts the one played last", Instance.toPlay().id(), second.id());
+        Settings.setDefaultInstance(first.id());
+        check("with a default, Play always starts it", Instance.toPlay().id() + " " + first.isDefault() + " " + second.isDefault(),
+                first.id() + " true false");
+        Settings.setDefaultInstance(null);
+        check("the default can be taken away", Instance.toPlay().id(), second.id());
+        Settings.setDefaultInstance(first.id());
+        first.delete();
+        check("a deleted default falls back to the one played last", Instance.toPlay().id(), second.id());
+        Settings.setDefaultInstance(null);
+    }
+
+    // ---- Loaders: Vanilla, Squid, Fabric, Quilt... ----
+
+    static void loaders() throws Exception {
+        check("unknown loader names are Vanilla", Loader.parse("FABRIC") + " " + Loader.parse("nonsense"), "FABRIC VANILLA");
+        check("changing an instance skips loaders that aren't ready", Loader.QUILT.nextReady(), Loader.VANILLA);
+        Path old = Folders.instances().resolve("Old Squid");
+        Files.createDirectories(old);
+        Files.writeString(old.resolve("instance.properties"), "name=Old Squid\nversion=26.3\nsquid=true\n");
+        Instance oldInstance = Instance.find("Old Squid");
+        check("instances from before loaders keep Squid", oldInstance.loader(), Loader.SQUID);
+        oldInstance.setLoaderVersion("fabric-loader-1-26.3");
+        oldInstance.setLoader(Loader.FABRIC);
+        check("a new loader forgets the old loader's version", Instance.find("Old Squid").loader() + " " + Instance.find("Old Squid").loaderVersion(), "FABRIC null");
+
+        check("picks the newest stable loader even from a list out of order", LoaderProfiles.pick(Json.array(Json.parse(
+                "[{\"loader\": {\"version\": \"0.20.0-beta.9\"}}, {\"loader\": {\"version\": \"0.24.0\"}}, "
+                + "{\"loader\": {\"version\": \"0.30.1\"}}, {\"loader\": {\"version\": \"0.9.0\"}}]"))), "0.30.1");
+        check("versions compare by number, betas before releases", LoaderProfiles.compare("0.10.0", "0.9.9") + " "
+                + LoaderProfiles.compare("1.0-beta.2", "1.0") + " " + LoaderProfiles.compare("1.0-beta.10", "1.0-beta.9"), "1 -1 1");
+        check("Maven names become paths", LoaderProfiles.mavenPath("net.fabricmc:fabric-loader:0.19.5") + " "
+                + LoaderProfiles.mavenPath("org.example:thing:1.0:natives-windows@zip"),
+                "net/fabricmc/fabric-loader/0.19.5/fabric-loader-0.19.5.jar org/example/thing/1.0/thing-1.0-natives-windows.zip");
+        Map<String, Object> merged = LoaderProfiles.merge(
+                Json.object(Json.parse("{\"mainClass\": \"mc.Main\", \"libraries\": [{\"name\": \"a:lib:1.0\"}, {\"name\": \"b:other:1.0\"}],"
+                        + " \"arguments\": {\"jvm\": [\"-Dmc\"], \"game\": [\"--mc\"]}}")),
+                Json.object(Json.parse("{\"mainClass\": \"loader.Main\", \"libraries\": [{\"name\": \"a:lib:2.0\"}],"
+                        + " \"arguments\": {\"jvm\": [\"-Dloader\"], \"game\": []}}")));
+        List<String> libraryNames = new java.util.ArrayList<>();
+        for (Object l : Json.array(merged.get("libraries"))) libraryNames.add((String) Json.object(l).get("name"));
+        check("merging: the loader's main class, its newer library, and both sets of arguments",
+                merged.get("mainClass") + " " + libraryNames + " " + Json.object(merged.get("arguments")).get("jvm"),
+                "loader.Main [a:lib:2.0, b:other:1.0] [-Dmc, -Dloader]");
+
+        // Installing Fabric from a pretend Fabric server, then starting it
+        byte[] loaderJar = "pretend fabric loader".getBytes(StandardCharsets.UTF_8);
+        HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        String base = "http://127.0.0.1:" + server.getAddress().getPort();
+        server.createContext("/", exchange -> {
+            String path = exchange.getRequestURI().getPath();
+            byte[] body;
+            if (path.equals("/fabric/versions/loader/test-new")) {
+                body = "[{\"loader\": {\"version\": \"0.20.0-beta.1\", \"stable\": false}}, {\"loader\": {\"version\": \"0.19.5\", \"stable\": true}}]"
+                        .getBytes(StandardCharsets.UTF_8);
+            } else if (path.equals("/fabric/versions/loader/test-new/0.19.5/profile/json")) {
+                try {
+                    body = ("{\"id\": \"fabric-loader-0.19.5-test-new\", \"inheritsFrom\": \"test-new\", "
+                            + "\"mainClass\": \"net.fabricmc.loader.impl.launch.knot.KnotClient\", "
+                            + "\"arguments\": {\"game\": [], \"jvm\": [\"-DFabricMcEmu= net.minecraft.client.main.Main \"]}, "
+                            + "\"libraries\": [{\"name\": \"net.fabricmc:fabric-loader:0.19.5\", \"url\": \"" + base + "/maven/\", "
+                            + "\"sha1\": \"" + sha1(loaderJar) + "\", \"size\": " + loaderJar.length + "}]}").getBytes(StandardCharsets.UTF_8);
+                } catch (Exception e) {
+                    throw new IllegalStateException(e);
+                }
+            } else if (path.equals("/maven/net/fabricmc/fabric-loader/0.19.5/fabric-loader-0.19.5.jar")) {
+                body = loaderJar;
+            } else {
+                body = new byte[0];
+            }
+            exchange.sendResponseHeaders(body.length == 0 ? 404 : 200, body.length == 0 ? -1 : body.length);
+            try (OutputStream out = exchange.getResponseBody()) {
+                out.write(body);
+            }
+        });
+        server.start();
+        String realMeta = LoaderProfiles.fabricMeta;
+        LoaderProfiles.fabricMeta = base + "/fabric";
+        try {
+            Downloader downloader = new Downloader();
+            Map<Path, Downloader.Job> jobs = new java.util.LinkedHashMap<>();
+            String id = LoaderProfiles.install(Loader.FABRIC, "test-new", downloader, jobs);
+            downloader.downloadAll(new java.util.ArrayList<>(jobs.values()));
+            check("installs the newest stable Fabric", id, "fabric-loader-0.19.5-test-new");
+            check("and its libraries", Files.readString(Folders.libraries().resolve("net/fabricmc/fabric-loader/0.19.5/fabric-loader-0.19.5.jar")),
+                    "pretend fabric loader");
+            List<String> cmd = Launcher.buildCommand("test-new", home.resolve("game-fabric"), Account.offline("Sam"), Loader.FABRIC, id, 0);
+            String classpath = cmd.get(cmd.indexOf("-cp") + 1);
+            check("Fabric starts the game", cmd.contains("net.fabricmc.loader.impl.launch.knot.KnotClient")
+                    && !cmd.contains("com.example.Main") && cmd.contains("-DFabricMcEmu= net.minecraft.client.main.Main "), true);
+            check("with Fabric and Minecraft's libraries", classpath.contains("fabric-loader-0.19.5.jar") + " " + classpath.contains("lib-1.0.jar")
+                    + " " + classpath.contains("test-new.jar"), "true true true");
+            check("a loader that isn't downloaded is explained", problem(() -> Launcher.buildCommand("test-new", home.resolve("game-fabric"),
+                    Account.offline("Sam"), Loader.QUILT, "quilt-loader-9-test-new", 0)), "Quilt isn't downloaded yet. Play again with internet.");
+        } finally {
+            LoaderProfiles.fabricMeta = realMeta;
+            server.stop(0);
         }
     }
 

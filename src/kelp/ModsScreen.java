@@ -69,9 +69,16 @@ public class ModsScreen extends Screen {
         list.draw(g, font, w, 32 * GUI, listBottom, empty, (gg, mod, x, y, width) -> {
             String name = mod.version().isEmpty() ? mod.name() : mod.name() + " " + mod.version();
             font.draw(gg, name, x, y, GUI, mod.enabled() ? 0xFFFFFF : 0x808080);
-            // On the right: ON or OFF, like a Minecraft options button
-            String state = !mod.squidMod() ? "Not a Squid mod" : mod.enabled() ? "ON" : "OFF";
-            int color = !mod.squidMod() ? 0xA0A0A0 : mod.enabled() ? 0x55FF55 : 0xFF5555;
+            // On the right: ON or OFF, like a Minecraft options button. Mods for another loader say which one.
+            String state = mod.enabled() ? "ON" : "OFF";
+            int color = mod.enabled() ? 0x55FF55 : 0xFF5555;
+            if (mod.kind() == null) {
+                state = "Not a mod";
+                color = 0xA0A0A0;
+            } else if (!instance.loader().runs(mod.kind())) {
+                state = "For " + mod.kind().label();
+                color = 0xA0A0A0;
+            }
             if (mod.squidMod() && mod.enabled() && !mod.worksOn(minecraftVersion())) {
                 state = "Wrong version";
                 color = 0xFFFF55;
@@ -93,7 +100,9 @@ public class ModsScreen extends Screen {
             if (!hovered.authors().isEmpty()) {
                 info = "By " + String.join(", ", hovered.authors()) + (info.isEmpty() ? "" : ". " + info);
             }
-            if (hovered.squidMod() && !hovered.worksOn(minecraftVersion())) {
+            if (hovered.kind() != null && !instance.loader().runs(hovered.kind())) {
+                info = "This is a " + hovered.kind().label() + " mod, so it only loads in a " + hovered.kind().label() + " instance.";
+            } else if (hovered.squidMod() && !hovered.worksOn(minecraftVersion())) {
                 info = "Made for Minecraft " + String.join(" or ", hovered.minecraft()) + ", so Squid will skip it on "
                         + minecraftVersion() + ".";
             }
@@ -103,12 +112,14 @@ public class ModsScreen extends Screen {
             centered(g, info, w, listBottom + 6 * GUI, problem != null ? 0xFF5555 : 0xA0A0A0);
         }
 
-        if (!instance.squid()) {
-            centered(g, "Squid is off for this instance, so these won't load.", w, listBottom + 18 * GUI, 0xFFFF55);
+        if (instance.loader() == Loader.VANILLA) {
+            centered(g, "Vanilla doesn't load mods. Pick Squid in Instances.", w, listBottom + 18 * GUI, 0xFFFF55);
         } else if (RunningGames.isRunning(instance)) {
             centered(g, "Changes are used the next time the game starts.", w, listBottom + 18 * GUI, 0xFFFF55);
         }
 
+        // Your own mods are Squid mods, so New Mod is for Squid instances (and Vanilla ones, which it switches to Squid)
+        newButton.setActive(instance.loader() == Loader.SQUID || instance.loader() == Loader.VANILLA);
         int buttonsY = h - 52 * GUI;
         newButton.setBounds(w / 2 - 100 * GUI, buttonsY, 98 * GUI, 20 * GUI);
         openButton.setBounds(w / 2 + 2 * GUI, buttonsY, 98 * GUI, 20 * GUI);
@@ -135,8 +146,8 @@ public class ModsScreen extends Screen {
             super.mousePressed(x, y);
             return;
         }
-        if (!mod.squidMod()) {
-            problem = "That jar has no squid.json, so Squid skips it either way.";
+        if (mod.kind() == null) {
+            problem = "Kelp can't tell what this jar is, so no loader will load it.";
             return;
         }
         if (mod.source() && x >= editLeft && x < editRight) {

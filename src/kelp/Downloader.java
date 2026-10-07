@@ -28,7 +28,7 @@ public class Downloader {
      * One file to download.
      *
      * @param sha1 the file's fingerprint, to check it arrived undamaged (or null to skip the check)
-     * @param size its size in bytes
+     * @param size its size in bytes, or -1 if it isn't known
      */
     public record Job(String url, Path file, String sha1, long size) {
     }
@@ -89,7 +89,7 @@ public class Downloader {
     /** Downloads every job, 8 at a time. Files that are already there are skipped. */
     public void downloadAll(List<Job> jobs) throws IOException, InterruptedException {
         filesTotal = jobs.size();
-        bytesTotal = jobs.stream().mapToLong(Job::size).sum();
+        bytesTotal = jobs.stream().mapToLong(job -> Math.max(0, job.size())).sum();
         pool = Executors.newFixedThreadPool(THREADS);
         try {
             List<Future<?>> running = new ArrayList<>();
@@ -120,7 +120,7 @@ public class Downloader {
 
     private void download(Job job) throws IOException, InterruptedException {
         Path file = job.file();
-        if (Files.exists(file) && Files.size(file) == job.size()) { // already downloaded earlier
+        if (Files.exists(file) && (job.size() < 0 || Files.size(file) == job.size())) { // already downloaded earlier
             finished(job);
             return;
         }
@@ -158,7 +158,7 @@ public class Downloader {
 
     private void finished(Job job) {
         filesDone.incrementAndGet();
-        bytesDone.addAndGet(job.size());
+        bytesDone.addAndGet(Math.max(0, job.size()));
     }
 
     private static String sha1(Path file) throws IOException {

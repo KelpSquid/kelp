@@ -3,17 +3,17 @@ package kelp;
 import java.awt.Graphics2D;
 import java.io.IOException;
 
-/** Makes a new instance: pick a name, a Minecraft version, and whether it uses Squid. */
+/** Makes a new instance: pick a name, a Minecraft version, and its loader (Squid unless you pick another). */
 public class NewInstanceScreen extends Screen {
     private final InstancesScreen parent;
     private final McTextField nameField = new McTextField(32);
     private final McButton versionButton = new McButton("", this::pickVersion);
-    private final McButton squidButton = new McButton("", this::toggleSquid);
+    private final McButton loaderButton = new McButton("", this::nextLoader);
     private final McButton createButton = new McButton("Create", this::create);
     private final McButton cancelButton = new McButton("Cancel", this::back);
 
     private VersionManifest.Version version;
-    private boolean squid;
+    private Loader loader = Loader.SQUID;
     private boolean nameTyped; // once the player types a name, picking a version stops changing it
     private String problem;
 
@@ -21,15 +21,15 @@ public class NewInstanceScreen extends Screen {
         super(panel);
         this.parent = parent;
         buttons.add(versionButton);
-        buttons.add(squidButton);
+        buttons.add(loaderButton);
         buttons.add(createButton);
         buttons.add(cancelButton);
         nameField.setFocused(true);
         nameField.onChange(text -> nameTyped = true);
     }
 
-    private void toggleSquid() {
-        squid = !squid;
+    private void nextLoader() {
+        loader = loader.next();
     }
 
     private void back() {
@@ -45,7 +45,7 @@ public class NewInstanceScreen extends Screen {
 
     private void create() {
         try {
-            Instance instance = Instance.create(nameField.getText(), version, squid);
+            Instance instance = Instance.create(nameField.getText(), version, loader);
             parent.select(instance);
             panel.setScreen(parent);
         } catch (IOException e) {
@@ -65,12 +65,14 @@ public class NewInstanceScreen extends Screen {
         nameField.draw(g, font, GUI, panel.getTime());
 
         versionButton.setLabel(version == null ? "Version: Pick one" : "Version: " + version.id());
-        squidButton.setLabel("Squid: " + (squid ? "ON" : "OFF"));
+        loaderButton.setLabel("Loader: " + loader.label() + (loader.recommended() ? " (best)" : ""));
         versionButton.setBounds(left, top + 40 * GUI, 200 * GUI, 20 * GUI);
-        squidButton.setBounds(left, top + 64 * GUI, 200 * GUI, 20 * GUI);
-        if (problem != null) centered(g, problem, w, top + 90 * GUI, 0xFF5555);
+        loaderButton.setBounds(left, top + 64 * GUI, 200 * GUI, 20 * GUI);
+        int aboutColor = !loader.ready() ? 0xFFFF55 : loader.recommended() ? 0x55FF55 : 0xA0A0A0;
+        centered(g, loader.about(), w, top + 88 * GUI, aboutColor);
+        if (problem != null) centered(g, problem, w, top + 102 * GUI, 0xFF5555);
 
-        createButton.setActive(version != null && !nameField.getText().isBlank());
+        createButton.setActive(version != null && !nameField.getText().isBlank() && loader.ready());
         createButton.setBounds(left, h - 28 * GUI, 98 * GUI, 20 * GUI);
         cancelButton.setBounds(w / 2 + 2 * GUI, h - 28 * GUI, 98 * GUI, 20 * GUI);
         for (McButton b : buttons) b.draw(g, font, GUI);

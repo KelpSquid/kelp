@@ -50,6 +50,20 @@ public final class Settings {
         set("lastInstance", id);
     }
 
+    /** The instance the title screen's Play button always starts, or null to start the one played last. */
+    public static String defaultInstance() {
+        return VALUES.getProperty("defaultInstance");
+    }
+
+    public static void setDefaultInstance(String id) {
+        if (id == null) {
+            VALUES.remove("defaultInstance");
+            save();
+        } else {
+            set("defaultInstance", id);
+        }
+    }
+
     private static void set(String key, String value) {
         VALUES.setProperty(key, value);
         save();

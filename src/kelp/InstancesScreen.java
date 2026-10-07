@@ -9,10 +9,11 @@ public class InstancesScreen extends Screen {
     private final McList<Instance> list = new McList<>(220);
     private final McButton playButton = new McButton("Play", this::play);
     private final McButton newButton = new McButton("New Instance", () -> panel.setScreen(new NewInstanceScreen(panel, this)));
-    private final McButton squidButton = new McButton("", this::toggleSquid);
+    private final McButton loaderButton = new McButton("", this::nextLoader);
     private final McButton modsButton = new McButton("Mods", this::openMods);
     private final McButton optionsButton = new McButton("Game Options", this::openOptions);
     private final McButton deleteButton = new McButton("Delete", this::delete);
+    private final McButton defaultButton = new McButton("", this::toggleDefault);
     private final McButton backButton = new McButton("Back", this::back);
     private String problem;
 
@@ -21,10 +22,11 @@ public class InstancesScreen extends Screen {
         this.parent = parent;
         buttons.add(playButton);
         buttons.add(newButton);
-        buttons.add(squidButton);
+        buttons.add(loaderButton);
         buttons.add(modsButton);
         buttons.add(optionsButton);
         buttons.add(deleteButton);
+        buttons.add(defaultButton);
         buttons.add(backButton);
     }
 
@@ -49,13 +51,23 @@ public class InstancesScreen extends Screen {
         panel.setScreen(new DownloadScreen(panel, this, list.getSelected()));
     }
 
-    private void toggleSquid() {
+    private void nextLoader() {
         Instance instance = list.getSelected();
+        if (RunningGames.isRunning(instance)) {
+            problem = "Close the game first, then change its loader.";
+            return;
+        }
         try {
-            instance.setSquid(!instance.squid());
+            instance.setLoader(instance.loader().nextReady());
         } catch (IOException e) {
             problem = "Couldn't save that: " + e.getMessage();
         }
+    }
+
+    /** Makes the picked instance the one the title screen's Play button starts, or stops it being that. */
+    private void toggleDefault() {
+        Instance instance = list.getSelected();
+        Settings.setDefaultInstance(instance.isDefault() ? null : instance.id());
     }
 
     private void openMods() {
@@ -75,6 +87,7 @@ public class InstancesScreen extends Screen {
         panel.setScreen(new ConfirmScreen(panel, "Delete " + instance.name() + "?",
                 "Its worlds, settings and mods will be gone forever!", () -> {
             try {
+                if (instance.isDefault()) Settings.setDefaultInstance(null);
                 instance.delete();
                 problem = null;
             } catch (IOException e) {
@@ -89,31 +102,35 @@ public class InstancesScreen extends Screen {
         McFont font = panel.getMcFont();
         centered(g, "Instances", w, 12 * GUI, 0xFFFFFF);
 
-        int listBottom = h - 108 * GUI;
+        int listBottom = h - 132 * GUI;
         String empty = list.getItems().isEmpty() ? "No instances yet. Click New Instance!" : null;
         list.draw(g, font, w, 32 * GUI, listBottom, empty, (gg, instance, x, y, width) -> {
-            font.draw(gg, instance.name(), x, y, GUI, 0xFFFFFF);
-            String details = "Minecraft " + instance.version().id() + (instance.squid() ? " + Squid" : "");
+            // The default instance is yellow, with a star, like it's been picked out
+            boolean isDefault = instance.isDefault();
+            font.draw(gg, isDefault ? "* " + instance.name() : instance.name(), x, y, GUI, isDefault ? 0xFFFF55 : 0xFFFFFF);
+            String details = "Minecraft " + instance.version().id() + instance.loader().suffix();
             font.draw(gg, details, x + width - font.width(details, GUI), y, GUI, 0xA0A0A0);
         });
         if (problem != null) centered(g, problem, w, listBottom + 2 * GUI, 0xFF5555);
 
         // Buttons: everything but New Instance and Back needs an instance picked first
         Instance selected = list.getSelected();
-        for (McButton b : new McButton[] {playButton, squidButton, modsButton, optionsButton, deleteButton}) {
+        for (McButton b : new McButton[] {playButton, loaderButton, modsButton, optionsButton, deleteButton, defaultButton}) {
             b.setActive(selected != null);
         }
-        squidButton.setLabel("Squid: " + (selected != null && selected.squid() ? "ON" : "OFF"));
-        int y = h - 100 * GUI;
+        loaderButton.setLabel(selected == null ? "Loader" : selected.loader().label());
+        defaultButton.setLabel(selected != null && selected.isDefault() ? "Not Default" : "Make Default");
+        int y = h - 124 * GUI;
         int left = w / 2 - 100 * GUI;
         int right = w / 2 + 2 * GUI;
         playButton.setBounds(left, y, 98 * GUI, 20 * GUI);
         newButton.setBounds(right, y, 98 * GUI, 20 * GUI);
-        squidButton.setBounds(left, y + 24 * GUI, 98 * GUI, 20 * GUI);
+        loaderButton.setBounds(left, y + 24 * GUI, 98 * GUI, 20 * GUI);
         modsButton.setBounds(right, y + 24 * GUI, 98 * GUI, 20 * GUI);
         optionsButton.setBounds(left, y + 48 * GUI, 98 * GUI, 20 * GUI);
         deleteButton.setBounds(right, y + 48 * GUI, 98 * GUI, 20 * GUI);
-        backButton.setBounds(left, y + 72 * GUI, 200 * GUI, 20 * GUI);
+        defaultButton.setBounds(left, y + 72 * GUI, 200 * GUI, 20 * GUI);
+        backButton.setBounds(left, y + 96 * GUI, 200 * GUI, 20 * GUI);
         for (McButton b : buttons) b.draw(g, font, GUI);
     }
 

@@ -1,7 +1,6 @@
 package kelp;
 
 import java.awt.Graphics2D;
-import java.util.List;
 
 /** The first thing you see: the Kelp title, a splash and the main buttons. */
 public class TitleScreen extends Screen {
@@ -10,7 +9,7 @@ public class TitleScreen extends Screen {
     private final McButton settings = new McButton("Options...", () -> panel.setScreen(new SettingsScreen(panel, this)));
     private final McButton quit = new McButton("Quit Game", () -> System.exit(0));
 
-    private Instance last; // the instance played last, which Play starts
+    private Instance last; // what Play starts: the default instance, or the one played last
 
     public TitleScreen(OceanPanel panel) {
         super(panel);
@@ -22,12 +21,7 @@ public class TitleScreen extends Screen {
 
     @Override
     public void shown() {
-        last = Instance.find(Settings.lastInstance());
-        if (last == null) {
-            // Nothing played yet (or it was deleted): use the newest instance, if there is one
-            List<Instance> all = Instance.all();
-            if (!all.isEmpty()) last = all.get(0);
-        }
+        last = Instance.toPlay(); // the default instance, or else the one played last
     }
 
     /** Plays the last instance again, or opens the instance list if there isn't one yet. */
@@ -70,7 +64,7 @@ public class TitleScreen extends Screen {
 
         // What Play will start, in the bottom-left corner where Minecraft shows its own version
         String playing = last == null ? "No instances yet" : last.name() + " - Minecraft " + last.version().id()
-                + (last.squid() ? " + Squid" : "");
+                + last.loader().suffix();
         font.draw(g, playing, 2 * GUI, h - 10 * GUI, GUI, 0xFFFFFF);
 
         // Mojang's rules ask projects like Kelp to say this clearly, so it's always on the title screen
