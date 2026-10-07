@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -15,6 +16,15 @@ import java.util.zip.ZipFile;
  * Kelp only changes the lines it knows about and keeps every other line exactly as it was.
  */
 public final class GameOptions {
+    /**
+     * The settings Minecraft's graphics presets (Fast, Fancy, Fabulous) change. Minecraft applies the chosen preset
+     * every time it starts, so changing one of these by hand has to switch the preset to Custom, like the game does.
+     */
+    static final Set<String> PRESET_SETTINGS = Set.of("renderDistance", "simulationDistance", "biomeBlendRadius",
+            "prioritizeChunkUpdates", "ao", "renderClouds", "particles", "mipmapLevels", "entityShadows",
+            "entityDistanceScaling", "menuBackgroundBlurriness", "cloudRange", "cutoutLeaves", "improvedTransparency",
+            "weatherRadius", "maxAnisotropyBit", "textureFiltering");
+
     private final Path file;
     private final List<String> lines;
     private final String newline; // keep whatever line endings the file already has
@@ -75,8 +85,25 @@ public final class GameOptions {
         return Boolean.parseBoolean(get(key, String.valueOf(fallback)));
     }
 
-    /** Changes a setting and saves the file right away. */
+    /** Changes a setting and saves the file right away. A graphics setting switches the graphics preset to Custom. */
     public void set(String key, String value) throws IOException {
+        if (PRESET_SETTINGS.contains(key)) put("graphicsPreset", "\"custom\"");
+        put(key, value);
+        save();
+    }
+
+    /**
+     * Minecraft's own Fast graphics preset, which the game applies when it starts. Render and simulation distance
+     * are written now too (8 and 6, what Fast uses), so Kelp's sliders show what the game will use.
+     */
+    public void useFastPreset() throws IOException {
+        put("graphicsPreset", "\"fast\"");
+        put("renderDistance", "8");
+        put("simulationDistance", "6");
+        save();
+    }
+
+    private void put(String key, String value) {
         String line = key + ":" + value;
         boolean found = false;
         for (int i = 0; i < lines.size(); i++) {
@@ -86,6 +113,9 @@ public final class GameOptions {
             }
         }
         if (!found) lines.add(line);
+    }
+
+    private void save() throws IOException {
         Files.createDirectories(file.getParent());
         Files.writeString(file, String.join(newline, lines) + newline, StandardCharsets.UTF_8);
     }

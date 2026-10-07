@@ -4,6 +4,7 @@ import java.awt.Desktop;
 import java.awt.Graphics2D;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * The mods installed in one instance, with a switch for each. Click a mod to turn it on or off.
@@ -15,6 +16,7 @@ public class ModsScreen extends Screen {
     private final McList<InstalledMod> list = new McList<>(220);
     private final McButton newButton = new McButton("New Mod", this::newMod);
     private final McButton openButton = new McButton("Open Folder", this::openFolder);
+    private final McButton shaderButton = new McButton("Shader Packs", this::openShaderPacks);
     private final McButton doneButton = new McButton("Done", this::back);
 
     private double listedAt = -1; // the folder is checked again every second, in case mods were added
@@ -30,6 +32,7 @@ public class ModsScreen extends Screen {
         this.instance = instance;
         buttons.add(newButton);
         buttons.add(openButton);
+        buttons.add(shaderButton);
         buttons.add(doneButton);
     }
 
@@ -45,6 +48,17 @@ public class ModsScreen extends Screen {
         try {
             Files.createDirectories(instance.mods());
             Desktop.getDesktop().open(instance.mods().toFile());
+        } catch (IOException e) {
+            problem = "Couldn't open the folder: " + e.getMessage();
+        }
+    }
+
+    /** Shader packs go in their own folder, next to mods. Iris lists them in Options > Video Settings > Shader Packs. */
+    private void openShaderPacks() {
+        try {
+            Path folder = instance.folder().resolve("shaderpacks");
+            Files.createDirectories(folder);
+            Desktop.getDesktop().open(folder.toFile());
         } catch (IOException e) {
             problem = "Couldn't open the folder: " + e.getMessage();
         }
@@ -118,13 +132,19 @@ public class ModsScreen extends Screen {
             centered(g, "Changes are used the next time the game starts.", w, listBottom + 18 * GUI, 0xFFFF55);
         }
 
-        // Your own mods are Squid mods, so New Mod is for Squid instances (and Vanilla ones, which it switches to Squid)
+        // Your own mods are Squid mods, so New Mod is for Squid instances (and Vanilla ones, which it switches to Squid).
+        // A Shaders instance shows a Shader Packs button in its place.
+        boolean shaders = instance.loader() == Loader.SHADERS;
+        McButton left = shaders ? shaderButton : newButton;
+        (shaders ? newButton : shaderButton).setBounds(-1000, -1000, 0, 0); // out of sight, so it can't be clicked
         newButton.setActive(instance.loader() == Loader.SQUID || instance.loader() == Loader.VANILLA);
         int buttonsY = h - 52 * GUI;
-        newButton.setBounds(w / 2 - 100 * GUI, buttonsY, 98 * GUI, 20 * GUI);
+        left.setBounds(w / 2 - 100 * GUI, buttonsY, 98 * GUI, 20 * GUI);
         openButton.setBounds(w / 2 + 2 * GUI, buttonsY, 98 * GUI, 20 * GUI);
         doneButton.setBounds(w / 2 - 100 * GUI, buttonsY + 24 * GUI, 200 * GUI, 20 * GUI);
-        for (McButton b : buttons) b.draw(g, font, GUI);
+        for (McButton b : buttons) {
+            if (b != (shaders ? newButton : shaderButton)) b.draw(g, font, GUI);
+        }
     }
 
     private String minecraftVersion() {

@@ -29,6 +29,7 @@ public final class LoaderProfiles {
      */
     public static String install(Loader loader, String minecraft, Downloader downloader, Map<Path, Downloader.Job> jobs)
             throws IOException, InterruptedException {
+        loader = loader.runtime();
         String meta = switch (loader) {
             case FABRIC -> fabricMeta;
             case QUILT -> quiltMeta;

@@ -1,6 +1,7 @@
 package kelp;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -34,6 +35,14 @@ public class GameInstaller {
 
     /** Installs the Minecraft version, plus Fabric or Quilt if the loader is one of them. */
     public void install(VersionManifest.Version version, Loader loader) throws IOException, InterruptedException {
+        install(version, loader, null);
+    }
+
+    /**
+     * Installs the Minecraft version and its loader. For the Shaders loader, Sodium and Iris also go into
+     * modsFolder the first time (if they aren't there, on or off, already).
+     */
+    public void install(VersionManifest.Version version, Loader loader, Path modsFolder) throws IOException, InterruptedException {
         stage = "Getting version details";
         Path versionFolder = Folders.versions().resolve(version.id());
         Map<String, Object> details = Json.object(Json.parse(
@@ -86,9 +95,19 @@ public class GameInstaller {
         }
 
         // 5. Fabric or Quilt, with their own libraries
-        if (loader == Loader.FABRIC || loader == Loader.QUILT) {
-            stage = "Getting " + loader.label();
+        if (loader.runtime() == Loader.FABRIC || loader == Loader.QUILT) {
+            stage = "Getting " + loader.runtime().label();
             loaderVersion = LoaderProfiles.install(loader, version.id(), downloader, jobs);
+        }
+        if (loader == Loader.SHADERS && modsFolder != null) {
+            // Sodium makes the game faster, and Iris (which needs Sodium) runs shader packs
+            stage = "Getting Sodium and Iris";
+            for (String project : new String[] {"sodium", "iris"}) {
+                if (hasMod(modsFolder, project)) continue;
+                Downloader.Job job = Modrinth.latest(project, "fabric", version.id(), modsFolder, downloader);
+                jobs.put(job.file(), job);
+            }
+            Files.createDirectories(modsFolder.resolveSibling("shaderpacks"));
         } else if (!loader.ready()) {
             throw new IOException(loader.label() + " is coming soon. Pick another loader for now.");
         }
@@ -101,7 +120,21 @@ public class GameInstaller {
         stage = "Downloading";
         downloader.downloadAll(new ArrayList<>(jobs.values()));
         JavaRuntime.markRunnable(java);
+
+        // 7. NeoForge and Forge patch the game with their own installer, which needs the game and Java first
+        if (loader == Loader.NEOFORGE || loader == Loader.FORGE) {
+            stage = "Installing " + loader.label();
+            loaderVersion = ForgeInstallers.install(loader, version.id(), downloader, JavaRuntime.executable(java));
+        }
         stage = "Done";
+    }
+
+    /** Whether the folder already has this mod, turned on or off, so it isn't downloaded a second time. */
+    static boolean hasMod(Path modsFolder, String project) throws IOException {
+        if (!Files.isDirectory(modsFolder)) return false;
+        try (java.util.stream.Stream<Path> files = Files.list(modsFolder)) {
+            return files.anyMatch(f -> f.getFileName().toString().toLowerCase().startsWith(project + "-"));
+        }
     }
 
     /** Adds a download described the way Mojang describes them: with a url, sha1 and size. */

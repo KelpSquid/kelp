@@ -10,15 +10,18 @@ import java.util.function.DoubleFunction;
 public class GameOptionsScreen extends Screen {
     private static final String[] GUI_SCALES = {"Auto", "1", "2", "3", "4"};
 
+    private final Screen parent;
     private final Instance instance;
     private final McButton doneButton;
     private final List<McSlider> sliders = new ArrayList<>();
     private final List<Object> layout = new ArrayList<>(); // sliders and buttons, in the order they're laid out
     private GameOptions options;
     private String problem;
+    private String notice;
 
     public GameOptionsScreen(OceanPanel panel, Screen parent, Instance instance) {
         super(panel);
+        this.parent = parent;
         this.instance = instance;
         doneButton = new McButton("Done", () -> panel.setScreen(parent));
         buttons.add(doneButton);
@@ -51,6 +54,19 @@ public class GameOptionsScreen extends Screen {
         toggle("Fullscreen", "fullscreen", false);
         toggle("View Bobbing", "bobView", true);
         toggle("Auto-Jump", "autoJump", false);
+        add(new McButton("Make It Faster", this::makeFaster));
+    }
+
+    /** Minecraft's own Fast graphics: shorter render distance, simpler clouds, leaves and particles, no shadows. */
+    private void makeFaster() {
+        try {
+            options.useFastPreset();
+            GameOptionsScreen fresh = new GameOptionsScreen(panel, parent, instance); // so the sliders show the new values
+            fresh.notice = "Fast graphics on! Render distance is now 8.";
+            panel.setScreen(fresh);
+        } catch (IOException e) {
+            problem = "Couldn't save: " + e.getMessage();
+        }
     }
 
     private static String percent(double v) {
@@ -125,6 +141,8 @@ public class GameOptionsScreen extends Screen {
         int bottom = h - 28 * GUI;
         if (problem != null) {
             centered(g, problem, w, bottom - 14 * GUI, 0xFF5555);
+        } else if (notice != null && !RunningGames.isRunning(instance)) {
+            centered(g, notice, w, bottom - 14 * GUI, 0x55FF55);
         } else if (RunningGames.isRunning(instance)) {
             // Minecraft saves its own options when it closes, which would undo changes made now
             centered(g, "Close the game first, or it will undo these.", w, bottom - 14 * GUI, 0xFFFF55);

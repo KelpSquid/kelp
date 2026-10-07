@@ -54,7 +54,7 @@ public final class ModTemplate {
                 //
                 // When things happen:
                 //   onJoin(() -> { ... });                 when you join a world
-                //   onKey("G", () -> { ... });             when you press G (you can change it in Controls)
+                //   onKey("H", () -> { ... });             when you press H (you can change it in Controls)
                 //   every(10, () -> { ... });              every 10 seconds
                 //   onTick(() -> { ... });                 20 times a second
                 //
@@ -64,8 +64,8 @@ public final class ModTemplate {
                     void start() {
                         say("%1$s is working!");
 
-                        onKey("G", () -> {
-                            say("You pressed G! You're at " + x() + ", " + y() + ", " + z());
+                        onKey("H", () -> {
+                            say("You pressed H! You're at " + x() + ", " + y() + ", " + z());
                             playSound("entity.experience_orb.pickup");
                         });
                     }

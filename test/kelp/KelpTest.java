@@ -60,6 +60,8 @@ public class KelpTest {
         launcher();
         loaders();
         defaultInstance();
+        shaders();
+        forge();
         squidReport();
         accounts();
         microsoftLogin();
@@ -168,7 +170,12 @@ public class KelpTest {
         options.set("renderDistance", "20");
         options.set("fullscreen", "true");
         check("changes one line, adds a new one, keeps the rest and Windows line endings",
-                Files.readString(file).replace("\r\n", "|"), "version:5023|renderDistance:20|key_key.jump:key.keyboard.space|fullscreen:true|");
+                Files.readString(file).replace("\r\n", "|"),
+                "version:5023|renderDistance:20|key_key.jump:key.keyboard.space|graphicsPreset:\"custom\"|fullscreen:true|");
+        check("a graphics setting switches the preset to Custom, so Minecraft doesn't undo it", options.get("graphicsPreset", ""), "\"custom\"");
+        options.useFastPreset();
+        check("Make It Faster picks Minecraft's own Fast preset", options.get("graphicsPreset", "") + " " + options.get("renderDistance", "")
+                + " " + options.get("simulationDistance", ""), "\"fast\" 8 6");
 
         Instance fresh = Instance.create("Never Played", v, false);
         check("an unplayed, undownloaded instance explains itself", problem(() -> GameOptions.load(fresh)),
@@ -207,7 +214,7 @@ public class KelpTest {
         check("a taken name gets a number", first.getFileName() + " " + second.getFileName(), "RainbowSheep.java RainbowSheep2.java");
         String code = Files.readString(first);
         check("the new mod is ready to play", code.contains("public class RainbowSheep extends EasyMod")
-                && code.contains("say(\"Rainbow Sheep is working!\");") && code.contains("onKey(\"G\""), true);
+                && code.contains("say(\"Rainbow Sheep is working!\");") && code.contains("onKey(\"H\""), true);
         check("a quote in the name can't break the code", ModTemplate.text("Bob's \"Mod\"", "BobSMod").contains("say(\"Bob's 'Mod' is working!\");"), true);
         InstalledMod sheep = InstalledMod.list(folder).stream().filter(m -> m.file().equals(first)).findFirst().orElseThrow();
         check("a .java mod is listed as your own Squid mod", sheep.name() + " | " + sheep.squidMod() + " | " + sheep.source(),
@@ -493,6 +500,104 @@ public class KelpTest {
         }
     }
 
+    /** The Shaders setup: Fabric, plus Sodium and Iris from a pretend Modrinth. */
+    static void shaders() throws Exception {
+        check("Shaders runs on Fabric and runs Fabric mods", Loader.SHADERS.runtime() + " " + Loader.SHADERS.runs(Loader.FABRIC)
+                + " " + Loader.SHADERS.runs(Loader.SQUID), "FABRIC true false");
+        byte[] sodiumJar = "pretend sodium".getBytes(StandardCharsets.UTF_8);
+        HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        String base = "http://127.0.0.1:" + server.getAddress().getPort();
+        List<String> agents = new java.util.ArrayList<>();
+        server.createContext("/", exchange -> {
+            agents.add(exchange.getRequestHeaders().getFirst("User-Agent"));
+            String path = exchange.getRequestURI().getPath();
+            byte[] body;
+            if (path.equals("/project/sodium/version")) {
+                try {
+                    body = ("[{\"version_type\": \"alpha\", \"files\": [{\"primary\": true, \"filename\": \"sodium-alpha.jar\", \"url\": \"" + base + "/nope\"}]},"
+                            + " {\"version_type\": \"release\", \"files\": [{\"primary\": false, \"filename\": \"sodium-sources.jar\", \"url\": \"" + base + "/nope\"},"
+                            + " {\"primary\": true, \"filename\": \"sodium-fabric-0.9.2+mc26.3.jar\", \"url\": \"" + base + "/files/sodium.jar\","
+                            + " \"hashes\": {\"sha1\": \"" + sha1(sodiumJar) + "\"}, \"size\": " + sodiumJar.length + "}]}]").getBytes(StandardCharsets.UTF_8);
+                } catch (Exception e) {
+                    throw new IllegalStateException(e);
+                }
+            } else if (path.equals("/files/sodium.jar")) {
+                body = sodiumJar;
+            } else if (path.equals("/project/empty/version")) {
+                body = "[]".getBytes(StandardCharsets.UTF_8);
+            } else {
+                body = new byte[0];
+            }
+            exchange.sendResponseHeaders(body.length == 0 ? 404 : 200, body.length == 0 ? -1 : body.length);
+            try (OutputStream out = exchange.getResponseBody()) {
+                out.write(body);
+            }
+        });
+        server.start();
+        String realApi = Modrinth.api;
+        Modrinth.api = base;
+        try {
+            Path mods = home.resolve("shaders-test/mods");
+            Downloader downloader = new Downloader();
+            Downloader.Job job = Modrinth.latest("sodium", "fabric", "26.3", mods, downloader);
+            check("Modrinth: the newest release, not an alpha, and its main file", job.file().getFileName().toString(), "sodium-fabric-0.9.2+mc26.3.jar");
+            downloader.downloadAll(List.of(job));
+            check("and it downloads and checks out", Files.readString(job.file()), "pretend sodium");
+            check("Kelp says who it is to Modrinth", agents.get(0), Downloader.USER_AGENT);
+            check("a mod that's there isn't added again", GameInstaller.hasMod(mods, "sodium") + " " + GameInstaller.hasMod(mods, "iris"), "true false");
+            check("a project with nothing for this version is explained",
+                    problem(() -> Modrinth.latest("empty", "fabric", "26.3", mods, new Downloader())), "empty doesn't have a version for Minecraft 26.3 yet.");
+        } finally {
+            Modrinth.api = realApi;
+            server.stop(0);
+        }
+    }
+
+    /** NeoForge and Forge: picking their version and reading what an installer makes. Real installs are tested by hand. */
+    static void forge() throws Exception {
+        check("NeoForge's way of writing Minecraft versions", ForgeInstallers.neoForgePrefix("1.21.1") + " " + ForgeInstallers.neoForgePrefix("1.21")
+                + " " + ForgeInstallers.neoForgePrefix("26.3") + " " + ForgeInstallers.neoForgePrefix("26.3.1"), "21.1. 21.0. 26.3.0. 26.3.1.");
+        HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        server.createContext("/", exchange -> {
+            String path = exchange.getRequestURI().getPath();
+            String reply = switch (path) {
+                case "/neo/api/maven/versions/releases/net/neoforged/neoforge" ->
+                        "{\"versions\": [\"26.2.0.9\", \"26.3.0.9-beta\", \"26.3.0.55-beta\", \"26.3.1.2\", \"26.3.0.100-beta\"]}";
+                case "/promos.json" -> "{\"promos\": {\"26.2-latest\": \"65.0.1\", \"26.2-recommended\": \"65.0.0\", \"26.3-latest\": \"66.0.9\"}}";
+                default -> "";
+            };
+            byte[] body = reply.getBytes(StandardCharsets.UTF_8);
+            exchange.sendResponseHeaders(body.length == 0 ? 404 : 200, body.length == 0 ? -1 : body.length);
+            try (OutputStream out = exchange.getResponseBody()) {
+                out.write(body);
+            }
+        });
+        server.start();
+        String base = "http://127.0.0.1:" + server.getAddress().getPort();
+        String realNeo = ForgeInstallers.neoForgeMaven;
+        String realPromos = ForgeInstallers.forgePromotions;
+        ForgeInstallers.neoForgeMaven = base + "/neo";
+        ForgeInstallers.forgePromotions = base + "/promos.json";
+        try {
+            check("NeoForge: the newest beta when there's no release yet", ForgeInstallers.neoForgeVersion("26.3", new Downloader()), "26.3.0.100-beta");
+            check("NeoForge: a release when there is one", ForgeInstallers.neoForgeVersion("26.3.1", new Downloader()), "26.3.1.2");
+            check("Forge: recommended first, else latest", ForgeInstallers.forgeVersion("26.2", new Downloader()) + " "
+                    + ForgeInstallers.forgeVersion("26.3", new Downloader()), "65.0.0 66.0.9");
+            check("a Minecraft version Forge doesn't have yet is explained",
+                    problem(() -> ForgeInstallers.forgeVersion("26.4", new Downloader())), "Forge doesn't support Minecraft 26.4 yet.");
+        } finally {
+            ForgeInstallers.neoForgeMaven = realNeo;
+            ForgeInstallers.forgePromotions = realPromos;
+            server.stop(0);
+        }
+        Path installer = home.resolve("fake-installer.jar");
+        jar(installer, "install_profile.json", "{\"version\": \"neoforge-26.3.0.55-beta\", \"minecraft\": \"26.3\"}");
+        check("reads which version an installer makes", ForgeInstallers.profileId(installer), "neoforge-26.3.0.55-beta");
+        jar(installer, "install_profile.json", "{\"version\": \"../../escape\"}");
+        check("an installer with a strange version name is refused", problem(() -> ForgeInstallers.profileId(installer)),
+                "fake-installer.jar doesn't say which version it makes.");
+    }
+
     static void defaultInstance() throws Exception {
         VersionManifest.Version v = new VersionManifest.Version("26.3", "release", "", "");
         Instance first = Instance.create("Default Test A", v, Loader.SQUID);
@@ -514,7 +619,7 @@ public class KelpTest {
 
     static void loaders() throws Exception {
         check("unknown loader names are Vanilla", Loader.parse("FABRIC") + " " + Loader.parse("nonsense"), "FABRIC VANILLA");
-        check("changing an instance skips loaders that aren't ready", Loader.QUILT.nextReady(), Loader.VANILLA);
+        check("the loader button goes all the way round", Loader.FORGE.nextReady(), Loader.VANILLA);
         Path old = Folders.instances().resolve("Old Squid");
         Files.createDirectories(old);
         Files.writeString(old.resolve("instance.properties"), "name=Old Squid\nversion=26.3\nsquid=true\n");

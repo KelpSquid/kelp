@@ -16,7 +16,9 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.HexFormat;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
@@ -48,7 +50,7 @@ public class Package {
 
     public static void main(String[] args) throws Exception {
         Path kelpJar = buildKelpJar();
-        List<Path> squidJars = squidJars();
+        Map<String, Path> squidJars = squidJars();
         String readme = Files.readString(Path.of("tools", "DOWNLOAD-README.txt")).replace("\r\n", "\n");
         byte[] asmLicense = Files.readAllBytes(Path.of("licenses", "ASM-LICENSE.txt"));
 
@@ -96,25 +98,37 @@ public class Package {
         }
     }
 
-    /** squid.jar and ASM, from Squid's own build. */
-    static List<Path> squidJars() throws IOException {
+    /**
+     * squid.jar, ASM, and Squid's built-in parts like the Store, from Squid's own build.
+     * The keys are where each goes inside the squid folder: built-in parts go in squid/builtin.
+     */
+    static Map<String, Path> squidJars() throws IOException {
         Path squid = SQUID.resolve("build").resolve("squid.jar");
         if (!Files.exists(squid)) throw new IOException("Build Squid first: run build.bat in the squid folder.");
-        List<Path> jars = new ArrayList<>(List.of(squid));
+        Map<String, Path> jars = new LinkedHashMap<>();
+        jars.put("squid.jar", squid);
         try (Stream<Path> lib = Files.list(SQUID.resolve("lib"))) {
-            jars.addAll(lib.filter(p -> p.toString().endsWith(".jar")).sorted().toList());
+            for (Path jar : lib.filter(p -> p.toString().endsWith(".jar")).sorted().toList()) jars.put(jar.getFileName().toString(), jar);
+        }
+        Path builtIn = SQUID.resolve("build").resolve("builtin");
+        if (Files.isDirectory(builtIn)) {
+            try (Stream<Path> parts = Files.list(builtIn)) {
+                for (Path jar : parts.filter(p -> p.toString().endsWith(".jar")).sorted().toList()) {
+                    jars.put("builtin/" + jar.getFileName(), jar);
+                }
+            }
         }
         return jars;
     }
 
     // ---- Windows: a zip with a Start Kelp file ----
 
-    static void windows(Path kelpJar, List<Path> squidJars, String readme, byte[] asmLicense) throws Exception {
+    static void windows(Path kelpJar, Map<String, Path> squidJars, String readme, byte[] asmLicense) throws Exception {
         Path jre = downloadJava("windows", "x64");
         Path out = BUILD.resolve("Kelp-windows.zip");
         try (ZipOutputStream zip = new ZipOutputStream(Files.newOutputStream(out))) {
             putFile(zip, "Kelp/kelp.jar", Files.readAllBytes(kelpJar));
-            for (Path jar : squidJars) putFile(zip, "Kelp/squid/" + jar.getFileName(), Files.readAllBytes(jar));
+            for (Map.Entry<String, Path> jar : squidJars.entrySet()) putFile(zip, "Kelp/squid/" + jar.getKey(), Files.readAllBytes(jar.getValue()));
             putFile(zip, "Kelp/squid/ASM-LICENSE.txt", asmLicense);
             putFile(zip, "Kelp/README.txt", windowsText(readme));
             // javaw runs Kelp without a black console window staying open
@@ -141,12 +155,12 @@ public class Package {
 
     // ---- Linux: a tar.gz, so the start script and Java keep their "runnable" mark ----
 
-    static void linux(Path kelpJar, List<Path> squidJars, String readme, byte[] asmLicense) throws Exception {
+    static void linux(Path kelpJar, Map<String, Path> squidJars, String readme, byte[] asmLicense) throws Exception {
         Path jre = downloadJava("linux", "x64");
         Path out = BUILD.resolve("Kelp-linux.tar.gz");
         try (Tar tar = new Tar(Files.newOutputStream(out))) {
             tar.file("Kelp/kelp.jar", 0644, Files.readAllBytes(kelpJar));
-            for (Path jar : squidJars) tar.file("Kelp/squid/" + jar.getFileName(), 0644, Files.readAllBytes(jar));
+            for (Map.Entry<String, Path> jar : squidJars.entrySet()) tar.file("Kelp/squid/" + jar.getKey(), 0644, Files.readAllBytes(jar.getValue()));
             tar.file("Kelp/squid/ASM-LICENSE.txt", 0644, asmLicense);
             tar.file("Kelp/README.txt", 0644, readme.getBytes(StandardCharsets.UTF_8));
             tar.file("Kelp/start-kelp.sh", 0755, ("#!/bin/sh\n"
@@ -160,7 +174,7 @@ public class Package {
 
     // ---- Mac: Kelp.app with both Javas, picking the one that matches the Mac's chip ----
 
-    static void mac(Path kelpJar, List<Path> squidJars, String readme, byte[] asmLicense) throws Exception {
+    static void mac(Path kelpJar, Map<String, Path> squidJars, String readme, byte[] asmLicense) throws Exception {
         Path arm = downloadJava("mac", "aarch64");
         Path intel = downloadJava("mac", "x64");
         String app = "Kelp/Kelp.app/Contents/";
@@ -176,7 +190,7 @@ public class Package {
                     .getBytes(StandardCharsets.UTF_8));
             tar.file(app + "Resources/kelp.jar", 0644, Files.readAllBytes(kelpJar));
             tar.file(app + "Resources/kelp.icns", 0644, icns(ImageIO.read(Path.of("branding", "kelp.png").toFile())));
-            for (Path jar : squidJars) tar.file(app + "Resources/squid/" + jar.getFileName(), 0644, Files.readAllBytes(jar));
+            for (Map.Entry<String, Path> jar : squidJars.entrySet()) tar.file(app + "Resources/squid/" + jar.getKey(), 0644, Files.readAllBytes(jar.getValue()));
             tar.file(app + "Resources/squid/ASM-LICENSE.txt", 0644, asmLicense);
             // A Mac Java download is itself a bundle; only its Contents/Home folder is the Java
             copyTar(arm, tar, name -> insideHome(name, app + "Resources/jre-arm64/"));

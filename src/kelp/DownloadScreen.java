@@ -40,7 +40,7 @@ public class DownloadScreen extends Screen {
             try {
                 Process game = alreadyOpen;
                 if (game == null) {
-                    installer.install(findDetails(version), instance.loader());
+                    installer.install(findDetails(version), instance.loader(), instance.mods());
                     if (installer.getLoaderVersion() != null) instance.setLoaderVersion(installer.getLoaderVersion());
                     phase = Phase.STARTING;
                     game = Launcher.launch(version.id(), instance.folder(), Accounts.readyToPlay(), instance.loader(),

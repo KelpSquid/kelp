@@ -7,10 +7,11 @@ package kelp;
 public enum Loader {
     VANILLA("Vanilla", true, true, "Plain Minecraft. Nothing to break."),
     SQUID("Squid", true, true, "Made for Kelp: easy mods that just work."),
+    SHADERS("Shaders", false, true, "Fabric with Sodium and Iris, for shader packs."),
     FABRIC("Fabric", false, true, "Runs Fabric mods. Less reliable than Squid."),
     QUILT("Quilt", false, true, "Runs Quilt and most Fabric mods. Less reliable."),
-    NEOFORGE("NeoForge", false, false, "Coming soon."),
-    FORGE("Forge", false, false, "Coming soon.");
+    NEOFORGE("NeoForge", false, true, "Runs NeoForge mods. Less reliable than Squid."),
+    FORGE("Forge", false, true, "Runs Forge mods. Less reliable than Squid.");
 
     private final String label;
     private final boolean recommended;
@@ -60,9 +61,15 @@ public enum Loader {
         return this == VANILLA ? "" : " + " + label;
     }
 
+    /** What actually starts the game. Shaders is Fabric with two mods already in it. */
+    public Loader runtime() {
+        return this == SHADERS ? FABRIC : this;
+    }
+
     /** Whether a mod made for this kind of loader runs on this one. Quilt runs most Fabric mods too. */
     public boolean runs(Loader modKind) {
-        return modKind == this || this == QUILT && modKind == FABRIC;
+        Loader runtime = runtime();
+        return modKind == runtime || runtime == QUILT && modKind == FABRIC;
     }
 
     /** Reads a saved name, like "FABRIC". Unknown names are Vanilla, the safe choice. */

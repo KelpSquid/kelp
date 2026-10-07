@@ -35,6 +35,8 @@ public class Downloader {
 
     private static final int THREADS = 8; // how many files download at the same time
     private static final int TRIES = 3;
+    // Sites like Modrinth ask every app to say who it is, so they can reach the developer if something goes wrong
+    static final String USER_AGENT = "SamuelArther/kelp/0.1 (kelp@kelplauncher.org)";
 
     // Give up connecting after 15 seconds, so a bad connection fails instead of waiting forever
     private final HttpClient client = HttpClient.newBuilder()
@@ -70,7 +72,8 @@ public class Downloader {
     public String fetchText(String url, Path saveTo) throws IOException, InterruptedException {
         String text;
         try {
-            HttpRequest request = HttpRequest.newBuilder(URI.create(url)).timeout(Duration.ofSeconds(30)).build();
+            HttpRequest request = HttpRequest.newBuilder(URI.create(url)).header("User-Agent", USER_AGENT)
+                    .timeout(Duration.ofSeconds(30)).build();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() != 200) throw new IOException("Got error " + response.statusCode() + " for " + url);
             text = response.body();
@@ -130,7 +133,7 @@ public class Downloader {
         IOException problem = null;
         for (int attempt = 1; attempt <= TRIES; attempt++) {
             try {
-                HttpResponse<Path> response = client.send(HttpRequest.newBuilder(URI.create(job.url())).build(),
+                HttpResponse<Path> response = client.send(HttpRequest.newBuilder(URI.create(job.url())).header("User-Agent", USER_AGENT).build(),
                         HttpResponse.BodyHandlers.ofFile(part));
                 if (response.statusCode() != 200) throw new IOException("got error " + response.statusCode());
                 if (job.sha1() != null && !job.sha1().equals(sha1(part))) throw new IOException("it arrived damaged");
