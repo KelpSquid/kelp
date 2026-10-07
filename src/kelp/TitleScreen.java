@@ -63,8 +63,7 @@ public class TitleScreen extends Screen {
         s.dispose();
 
         // What Play will start, in the bottom-left corner where Minecraft shows its own version
-        String playing = last == null ? "No instances yet" : last.name() + " - Minecraft " + last.version().id()
-                + last.loader().suffix();
+        String playing = last == null ? "No instances yet" : "Play: " + last.summary();
         font.draw(g, playing, 2 * GUI, h - 10 * GUI, GUI, 0xFFFFFF);
 
         // Mojang's rules ask projects like Kelp to say this clearly, so it's always on the title screen

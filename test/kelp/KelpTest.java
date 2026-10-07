@@ -606,6 +606,15 @@ public class KelpTest {
 
     static void defaultInstance() throws Exception {
         VersionManifest.Version v = new VersionManifest.Version("26.3", "release", "", "");
+        check("the Play corner doesn't repeat what the name says", Instance.create("Squid 26.3", v, Loader.SQUID).summary() + " | "
+                + Instance.create("Survival", v, Loader.SQUID).summary() + " | " + Instance.create("Minecraft 26.3", v, Loader.NEOFORGE).summary()
+                + " | " + Instance.create("Plain 26.3", v, Loader.VANILLA).summary(),
+                "Squid 26.3 | Survival (Minecraft 26.3 + Squid) | Minecraft 26.3 (NeoForge) | Plain 26.3");
+        Instance beta = Instance.create("Beta Test", v, Loader.NEOFORGE);
+        beta.setLoaderVersion("neoforge-26.3.0.55-beta");
+        Instance stable = Instance.create("Stable Test", v, Loader.FORGE);
+        stable.setLoaderVersion("26.3-forge-66.0.9");
+        check("a beta loader is noticed", beta.loaderIsBeta() + " " + stable.loaderIsBeta(), "true false");
         Instance first = Instance.create("Default Test A", v, Loader.SQUID);
         Instance second = Instance.create("Default Test B", v, Loader.VANILLA);
         Settings.setLastInstance(second.id());

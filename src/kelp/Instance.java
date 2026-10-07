@@ -58,6 +58,23 @@ public final class Instance {
         return chosen;
     }
 
+    /**
+     * What Play starts, in a few words: the name, plus the Minecraft version and loader only if the name doesn't
+     * already say them. "Squid 26.3" stays "Squid 26.3"; "Survival" becomes "Survival (Minecraft 26.3 + Squid)".
+     */
+    public String summary() {
+        String lower = name.toLowerCase();
+        java.util.List<String> extra = new java.util.ArrayList<>();
+        if (!lower.contains(versionId.toLowerCase())) extra.add("Minecraft " + versionId);
+        if (loader != Loader.VANILLA && !lower.contains(loader.label().toLowerCase())) extra.add(loader.label());
+        return extra.isEmpty() ? name : name + " (" + String.join(" + ", extra) + ")";
+    }
+
+    /** Whether the installed Fabric, Quilt, NeoForge or Forge is a beta (or alpha), which can crash more. */
+    public boolean loaderIsBeta() {
+        return loaderVersion != null && loaderVersion.toLowerCase().matches(".*(alpha|beta|-rc|-pre).*");
+    }
+
     /** Whether the title screen's Play button always starts this one. */
     public boolean isDefault() {
         return id().equals(Settings.defaultInstance());

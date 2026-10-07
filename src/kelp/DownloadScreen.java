@@ -106,6 +106,7 @@ public class DownloadScreen extends Screen {
             }
             case STARTING -> {
                 centered(g, font, "Starting " + name + "...", w, titleY, 0xFFFFFF);
+                if (instance.loaderIsBeta()) centered(g, font, betaNotice(), w, lineY, 0xFFFF55);
                 button.setLabel("Cancel");
             }
             case RUNNING -> {
@@ -118,6 +119,10 @@ public class DownloadScreen extends Screen {
                 }
                 centered(g, font, line, w, lineY, 0xA0A0A0);
                 int y = lineY + 12 * GUI;
+                if (instance.loaderIsBeta()) {
+                    centered(g, font, betaNotice(), w, y, 0xFFFF55);
+                    y += 12 * GUI;
+                }
                 if (squid != null && !squid.skipped().isEmpty()) {
                     // Mods that couldn't work this time. The game still opened without them.
                     List<SquidReport.Skipped> skipped = squid.skipped();
@@ -172,6 +177,11 @@ public class DownloadScreen extends Screen {
 
         button.setBounds(w / 2 - 100 * GUI, centerY + 30 * GUI, 200 * GUI, 20 * GUI);
         button.draw(g, font, GUI);
+    }
+
+    /** For a loader that only has a beta for this Minecraft version yet. */
+    private String betaNotice() {
+        return instance.loader().label() + " for Minecraft " + version.id() + " is still a beta, so it might crash.";
     }
 
     /** Squid's report for this game, read again at most once a second (or never, without Squid). */

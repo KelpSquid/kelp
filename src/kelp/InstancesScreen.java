@@ -108,7 +108,7 @@ public class InstancesScreen extends Screen {
             // The default instance is yellow, with a star, like it's been picked out
             boolean isDefault = instance.isDefault();
             font.draw(gg, isDefault ? "* " + instance.name() : instance.name(), x, y, GUI, isDefault ? 0xFFFF55 : 0xFFFFFF);
-            String details = "Minecraft " + instance.version().id() + instance.loader().suffix();
+            String details = "Minecraft " + instance.version().id() + instance.loader().suffix() + (instance.loaderIsBeta() ? " beta" : "");
             font.draw(gg, details, x + width - font.width(details, GUI), y, GUI, 0xA0A0A0);
         });
         if (problem != null) centered(g, problem, w, listBottom + 2 * GUI, 0xFF5555);
