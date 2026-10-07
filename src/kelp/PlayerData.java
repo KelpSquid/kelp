@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Deletes everything Kelp and Squid keep about one player on this computer: their sign-in, their emblem, their Squid
+ * Deletes everything Kelp and Squid keep about one player on this computer: their sign-in, their emblem and badges, their Squid
  * Count, and the skin, cape and effects they picked in Squid's wardrobe. Worlds, mods, screenshots and the skin and
  * cape pictures themselves stay, since they're things made in the game rather than about the player.
  */
@@ -23,6 +23,7 @@ public final class PlayerData {
         String plain = id.replace("-", "");
         Files.deleteIfExists(Emblem.file(id));
         Files.deleteIfExists(Emblem.file(plain));
+        Files.deleteIfExists(Badges.file(id));
         Emblem.forget(id);
         Emblem.forget(plain);
         removePlayer(SquidCount.file(), true, id, plain);

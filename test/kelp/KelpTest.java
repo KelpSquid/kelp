@@ -179,6 +179,12 @@ public class KelpTest {
                         + Accounts.all().stream().anyMatch(a -> a.id().equals(leaving.id())), "true 0 70 true false false");
         check("JSON is written back the way it was read", PlayerData.write(Json.parse("{\"a\": [1, 2.5, \"x\\\"y\"], \"b\": {\"c\": true, \"d\": null}}"), ""),
                 "{\n    \"a\": [1, 2.5, \"x\\\"y\"],\n    \"b\": {\n        \"c\": true,\n        \"d\": null\n    }\n}");
+        // Badges: the ones the server handed out, in Kelp's order, ignoring ones it doesn't know
+        java.nio.file.Files.createDirectories(Badges.file("badge-test").getParent());
+        java.nio.file.Files.writeString(Badges.file("badge-test"), "birthday\nmade-up\ndev\n");
+        check("badges show in Kelp's order, only real ones", Badges.of("badge-test") + " " + Badges.of("nobody"), "[dev, birthday] []");
+        for (String badge : Badges.ALL) Textures.load("badges/" + badge + ".png");
+
         // Parent Controls: a PIN kept hashed, and Minecraft's own switches when something's off
         check("without Parent Controls everything is allowed", ParentControls.hasPin() + " " + ParentControls.gameArguments(), "false []");
         check("a PIN is 4 to 8 numbers", ParentControls.validPin("1234") + " " + ParentControls.validPin("123") + " " + ParentControls.validPin("12a4"), "true false false");
