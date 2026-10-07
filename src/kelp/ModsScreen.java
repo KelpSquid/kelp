@@ -79,7 +79,9 @@ public class ModsScreen extends Screen {
         centered(g, "Mods for " + instance.name(), w, 12 * GUI, 0xFFFFFF);
 
         int listBottom = h - 84 * GUI;
-        String empty = list.getItems().isEmpty() ? "No mods yet. Click New Mod!" : null;
+        // New Mod makes Squid mods, so only Squid (and Vanilla) instances point people to it
+        boolean canMakeMods = instance.loader() == Loader.SQUID || instance.loader() == Loader.VANILLA;
+        String empty = !list.getItems().isEmpty() ? null : canMakeMods ? "No mods yet. Click New Mod!" : "No mods yet. Click Open Folder!";
         list.draw(g, font, w, 32 * GUI, listBottom, empty, (gg, mod, x, y, width) -> {
             String name = mod.version().isEmpty() ? mod.name() : mod.name() + " " + mod.version();
             font.draw(gg, name, x, y, GUI, mod.enabled() ? 0xFFFFFF : 0x808080);

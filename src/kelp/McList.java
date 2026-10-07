@@ -15,9 +15,9 @@ public class McList<T> {
     }
 
     private static final int GUI = Screen.GUI;
-    private static final int ROW = 14 * GUI;
 
     private final int rowWidth;
+    private final int row; // each row's height
     private List<T> items = List.of();
     private T selected;
     private double scroll = 0; // how far the list is scrolled down, in screen pixels
@@ -30,7 +30,13 @@ public class McList<T> {
     private int mouseY = -1;
 
     public McList(int rowWidth) {
+        this(rowWidth, 1);
+    }
+
+    /** lines is how many lines of text each row has room for, like 2 for a name with details under it. */
+    public McList(int rowWidth, int lines) {
         this.rowWidth = rowWidth * GUI;
+        this.row = (4 + 10 * lines) * GUI;
     }
 
     public List<T> getItems() {
@@ -76,18 +82,18 @@ public class McList<T> {
         clip.clipRect(boxX, top, boxW, bottom - top); // rows scrolled out of the box get cut off
         T hovered = itemAt(mouseX, mouseY);
         for (int i = 0; i < items.size(); i++) {
-            int y = (int) (top + 2 * GUI + i * ROW - scroll);
-            if (y + ROW < top || y > bottom) continue; // off screen, skip it
+            int y = (int) (top + 2 * GUI + i * row - scroll);
+            if (y + row < top || y > bottom) continue; // off screen, skip it
             T item = items.get(i);
             if (item.equals(selected)) {
                 // Minecraft's selection look: a white outline around a black row
                 clip.setColor(Color.WHITE);
-                clip.fillRect(rowX, y, rowWidth, ROW - GUI);
+                clip.fillRect(rowX, y, rowWidth, row - GUI);
                 clip.setColor(Color.BLACK);
-                clip.fillRect(rowX + GUI, y + GUI, rowWidth - 2 * GUI, ROW - 3 * GUI);
+                clip.fillRect(rowX + GUI, y + GUI, rowWidth - 2 * GUI, row - 3 * GUI);
             } else if (item.equals(hovered)) {
                 clip.setColor(new Color(255, 255, 255, 40));
-                clip.fillRect(rowX, y, rowWidth, ROW - GUI);
+                clip.fillRect(rowX, y, rowWidth, row - GUI);
             }
             painter.paint(clip, item, rowX + 4 * GUI, y + 3 * GUI, rowWidth - 8 * GUI);
         }
@@ -109,14 +115,14 @@ public class McList<T> {
     }
 
     private double maxScroll() {
-        return Math.max(0, items.size() * ROW + 4 * GUI - (bottom - top));
+        return Math.max(0, items.size() * row + 4 * GUI - (bottom - top));
     }
 
     /** The item under the point, or null. */
     public T itemAt(int x, int y) {
         if (x < rowX || x >= rowX + rowWidth || y < top || y >= bottom) return null;
-        int row = (int) ((y - top - 2 * GUI + scroll) / ROW);
-        return row >= 0 && row < items.size() ? items.get(row) : null;
+        int index = (int) ((y - top - 2 * GUI + scroll) / row);
+        return index >= 0 && index < items.size() ? items.get(index) : null;
     }
 
     public void mouseMoved(int x, int y) {
@@ -132,6 +138,6 @@ public class McList<T> {
     }
 
     public void mouseWheel(int notches) {
-        scroll += notches * ROW * 3; // three rows per notch
+        scroll += notches * row * 3; // three rows per notch
     }
 }

@@ -6,7 +6,7 @@ import java.io.IOException;
 /** Every instance, with buttons to play, make, change and delete them. */
 public class InstancesScreen extends Screen {
     private final Screen parent;
-    private final McList<Instance> list = new McList<>(220);
+    private final McList<Instance> list = new McList<>(220, 2); // the name, with its version and loader under it
     private final McButton playButton = new McButton("Play", this::play);
     private final McButton newButton = new McButton("New Instance", () -> panel.setScreen(new NewInstanceScreen(panel, this)));
     private final McButton loaderButton = new McButton("", this::nextLoader);
@@ -111,19 +111,21 @@ public class InstancesScreen extends Screen {
         int listBottom = h - 132 * GUI;
         String empty = list.getItems().isEmpty() ? "No instances yet. Click New Instance!" : null;
         list.draw(g, font, w, 32 * GUI, listBottom, empty, (gg, instance, x, y, width) -> {
-            // The default instance is yellow, with a star, like it's been picked out
+            // Like Minecraft's world list: the name, and under it in grey, its version and loader.
+            // The default instance is yellow, with a star, like it's been picked out.
             boolean isDefault = instance.isDefault();
-            font.draw(gg, isDefault ? "* " + instance.name() : instance.name(), x, y, GUI, isDefault ? 0xFFFF55 : 0xFFFFFF);
+            String name = fit(font, isDefault ? "* " + instance.name() : instance.name(), width);
+            font.draw(gg, name, x, y, GUI, isDefault ? 0xFFFF55 : 0xFFFFFF);
             String details = "Minecraft " + instance.version().id() + instance.loader().suffix() + (instance.loaderIsBeta() ? " beta" : "");
-            font.draw(gg, details, x + width - font.width(details, GUI), y, GUI, 0xA0A0A0);
+            font.draw(gg, fit(font, details, width), x, y + 10 * GUI, GUI, 0x808080);
         });
         if (problem != null) centered(g, problem, w, listBottom + 2 * GUI, 0xFF5555);
 
-        // Buttons: everything but New Instance and Back needs an instance picked first
+        // Buttons: everything but New Instance and Back is for one instance, so they only show once one is picked
         Instance selected = list.getSelected();
-        for (McButton b : new McButton[] {playButton, loaderButton, modsButton, optionsButton, deleteButton, defaultButton, worldsButton}) {
-            b.setActive(selected != null);
-        }
+        McButton[] forOne = {playButton, loaderButton, modsButton, optionsButton, deleteButton, defaultButton, worldsButton};
+        for (McButton b : forOne) b.setActive(selected != null);
+        if (selected == null) centered(g, "Click an instance to play it or change it.", w, h - 112 * GUI, 0xA0A0A0);
         loaderButton.setLabel(selected == null ? "Loader" : selected.loader().label());
         defaultButton.setLabel(selected != null && selected.isDefault() ? "Not Default" : "Make Default");
         int y = h - 124 * GUI;
@@ -138,7 +140,17 @@ public class InstancesScreen extends Screen {
         defaultButton.setBounds(left, y + 72 * GUI, 98 * GUI, 20 * GUI);
         worldsButton.setBounds(right, y + 72 * GUI, 98 * GUI, 20 * GUI);
         backButton.setBounds(left, y + 96 * GUI, 200 * GUI, 20 * GUI);
-        for (McButton b : buttons) b.draw(g, font, GUI);
+        if (selected == null) newButton.setBounds(left, y + 72 * GUI, 200 * GUI, 20 * GUI); // on its own, above Back
+        for (McButton b : buttons) {
+            if (selected != null || !java.util.Arrays.asList(forOne).contains(b)) b.draw(g, font, GUI);
+        }
+    }
+
+    /** Cuts text down with "..." until it fits. */
+    private static String fit(McFont font, String text, int maxWidth) {
+        if (font.width(text, GUI) <= maxWidth) return text;
+        while (text.length() > 1 && font.width(text + "...", GUI) > maxWidth) text = text.substring(0, text.length() - 1);
+        return text + "...";
     }
 
     @Override
