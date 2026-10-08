@@ -14,13 +14,24 @@ A launcher for Minecraft: Java Edition, made from scratch, with an animated unde
 - **Any version:** every release and snapshot, from Mojang's official list
 - **No setup:** Kelp downloads the game, and the right Java for each version, by itself
 - **Squid:** turn it on for an instance to play with Squid mods, and see which ones loaded
-- **Mods screen:** each mod's name, version and authors, with on/off switches, plus New Mod to make your own
+- **Mods screen:** each mod's name, icon, version and authors, with on/off switches, plus New Mod to make your own.
+  Dropping in a newer download of a mod updates it (the old one is turned off, never deleted)
+- **New Mod:** start blank or from a starter mod (Rocket Boots, Creeper Alarm, Day Night Switch, Where Am I, Health
+  Alarm, Lucky Button, What's That, Biome Announcer), as one file or a project ready for VS Code and IntelliJ. Every new
+  project gets its own little pixel icon, made from its name
+- **Mod Doctor:** finds what would make Squid skip a mod before you play (two copies, a typo in squid.json, a missing
+  main class, a bad id, a mod it needs) and fixes it with one click; Instances say how many mods need a fix
+- **Pack:** turns a project into one .squid file to share, the same file every time, with junk files left out
 - **Modpacks:** import Modrinth (.mrpack), CurseForge and Prism modpacks
+- **Share:** save an instance as a .mrpack for a friend, mods and settings included (worlds stay home)
 - **Game options:** render distance, FOV, volume and more, changed from Kelp
 - **World backups:** every 15 minutes while you play, like Legacy Console Edition, with one-click restore
 - **Crash helper:** when the game crashes, Kelp says why in plain words and which mod caused it
 - **Stats and Gallery:** play time, blocks mined, mobs defeated and more; your screenshots, clips and replay videos
-- **Themes:** change Kelp's look (ocean, lava, sky, Nether, End), make your own with a picture and music, or get one
+- **Themes:** change Kelp's look (ocean, lava, sky, Nether, End), make your own with a picture and music (WAV, MP3,
+  FLAC, Ogg or .sqda, which loops at its own loop points), or get one
+- **Sound Maker:** turns a sound into a .sqda for resource packs; Find Loop listens to it and fills in the tempo and a
+  seamless loop on whole bars
 - **Emblems:** a Call of Duty style emblem next to your name, with better tools unlocked by your Squid Count
 - **Badges:** Dev, Beta Tester, Early Player and more next to your name, handed out by Kelp's server
 - **Parent Controls:** a PIN-locked switch for multiplayer and chat, using Minecraft's own switches
