@@ -175,6 +175,27 @@ public final class ModStarters {
                         }
                     }
                     """),
+            new Starter("Diamond Counter", "Counts every diamond you mine, forever.", """
+                    // %1$s: counts the diamonds you mine, and remembers them even after you quit.
+                    // Try counting something else: "ancient_debris", "oak_log", or "" for every block.
+
+                    public class %2$s extends EasyMod {
+                        int diamonds;
+
+                        void start() {
+                            diamonds = remembered("diamonds", 0);
+                            onBreak(block -> {
+                                if (block.contains("diamond_ore")) {
+                                    diamonds = diamonds + 1;
+                                    remember("diamonds", diamonds);
+                                    title("Diamonds!", "That's " + diamonds + " ever");
+                                    particles("happy_villager", 10);
+                                }
+                            });
+                            onCommand("diamonds", () -> say("You've mined " + diamonds + " diamonds."));
+                        }
+                    }
+                    """),
             new Starter("Dance Party", "Notes and hearts jump to the beat of your music.", """
                     // %1$s: play a song in Squid > Jukebox, and notes and hearts jump to its beat!
                     // Try other particles: "flame", "happy_villager", "end_rod". Or make the effect bigger when it's loud.
