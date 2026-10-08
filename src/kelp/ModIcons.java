@@ -31,10 +31,30 @@ public final class ModIcons {
         String key;
         try {
             key = file + "|" + Files.getLastModifiedTime(file).toMillis();
+            if (Files.isDirectory(file)) {
+                // A folder's own time doesn't change when a file inside does: look at the icon and squid.json
+                Path json = file.resolve("squid.json");
+                if (Files.exists(json)) key += "|" + Files.getLastModifiedTime(json).toMillis();
+                Path resources = file.resolve("resources");
+                if (Files.isDirectory(resources)) {
+                    try (java.util.stream.Stream<Path> pictures = Files.list(resources)) {
+                        for (Path p : pictures.filter(p -> p.getFileName().toString().toLowerCase(java.util.Locale.ROOT).endsWith(".png")).toList()) {
+                            key += "|" + p.getFileName() + Files.getLastModifiedTime(p).toMillis();
+                        }
+                    }
+                }
+            }
         } catch (IOException e) {
             return null;
         }
-        return CACHE.computeIfAbsent(key, k -> Optional.ofNullable(read(mod))).orElse(null);
+        Optional<BufferedImage> known = CACHE.get(key);
+        if (known != null) return known.orElse(null);
+        // A changed picture replaces the old one, so the list of pictures doesn't keep growing
+        String prefix = file + "|";
+        CACHE.keySet().removeIf(k -> k.startsWith(prefix));
+        Optional<BufferedImage> picture = Optional.ofNullable(read(mod));
+        CACHE.put(key, picture);
+        return picture.orElse(null);
     }
 
     private static BufferedImage read(InstalledMod mod) {
@@ -50,12 +70,13 @@ public final class ModIcons {
             if (!name.contains(".jar") && !name.contains(".squid")) return null;
             try (ZipFile zip = new ZipFile(file.toFile())) {
                 String path = null;
-                ZipEntry squid = zip.getEntry("squid.json");
+                String root = name.contains(".squid") ? ModProject.packedRoot(zip) : "";
+                ZipEntry squid = root == null ? null : name.contains(".squid") ? ModProject.entry(zip, root + "squid.json") : zip.getEntry("squid.json");
                 ZipEntry fabric = zip.getEntry("fabric.mod.json");
                 ZipEntry quilt = zip.getEntry("quilt.mod.json");
                 if (squid != null) {
                     String icon = iconName(Json.object(Json.parse(ModProject.text(zip.getInputStream(squid).readAllBytes()))));
-                    path = name.contains(".squid") ? "resources/" + icon : icon;
+                    path = name.contains(".squid") ? root + "resources/" + icon : icon;
                 } else if (fabric != null) {
                     Object icon = Json.object(Json.parse(ModProject.text(zip.getInputStream(fabric).readAllBytes()))).get("icon");
                     // Fabric's icon is a path, or sizes and paths: the biggest is fine, it's shown small
@@ -67,7 +88,8 @@ public final class ModIcons {
                     if (metadata != null && metadata.get("icon") instanceof String one) path = one;
                 }
                 if (path == null) return null;
-                ZipEntry entry = zip.getEntry(path.startsWith("/") ? path.substring(1) : path);
+                String wanted = path.startsWith("/") ? path.substring(1) : path;
+                ZipEntry entry = name.contains(".squid") ? ModProject.entry(zip, wanted) : zip.getEntry(wanted);
                 if (entry == null || entry.getSize() > 4 << 20) return null;
                 try (InputStream in = zip.getInputStream(entry)) {
                     return small(javax.imageio.ImageIO.read(in));

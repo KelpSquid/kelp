@@ -218,6 +218,7 @@ public final class ModProject {
             json.putAll(Json.object(parsed));
         }
         String spaced = ModTemplate.spaced(className);
+        if (json.get("id") instanceof String blank && blank.isBlank()) json.remove("id"); // Squid treats a blank id as none
         json.putIfAbsent("id", idFor(className));
         json.putIfAbsent("name", spaced);
         json.putIfAbsent("version", "1.0");
@@ -227,7 +228,7 @@ public final class ModProject {
             throw new IOException("its id can only use a-z, 0-9, _ and -");
         }
         String main = String.valueOf(json.get("main"));
-        if (!Files.exists(src.resolve(main.replace('.', '/') + ".java"))) {
+        if (!classesIn(src).contains(main)) {
             throw new IOException("its main class " + main + " isn't in src. Put \"main\": \"YourClass\" in squid.json");
         }
 
@@ -278,7 +279,59 @@ public final class ModProject {
     /** Text from a file, with or without the mark (BOM) some editors put at the start. */
     static String text(byte[] bytes) {
         int start = bytes.length >= 3 && (bytes[0] & 0xFF) == 0xEF && (bytes[1] & 0xFF) == 0xBB && (bytes[2] & 0xFF) == 0xBF ? 3 : 0;
-        return new String(bytes, start, bytes.length - start, StandardCharsets.UTF_8);
+        // Like Squid: UTF-8, or else Windows' own encoding (old Notepad), so "José" survives a Fix or a Pack
+        try {
+            return StandardCharsets.UTF_8.newDecoder()
+                    .onMalformedInput(java.nio.charset.CodingErrorAction.REPORT)
+                    .onUnmappableCharacter(java.nio.charset.CodingErrorAction.REPORT)
+                    .decode(java.nio.ByteBuffer.wrap(bytes, start, bytes.length - start)).toString();
+        } catch (java.nio.charset.CharacterCodingException e) {
+            return new String(bytes, start, bytes.length - start, java.nio.charset.Charset.forName("windows-1252"));
+        }
+    }
+
+    /**
+     * Where a .squid file's squid.json is, the way Squid finds it: "" at the top, or "MegaMod/" when the whole folder
+     * was zipped by hand (with / or Windows' \ between folders). Null if it has none.
+     */
+    static String packedRoot(java.util.zip.ZipFile zip) {
+        String nested = null;
+        var entries = zip.entries();
+        while (entries.hasMoreElements()) {
+            String name = entries.nextElement().getName().replace('\\', '/');
+            if (name.equals("squid.json")) return "";
+            int slash = name.indexOf('/');
+            if (slash > 0 && name.substring(slash + 1).equals("squid.json")) nested = name.substring(0, slash + 1);
+        }
+        return nested;
+    }
+
+    /** A .squid's entry by name, however its folders are written. */
+    static java.util.zip.ZipEntry entry(java.util.zip.ZipFile zip, String name) {
+        var entries = zip.entries();
+        while (entries.hasMoreElements()) {
+            java.util.zip.ZipEntry entry = entries.nextElement();
+            if (entry.getName().replace('\\', '/').equals(name)) return entry;
+        }
+        return null;
+    }
+
+    /** Every class in src, by its full name (with its package, read from the code, like Squid does). */
+    static java.util.Set<String> classesIn(Path src) {
+        java.util.Set<String> found = new java.util.HashSet<>();
+        if (!Files.isDirectory(src)) return found;
+        java.util.regex.Pattern pkg = java.util.regex.Pattern.compile("^\\s*package\\s+([\\w.]+)\\s*;", java.util.regex.Pattern.MULTILINE);
+        try (Stream<Path> walk = Files.walk(src)) {
+            for (Path file : walk.filter(p -> p.toString().endsWith(".java")).toList()) {
+                String fileName = file.getFileName().toString();
+                String className = fileName.substring(0, fileName.length() - ".java".length());
+                var m = pkg.matcher(text(Files.readAllBytes(file)));
+                found.add(m.find() ? m.group(1) + "." + className : className);
+            }
+        } catch (IOException | RuntimeException e) {
+            // can't look: nothing found
+        }
+        return found;
     }
 
     /** Writes squid.json back out: text, numbers, true/false, null, and lists and objects of those. */

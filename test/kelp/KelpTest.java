@@ -871,6 +871,48 @@ public class KelpTest {
                 "[name, authors, main] LostMain bad-id");
         Map<Path, ModDoctor.Finding> after = ModDoctor.check(InstalledMod.list(doctorMods));
         check("after the fixes, those mods are fine", after.containsKey(typo) + " " + after.containsKey(lost) + " " + after.containsKey(badId), "false false false");
+        // Dropping mods in: newer versions update (the old one is turned off, not deleted), older ones don't, and your
+        // own code is never written over
+        VersionManifest.Version dropVersion = new VersionManifest.Version("26.3", "release", "", "");
+        Instance dropInstance = Instance.create("Drop Test", dropVersion, Loader.SQUID);
+        Path dropSource = Files.createDirectories(home.resolve("drop-source"));
+        Path dropProject = ModProject.create(dropSource, "Mega Mod", "26.3");
+        java.util.function.Function<String, Path> packAs = ver -> {
+            try {
+                Files.writeString(dropProject.resolve("squid.json"), "{\"id\": \"mega-mod\", \"name\": \"Mega Mod\", \"version\": \"" + ver + "\", \"main\": \"MegaMod\"}");
+                Path out = Files.createDirectories(home.resolve("drop-" + ver));
+                return Files.move(ModProject.pack(dropProject, out), out.resolve("MegaMod " + ver + ".squid"));
+            } catch (java.io.IOException e) {
+                throw new java.io.UncheckedIOException(e);
+            }
+        };
+        Path v1 = packAs.apply("1.0");
+        Path v2 = packAs.apply("2.0");
+        Path v3 = packAs.apply("3.0");
+        ModsScreen dropScreen = new ModsScreen(new OceanPanel(), null, dropInstance);
+        dropScreen.filesDropped(List.of(v2));
+        dropScreen.filesDropped(List.of(v1));
+        List<String> afterOld = new java.util.ArrayList<>();
+        try (java.util.stream.Stream<Path> s = Files.list(dropInstance.mods())) {
+            s.forEach(p -> afterOld.add(p.getFileName().toString()));
+        }
+        java.util.Collections.sort(afterOld);
+        check("dropping an older version keeps the newer one, and doesn't add the old one", afterOld.toString(), "[MegaMod 2.0.squid]");
+        dropScreen.filesDropped(List.of(v3));
+        List<String> afterNew = new java.util.ArrayList<>();
+        try (java.util.stream.Stream<Path> s = Files.list(dropInstance.mods())) {
+            s.forEach(p -> afterNew.add(p.getFileName().toString()));
+        }
+        java.util.Collections.sort(afterNew);
+        check("dropping a newer version adds it and turns the old one off (not deleted)", afterNew.toString(),
+                "[MegaMod 2.0.squid.disabled, MegaMod 3.0.squid]");
+        Path ownJava = dropInstance.mods().resolve("Helper.java");
+        Files.writeString(ownJava, "public class Helper extends EasyMod { void start() { say(\"mine\"); } }");
+        Path friendJava = Files.createDirectories(home.resolve("friend")).resolve("Helper.java");
+        Files.writeString(friendJava, "public class Helper extends EasyMod { void start() { say(\"theirs\"); } }");
+        dropScreen.filesDropped(List.of(friendJava));
+        check("a dropped .java with the same name as yours gets a number, and yours stays",
+                Files.readString(ownJava).contains("mine") + " " + Files.exists(dropInstance.mods().resolve("Helper2.java")), "true true");
         InstalledMod off = listed.toggle();
         check("a project can be turned off", off.file().getFileName() + " " + InstalledMod.list(instance.mods()).stream()
                 .filter(m -> m.file().equals(off.file())).findFirst().map(InstalledMod::enabled).orElse(null), "MegaMod.disabled false");

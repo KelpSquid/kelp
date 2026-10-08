@@ -103,7 +103,7 @@ public class SoundMakerScreen extends Screen {
     }
 
     private void make() {
-        if (sound == null || working) return;
+        if (sound == null || working || finding) return;
         Double loopStart = number(loopStartField.getText());
         Double loopEnd = number(loopEndField.getText());
         Double bpm = number(bpmField.getText());
@@ -146,37 +146,48 @@ public class SoundMakerScreen extends Screen {
         Thread.ofVirtual().start(() -> {
             try {
                 double[] found = analyze(from);
-                double bpm = found[0];
-                if (bpm > 0) {
-                    bpmField.setText(Math.rint(bpm) == bpm ? String.valueOf((long) bpm) : String.format(java.util.Locale.ROOT, "%.2f", bpm));
-                    beatOffset = found[1];
-                }
-                if (found[2] >= 0) {
-                    looping = true;
-                    loopStartField.setText(String.format(java.util.Locale.ROOT, "%.2f", found[2]));
-                    loopEndField.setText(String.format(java.util.Locale.ROOT, "%.2f", found[3]));
-                }
-                if (bpm > 0 && found[2] >= 0) {
-                    message = t("{0} BPM, and a loop from {1} s to {2} s.", bpmField.getText(), loopStartField.getText(), loopEndField.getText());
-                } else if (bpm > 0) {
-                    message = t("{0} BPM. It's too short for a loop.", bpmField.getText());
-                } else if (found[2] >= 0) {
-                    message = t("No steady beat, but a loop from {0} s to {1} s.", loopStartField.getText(), loopEndField.getText());
-                } else {
-                    problem(t("Couldn't find a beat or a loop in it."));
-                    return;
-                }
-                messageIsProblem = false;
+                // Filled in on the screen's own thread, and only if it's still the same sound
+                javax.swing.SwingUtilities.invokeLater(() -> {
+                    if (sound == from) fillIn(found);
+                    finding = false;
+                });
             } catch (Throwable e) {
                 Throwable cause = e instanceof InvocationTargetException ite && ite.getCause() != null ? ite.getCause() : e;
-                problem(t("Couldn't listen to it: {0}", cause.getMessage() == null ? cause.toString() : cause.getMessage()));
-            } finally {
-                finding = false;
+                javax.swing.SwingUtilities.invokeLater(() -> {
+                    if (sound == from) problem(t("Couldn't listen to it: {0}", cause.getMessage() == null ? cause.toString() : cause.getMessage()));
+                    finding = false;
+                });
             }
         });
     }
 
-    /** Squid's Analysis on a sound: {bpm, first beat (s), loop start (s), loop end (s)}, with -1 for what it didn't find. */
+    /** Puts what Find Loop heard into the fields: the tempo (if the beat was steady) and the loop. */
+    private void fillIn(double[] found) {
+        double bpm = found[4] >= 0.2 ? found[0] : -1; // an unsteady beat would only make wrong beat cues
+        if (bpm > 0) {
+            bpmField.setText(Math.rint(bpm) == bpm ? String.valueOf((long) bpm) : String.format(java.util.Locale.ROOT, "%.2f", bpm));
+            beatOffset = found[1];
+        }
+        if (found[2] >= 0) {
+            looping = true;
+            // To the thousandth of a second, so a loop found on the beat stays on the beat
+            loopStartField.setText(String.format(java.util.Locale.ROOT, "%.3f", found[2]));
+            loopEndField.setText(String.format(java.util.Locale.ROOT, "%.3f", found[3]));
+        }
+        if (bpm > 0 && found[2] >= 0) {
+            message = t("{0} BPM, and a loop from {1} s to {2} s.", bpmField.getText(), loopStartField.getText(), loopEndField.getText());
+        } else if (bpm > 0) {
+            message = t("{0} BPM. It's too short for a loop.", bpmField.getText());
+        } else if (found[2] >= 0) {
+            message = t("No steady beat, but a loop from {0} s to {1} s.", loopStartField.getText(), loopEndField.getText());
+        } else {
+            problem(t("Couldn't find a beat or a loop in it."));
+            return;
+        }
+        messageIsProblem = false;
+    }
+
+    /** Squid's Analysis on a sound: {bpm, first beat (s), loop start (s), loop end (s), how sure of the beat (0-1)}, -1 for what it didn't find. */
     static double[] analyze(Path from) throws Exception {
         try (URLClassLoader squid = squidLoader()) {
             Class<?> audio = squid.loadClass("squid.audio.Audio");
@@ -186,10 +197,11 @@ public class SoundMakerScreen extends Screen {
             Object pcm = audio.getMethod("decode", byte[].class).invoke(null, (Object) Files.readAllBytes(from));
             Object tempo = analysis.getMethod("tempo", pcmClass).invoke(null, pcm);
             Object loop = analysis.getMethod("loop", pcmClass, tempoClass, double.class).invoke(null, pcm, tempo, 10.0);
-            double[] found = {-1, 0, -1, -1};
+            double[] found = {-1, 0, -1, -1, 0};
             if (tempo != null) {
                 found[0] = (double) tempoClass.getMethod("bpm").invoke(tempo);
                 found[1] = (double) tempoClass.getMethod("offset").invoke(tempo);
+                found[4] = (double) tempoClass.getMethod("confidence").invoke(tempo);
             }
             if (loop != null) {
                 found[2] = (double) loop.getClass().getMethod("start").invoke(loop);

@@ -116,15 +116,20 @@ public class ModsScreen extends Screen {
 
     /**
      * Mods dropped onto the window (or picked with Add Mod) are copied into this instance's mods folder, so the
-     * originals can be deleted from Downloads. A mod with the same file name is replaced, like an update, and so is
-     * an older download of the same Squid mod under another name ("MegaMod (1).squid"). Your own projects and
-     * .java mods are never replaced: Kelp says there are two copies instead.
+     * originals can be deleted from Downloads.
+     *
+     * A newer (or the same) version of a mod that's already there is an update: it goes in, and the older download
+     * is turned off, never deleted. An older version than the one already there isn't added at all. Your own code is
+     * never replaced: a .java with the same name gets a number (MegaMod2.java), and a mod that's the same as one of
+     * your projects goes in next to it, with a note that Squid will only load one of them.
      */
     @Override
     public void filesDropped(java.util.List<Path> files) {
         java.util.List<String> added = new java.util.ArrayList<>();
+        java.util.Set<Path> justAdded = new java.util.HashSet<>();
         String twoCopies = null;
         wrongLoader = false;
+        notice = null;
         try {
             Files.createDirectories(instance.mods());
             for (Path file : files) {
@@ -133,22 +138,50 @@ public class ModsScreen extends Screen {
                     problem = t("{0} isn't a mod. Mods are .jar, .squid or .java files.", name);
                     continue;
                 }
+                Path target = instance.mods().resolve(name);
+                if (name.endsWith(".java")) {
+                    // Your own code is never written over: the new one gets a number instead
+                    String base = name.substring(0, name.length() - ".java".length());
+                    for (int n = 2; ModProject.taken(instance.mods(), target.getFileName().toString().replace(".java", "")); n++) {
+                        target = instance.mods().resolve(base + n + ".java");
+                    }
+                }
                 String id = InstalledMod.squidId(file);
+                InstalledMod dropped = InstalledMod.of(file);
+                String droppedVersion = dropped == null ? "" : ModDoctor.version(dropped);
                 String sameAsYours = null;
+                String newerHere = null;
+                java.util.List<Path> older = new java.util.ArrayList<>();
                 if (id != null) {
                     try (java.util.stream.Stream<Path> old = Files.list(instance.mods())) {
                         for (Path other : old.toList()) {
                             String otherName = other.getFileName().toString();
-                            if (otherName.equals(name) || !id.equals(InstalledMod.squidId(other))) continue;
-                            boolean packed = otherName.matches(".*\\.(jar|squid)(\\.disabled)?");
-                            if (packed) Files.delete(other); // an older download of the same mod
-                            else sameAsYours = otherName;
+                            if (justAdded.contains(other) || !id.equals(InstalledMod.squidId(other))) continue;
+                            InstalledMod there = InstalledMod.of(other);
+                            if (there == null) continue;
+                            if (there.source()) {
+                                sameAsYours = otherName; // your own code: left alone
+                            } else if (ModDoctor.compareVersions(ModDoctor.version(there), droppedVersion) > 0) {
+                                newerHere = otherName;
+                            } else if (!other.equals(target)) {
+                                older.add(other);
+                            }
                         }
                     }
                 }
-                Files.copy(file, instance.mods().resolve(name), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-                added.add(name);
-                if (sameAsYours != null) twoCopies = t("{0} is the same mod as your {1}, so Squid will only load one of them.", name, sameAsYours);
+                if (newerHere != null) {
+                    notice = t("You already have a newer {0} ({1}), so Kelp kept it.", dropped.name(), newerHere);
+                    wrongLoader = true;
+                    continue;
+                }
+                // The new copy goes in first; only once it's there are older downloads turned off
+                Files.copy(file, target, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                justAdded.add(target);
+                for (Path old : older) {
+                    if (!old.getFileName().toString().endsWith(".disabled")) Files.move(old, old.resolveSibling(old.getFileName() + ".disabled"));
+                }
+                added.add(target.getFileName().toString());
+                if (sameAsYours != null) twoCopies = t("{0} is the same mod as your {1}, so Squid will only load one of them.", target.getFileName(), sameAsYours);
             }
         } catch (IOException e) {
             problem = t("Couldn't add it: {0}", e.getMessage());

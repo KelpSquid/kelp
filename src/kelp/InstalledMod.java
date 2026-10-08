@@ -75,6 +75,17 @@ public record InstalledMod(Path file, boolean enabled, Loader kind, String name,
         return mods;
     }
 
+    /** One mod file or folder, read the same way the list reads it. Null if it isn't a mod at all. */
+    public static InstalledMod of(Path file) {
+        String fileName = file.getFileName().toString();
+        if (ModProject.isProject(file)) return readProject(file, !fileName.endsWith(OFF));
+        if (fileName.endsWith(".jar") || fileName.endsWith(".squid")) return read(file, true);
+        if (fileName.endsWith(".jar" + OFF) || fileName.endsWith(".squid" + OFF)) return read(file, false);
+        if (fileName.endsWith(".java")) return readSource(file, true);
+        if (fileName.endsWith(".java" + OFF)) return readSource(file, false);
+        return null;
+    }
+
     /** Turns the mod on or off by renaming its file. Gives back the mod as it is now. */
     public InstalledMod toggle() throws IOException {
         String fileName = file.getFileName().toString();
@@ -182,7 +193,8 @@ public record InstalledMod(Path file, boolean enabled, Loader kind, String name,
             } else if (fileName.endsWith(".jar") || fileName.endsWith(".squid")) {
                 plain = fileName.substring(0, fileName.lastIndexOf('.'));
                 try (ZipFile zip = new ZipFile(file.toFile())) {
-                    ZipEntry entry = zip.getEntry("squid.json");
+                    String root = fileName.endsWith(".squid") ? ModProject.packedRoot(zip) : "";
+                    ZipEntry entry = root == null ? null : fileName.endsWith(".squid") ? ModProject.entry(zip, root + "squid.json") : zip.getEntry("squid.json");
                     if (entry == null) return null;
                     json = object(text(zip, entry));
                 }

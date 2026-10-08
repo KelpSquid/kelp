@@ -64,14 +64,13 @@ public final class ModDoctor {
         for (List<InstalledMod> copies : byId.values()) {
             if (copies.size() < 2) continue;
             // The same pick Squid makes: the newest version; if they're the same, your own code over a packed copy,
-            // then the first by file name
+            // then the first by file name (sorted the way Squid sorts them)
             List<InstalledMod> sorted = new ArrayList<>(copies);
-            sorted.sort(java.util.Comparator.comparing(m -> m.file().getFileName().toString()));
+            sorted.sort(java.util.Comparator.comparing(InstalledMod::file));
             InstalledMod keep = sorted.getFirst();
-            for (InstalledMod copy : sorted) {
-                boolean newer = Updates.newer(copy.version(), keep.version());
-                boolean same = !newer && !Updates.newer(keep.version(), copy.version());
-                if (newer || same && copy.source() && !keep.source()) keep = copy;
+            for (InstalledMod copy : sorted.subList(1, sorted.size())) {
+                int c = compareVersions(version(copy), version(keep));
+                if (c > 0 || c == 0 && copy.source() && !keep.source()) keep = copy;
             }
             for (InstalledMod copy : copies) {
                 if (copy == keep) continue;
@@ -90,6 +89,31 @@ public final class ModDoctor {
             if (finding != null) found.put(mod.file(), finding);
         }
         return found;
+    }
+
+    /** A mod's version as Squid sees it: your own code without one is "1.0". */
+    static String version(InstalledMod mod) {
+        return mod.version().isBlank() && mod.source() ? "1.0" : mod.version();
+    }
+
+    /** Compares versions like "1.2.0" and "1.10" number by number, a beta before its release: the same as Squid. */
+    static int compareVersions(String a, String b) {
+        String[] x = a.split("[.+-]");
+        String[] y = b.split("[.+-]");
+        for (int i = 0; i < Math.max(x.length, y.length); i++) {
+            String p = i < x.length ? x[i] : null;
+            String q = i < y.length ? y[i] : null;
+            if (p == null) return number(q) && Long.parseLong(q) == 0 ? 0 : number(q) ? -1 : 1;
+            if (q == null) return number(p) && Long.parseLong(p) == 0 ? 0 : number(p) ? 1 : -1;
+            int c = number(p) && number(q) ? Long.compare(Long.parseLong(p), Long.parseLong(q))
+                    : number(p) ? 1 : number(q) ? -1 : p.compareTo(q);
+            if (c != 0) return c;
+        }
+        return 0;
+    }
+
+    private static boolean number(String part) {
+        return part.matches("\\d{1,18}");
     }
 
     /** What's wrong with a project folder, or null if nothing is. */
@@ -111,13 +135,14 @@ public final class ModDoctor {
         // The main class: the one Squid starts. If it isn't there but exactly one class is a mod, that's the one.
         String main = json.get("main") instanceof String m && !m.isBlank() ? m : className;
         Path src = folder.resolve("src");
-        if (Files.isDirectory(src) && !Files.exists(src.resolve(main.replace('.', '/') + ".java"))) {
+        if (Files.isDirectory(src) && !ModProject.classesIn(src).contains(main)) {
             List<String> mains = modClasses(src);
             if (mains.size() == 1) {
                 String right = mains.getFirst();
                 return new Finding(t("Squid looks for the class {0}, but it isn't in src.", main), t("Fix"), () -> {
-                    json.put("main", right);
-                    write(file, json);
+                    Map<String, Object> now = reread(file);
+                    now.put("main", right);
+                    write(file, now);
                     return t("Squid will start {0} now.", right);
                 });
             }
@@ -126,12 +151,13 @@ public final class ModDoctor {
         }
 
         // An id Squid can't use
-        if (json.get("id") instanceof String id && !id.matches("[a-z0-9_-]+")) {
+        if (json.get("id") instanceof String id && !id.isBlank() && !id.matches("[a-z0-9_-]+")) {
             String fixed = id.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9_-]+", "-").replaceAll("^-+|-+$", "");
             String better = fixed.isEmpty() ? ModProject.idFor(className) : fixed;
             return new Finding(t("Its id \"{0}\" can only use a-z, 0-9, _ and -.", id), t("Fix"), () -> {
-                json.put("id", better);
-                write(file, json);
+                Map<String, Object> now = reread(file);
+                now.put("id", better);
+                write(file, now);
                 return t("Its id is {0} now.", better);
             });
         }
@@ -146,7 +172,7 @@ public final class ModDoctor {
             return new Finding(t("squid.json has \"{0}\". Did you mean \"{1}\"?", key, right), t("Fix"), () -> {
                 // Same place in the file, new name
                 Map<String, Object> renamed = new LinkedHashMap<>();
-                for (Map.Entry<String, Object> e : json.entrySet()) renamed.put(e.getKey().equals(key) ? right : e.getKey(), e.getValue());
+                for (Map.Entry<String, Object> e : reread(file).entrySet()) renamed.put(e.getKey().equals(key) ? right : e.getKey(), e.getValue());
                 write(file, renamed);
                 return t("Changed \"{0}\" to \"{1}\".", key, right);
             });
@@ -155,7 +181,7 @@ public final class ModDoctor {
         // Mods it needs that aren't here (Squid's own parts are always there)
         Object depends = json.get("depends");
         List<?> needs = depends instanceof List<?> list ? list : depends instanceof String one ? List.of(one) : List.of();
-        String ownId = json.get("id") instanceof String id ? id : ModProject.idFor(className);
+        String ownId = json.get("id") instanceof String id && !id.isBlank() ? id : ModProject.idFor(className);
         for (Object need : needs) {
             String needed = String.valueOf(need).strip();
             if (needed.isEmpty() || needed.equals(ownId) || needed.startsWith("squid-") || ids.contains(needed)) continue;
@@ -164,20 +190,35 @@ public final class ModDoctor {
         return null;
     }
 
-    /** The classes in src that are mods: they say "extends EasyMod" or "implements SquidMod". */
+    /** The classes in src that are mods (they say "extends EasyMod" or "implements SquidMod"), by full name. */
     static List<String> modClasses(Path src) {
         List<String> found = new ArrayList<>();
+        java.util.regex.Pattern pkg = java.util.regex.Pattern.compile("^\\s*package\\s+([\\w.]+)\\s*;", java.util.regex.Pattern.MULTILINE);
         try (Stream<Path> walk = Files.walk(src)) {
             for (Path file : walk.filter(p -> p.toString().endsWith(".java")).sorted().toList()) {
                 String code = ModProject.text(Files.readAllBytes(file));
                 if (!code.matches("(?s).*\\b(extends\\s+EasyMod|implements\\s+([\\w.]+\\s*,\\s*)*SquidMod)\\b.*")) continue;
-                String path = src.relativize(file).toString().replace('\\', '/');
-                found.add(path.substring(0, path.length() - ".java".length()).replace('/', '.'));
+                String fileName = file.getFileName().toString();
+                String className = fileName.substring(0, fileName.length() - ".java".length());
+                var m = pkg.matcher(code);
+                found.add(m.find() ? m.group(1) + "." + className : className);
             }
         } catch (IOException | RuntimeException e) {
             // can't look: nothing found
         }
         return found;
+    }
+
+    /** squid.json as it is right now: a fix starts from the newest version, never from what was read earlier. */
+    private static Map<String, Object> reread(Path file) throws IOException {
+        Object parsed;
+        try {
+            parsed = Json.parse(ModProject.text(Files.readAllBytes(file)));
+        } catch (RuntimeException e) {
+            throw new IOException(t("Its squid.json has a mistake: {0}", e.getMessage()));
+        }
+        if (!(parsed instanceof Map<?, ?>)) throw new IOException(t("Its squid.json has a mistake: {0}", t("it has to start with { and end with }")));
+        return new LinkedHashMap<>(Json.object(parsed));
     }
 
     private static void write(Path file, Map<String, Object> json) throws IOException {
