@@ -25,6 +25,7 @@ public class WorldsScreen extends Screen {
     private final McButton importButton = new McButton(t("Import World"), this::pickWorld);
     private final McButton openButton = new McButton(t("Open Folder"), this::openFolder);
     private final McButton doneButton = new McButton(t("Done"), this::back);
+    private final McButton playButton = new McButton(t("Play World"), this::playWorld);
     private final McButton backUpButton = new McButton(t("Back Up Now"), this::backUpNow);
     private final McButton backupsButton = new McButton(t("Backups..."), this::openBackups);
     private volatile String status;
@@ -38,8 +39,16 @@ public class WorldsScreen extends Screen {
         buttons.add(importButton);
         buttons.add(openButton);
         buttons.add(doneButton);
+        buttons.add(playButton);
         buttons.add(backUpButton);
         buttons.add(backupsButton);
+    }
+
+    /** Starts the game straight into the picked world, skipping the title screen. */
+    private void playWorld() {
+        Worlds.World world = list.getSelected();
+        if (world == null || importing || RunningGames.isRunning(instance)) return;
+        panel.setScreen(new DownloadScreen(panel, this, instance, world.folder().getFileName().toString()));
     }
 
     /** Zips the picked world into its backups right away. */
@@ -174,7 +183,10 @@ public class WorldsScreen extends Screen {
         int y = h - 52 * GUI;
         importButton.setBounds(w / 2 - 100 * GUI, y, 98 * GUI, 20 * GUI);
         openButton.setBounds(w / 2 + 2 * GUI, y, 98 * GUI, 20 * GUI);
-        doneButton.setBounds(w / 2 - 100 * GUI, y + 24 * GUI, 200 * GUI, 20 * GUI);
+        // Play World opens the picked one straight away (Minecraft 1.20 and newer can)
+        playButton.setActive(picked && !importing && !RunningGames.isRunning(instance));
+        playButton.setBounds(w / 2 - 100 * GUI, y + 24 * GUI, 98 * GUI, 20 * GUI);
+        doneButton.setBounds(w / 2 + 2 * GUI, y + 24 * GUI, 98 * GUI, 20 * GUI);
         for (McButton b : buttons) b.draw(g, font, GUI);
     }
 

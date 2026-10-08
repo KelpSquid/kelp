@@ -43,7 +43,13 @@ public final class Launcher {
      */
     public static Process launch(String versionId, Path gameFolder, Account account, Loader loader, String loaderVersion,
                                  int memoryGb, boolean fast) throws IOException {
-        List<String> command = buildCommand(versionId, gameFolder, account, loader, loaderVersion, memoryGb, fast);
+        return launch(versionId, gameFolder, account, loader, loaderVersion, memoryGb, fast, null);
+    }
+
+    /** Like the others; world (a world's folder name in saves, or null) is the world the game opens straight into. */
+    public static Process launch(String versionId, Path gameFolder, Account account, Loader loader, String loaderVersion,
+                                 int memoryGb, boolean fast, String world) throws IOException {
+        List<String> command = buildCommand(versionId, gameFolder, account, loader, loaderVersion, memoryGb, fast, world);
         Files.deleteIfExists(SquidReport.file(gameFolder)); // so Kelp never shows last time's report
         Process game = new ProcessBuilder(command)
                 .directory(gameFolder.toFile())
@@ -68,6 +74,15 @@ public final class Launcher {
 
     public static List<String> buildCommand(String versionId, Path gameFolder, Account account, Loader loader,
                                             String loaderVersion, int memoryGb, boolean fast) throws IOException {
+        return buildCommand(versionId, gameFolder, account, loader, loaderVersion, memoryGb, fast, null);
+    }
+
+    /**
+     * The full command; world (a world's folder name, or null) makes the game skip the title screen and open that
+     * world, which Minecraft can do since 1.20 (its "quick play").
+     */
+    public static List<String> buildCommand(String versionId, Path gameFolder, Account account, Loader loader,
+                                            String loaderVersion, int memoryGb, boolean fast, String world) throws IOException {
         boolean withSquid = loader == Loader.SQUID;
         Path versionFolder = Folders.versions().resolve(versionId);
         Map<String, Object> details = Json.object(Json.parse(Files.readString(versionFolder.resolve(versionId + ".json"))));
@@ -177,6 +192,13 @@ public final class Launcher {
             addArguments(command, arguments.get("game"), vars);
         } else {
             for (String part : ((String) details.get("minecraftArguments")).split(" ")) command.add(fill(part, vars));
+        }
+        if (world != null) {
+            if (arguments == null || !String.valueOf(arguments.get("game")).contains("quickPlaySingleplayer")) {
+                throw new IOException("Minecraft " + versionId + " can't open a world by itself. Play it, then pick the world.");
+            }
+            command.add("--quickPlaySingleplayer");
+            command.add(world);
         }
         command.addAll(ParentControls.gameArguments()); // Minecraft's own switches for no multiplayer or no chat
         return command;

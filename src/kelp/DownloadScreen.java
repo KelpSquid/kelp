@@ -34,6 +34,11 @@ public class DownloadScreen extends Screen {
     private double reportCheckedAt = -1;
 
     public DownloadScreen(OceanPanel panel, Screen parent, Instance instance) {
+        this(panel, parent, instance, null);
+    }
+
+    /** Like the other; world (a world's folder name, or null) is opened straight away, skipping the title screen. */
+    public DownloadScreen(OceanPanel panel, Screen parent, Instance instance, String world) {
         super(panel);
         this.parent = parent;
         this.instance = instance;
@@ -61,7 +66,7 @@ public class DownloadScreen extends Screen {
                     Account account = Accounts.readyToPlay();
                     if (cancelled) return;
                     game = Launcher.launch(version.id(), instance.folder(), account, instance.loader(),
-                            instance.loaderVersion(), Settings.memoryGb());
+                            instance.loaderVersion(), Settings.memoryGb(), true, world);
                     if (cancelled) { // pressed in the split second while the game was starting
                         game.destroy();
                         return;
@@ -75,7 +80,7 @@ public class DownloadScreen extends Screen {
                     // Squid's fast boot didn't match the mods anymore: start it the normal way (which makes a new one)
                     FastBoot.forget(instance.folder());
                     game = Launcher.launch(version.id(), instance.folder(), Accounts.readyToPlay(), instance.loader(),
-                            instance.loaderVersion(), Settings.memoryGb(), false);
+                            instance.loaderVersion(), Settings.memoryGb(), false, world);
                     RunningGames.add(instance, game);
                     exitCode = game.waitFor();
                 }

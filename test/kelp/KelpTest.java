@@ -600,7 +600,9 @@ public class KelpTest {
                    "default-user-jvm": [{"value": ["-Xms2G", "-Xmx4G"]}],
                    "jvm": ["-Djava.library.path=${natives_directory}", "-cp", "${classpath}"],
                    "game": ["--username", "${auth_player_name}", "--version", "${version_name}",
-                            {"rules": [{"action": "allow", "features": {"is_demo_user": true}}], "value": "--demo"}]},
+                            {"rules": [{"action": "allow", "features": {"is_demo_user": true}}], "value": "--demo"},
+                            {"rules": [{"action": "allow", "features": {"is_quick_play_singleplayer": true}}],
+                             "value": ["--quickPlaySingleplayer", "${quickPlaySingleplayer}"]}]},
                  "libraries": [
                    {"name": "com.example:lib:1.0", "downloads": {"artifact": {"path": "com/example/lib/1.0/lib-1.0.jar"}}},
                    {"name": "com.example:mac-only:1.0", "rules": [{"action": "allow", "os": {"name": "nothing-real"}}],
@@ -617,6 +619,8 @@ public class KelpTest {
         check("main class, then the game's settings", String.join(" ", cmd.subList(cmd.indexOf("com.example.Main"), cmd.size())),
                 "com.example.Main --username Samuel_A --version test-new");
         check("game features like demo mode stay off", cmd.contains("--demo"), false);
+        check("Play World opens a world straight away", String.join(" ", Launcher.buildCommand("test-new", game, Account.offline("Samuel_A"),
+                Loader.VANILLA, null, 0, true, "My World").subList(cmd.size(), cmd.size() + 2)), "--quickPlaySingleplayer My World");
 
         List<String> more = Launcher.buildCommand("test-new", game, Account.offline("Samuel_A"), false, 8);
         check("the memory setting replaces Mojang's", more.stream().filter(s -> s.startsWith("-Xm")).toList().toString(), "[-Xms2G, -Xmx8G]");
@@ -642,6 +646,8 @@ public class KelpTest {
         check("Squid can't start versions older than Java 21",
                 problem(() -> Launcher.buildCommand("test-old", home.resolve("game-old"), Account.offline("Player"), true, 0)),
                 "Squid needs Java 21, but Minecraft test-old runs on Java 8. Pick the Vanilla loader to play it.");
+        check("a version too old to open a world by itself says so", problem(() -> Launcher.buildCommand("test-old", home.resolve("game-old"),
+                Account.offline("Player"), Loader.VANILLA, null, 0, true, "My World")), "Minecraft test-old can't open a world by itself. Play it, then pick the world.");
         Account signedIn = new Account("0123456789abcdef0123456789abcdef", "Samuel", true, "refresh", "mc-token", Long.MAX_VALUE);
         List<String> msCmd = Launcher.buildCommand("test-old", home.resolve("game-old"), signedIn, false, 0);
         check("a Microsoft account plays with its own name and ID", msCmd.get(msCmd.indexOf("--username") + 1) + " "
