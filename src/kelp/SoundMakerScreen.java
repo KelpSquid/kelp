@@ -112,14 +112,13 @@ public class SoundMakerScreen extends Screen {
         boolean loop = looping;
         Thread.ofVirtual().start(() -> {
             try {
-                String name = from.getFileName().toString();
-                int dot = name.lastIndexOf('.');
-                Path out = from.resolveSibling((dot > 0 ? name.substring(0, dot) : name) + ".sqda");
+                Path out = outFor(from, made);
                 String summary = convert(from, out, q, loop ? loopStart : null, loop ? loopEnd : null, title, bpm);
                 made = out;
                 message = t("Made {0} ({1} KB).", out.getFileName(), Files.size(out) / 1024) + " " + summary;
                 messageIsProblem = false;
-            } catch (Exception e) {
+            } catch (Throwable e) {
+                // Even running out of memory on a huge file says so, instead of "Making it..." forever
                 Throwable cause = e instanceof InvocationTargetException ite && ite.getCause() != null ? ite.getCause() : e;
                 problem(t("Couldn't make it: {0}", cause.getMessage() == null ? cause.toString() : cause.getMessage()));
             } finally {
@@ -131,6 +130,22 @@ public class SoundMakerScreen extends Screen {
     private void problem(String text) {
         message = text;
         messageIsProblem = true;
+    }
+
+    /**
+     * Where the .sqda goes: next to the sound, with the same name. It never saves over the sound itself (making a
+     * .sqda from a .sqda), or over another .sqda that's already there: those get a number, like "Song 2.sqda".
+     * Making the same one again (lastMade) replaces it, since that's the point of making it again.
+     */
+    static Path outFor(Path from, Path lastMade) {
+        String name = from.getFileName().toString();
+        int dot = name.lastIndexOf('.');
+        String base = dot > 0 ? name.substring(0, dot) : name;
+        Path out = from.resolveSibling(base + ".sqda");
+        for (int n = 2; (out.equals(from) || Files.exists(out)) && !out.equals(lastMade); n++) {
+            out = from.resolveSibling(base + " " + n + ".sqda");
+        }
+        return out;
     }
 
     /** Squid does the work: its decoders read the sound, Squid Music squeezes it, and SqdaTool puts the .sqda together. */
@@ -148,6 +163,12 @@ public class SoundMakerScreen extends Screen {
             Object pcm = audio.getMethod("decode", byte[].class).invoke(null, (Object) Files.readAllBytes(from));
             Map<String, String> info = new LinkedHashMap<>();
             if (!title.isBlank()) info.put("title", title);
+            // A loop that runs past the end of the sound ends where the sound does
+            double seconds = (double) pcmClass.getMethod("seconds").invoke(pcm);
+            if (loopStart != null && loopStart >= seconds) {
+                throw new java.io.IOException(t("The loop starts after the sound ends ({0} s long).", String.format(java.util.Locale.ROOT, "%.1f", seconds)));
+            }
+            if (loopEnd != null && loopEnd > seconds) loopEnd = seconds;
             Method simple = tool.getMethod("simple", pcmClass, int.class, Double.class, Double.class, Map.class, Double.class, double.class, int.class);
             Object sqda = simple.invoke(null, pcm, quality, loopStart, loopEnd, info, bpm, 0.0, 4);
             Files.write(out, (byte[]) sqdaClass.getMethod("write").invoke(sqda));
