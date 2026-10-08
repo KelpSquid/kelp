@@ -23,9 +23,10 @@ public class InstancesScreen extends Screen {
     private final McButton backButton = new McButton(t("Back"), this::back);
     private final McButton shareButton = new McButton(t("Share"), this::share);
     private String notice; // good news, like "Saved X to Downloads!"
-    /** How many mods in each instance Mod Doctor would fix, looked at again every few seconds. */
-    private final java.util.Map<String, Integer> toFix = new java.util.HashMap<>();
+    /** How many mods in each instance Mod Doctor would fix, looked at again every few seconds in the background. */
+    private final java.util.Map<String, Integer> toFix = new java.util.concurrent.ConcurrentHashMap<>();
     private double checkedAt = -1;
+    private volatile boolean checking;
     private String problem;
 
     public InstancesScreen(OceanPanel panel, Screen parent) {
@@ -97,18 +98,36 @@ public class InstancesScreen extends Screen {
         panel.setScreen(new GameOptionsScreen(panel, this, list.getSelected()));
     }
 
-    /** Packs the instance into a .mrpack in Downloads, for a friend to bring in with Import. Worlds stay home. */
+    /**
+     * Packs the instance into a .mrpack in Downloads, for a friend to bring in with Import. Worlds stay home. It's
+     * made in the background, so a big resource pack never freezes Kelp.
+     */
     private void share() {
         Instance instance = list.getSelected();
-        try {
-            Path file = ModpackExport.export(instance, Path.of(System.getProperty("user.home"), "Downloads"), false);
-            notice = t("Saved {0} to Downloads! A friend can bring it in with Import.", file.getFileName());
-            problem = null;
-        } catch (IOException e) {
-            problem = t("Couldn't share it: {0}", e.getMessage());
-            notice = null;
-        }
+        if (sharing) return;
+        sharing = true;
+        problem = null;
+        notice = t("Sharing...");
+        Thread.ofVirtual().start(() -> {
+            String good = null;
+            String bad = null;
+            try {
+                Path file = ModpackExport.export(instance, Path.of(System.getProperty("user.home"), "Downloads"), false);
+                good = t("Saved {0} to Downloads! A friend can bring it in with Import.", file.getFileName());
+            } catch (IOException | RuntimeException e) {
+                bad = t("Couldn't share it: {0}", e.getMessage());
+            }
+            String done = good;
+            String failed = bad;
+            javax.swing.SwingUtilities.invokeLater(() -> {
+                notice = done;
+                problem = failed;
+                sharing = false;
+            });
+        });
     }
+
+    private volatile boolean sharing;
 
     private void delete() {
         Instance instance = list.getSelected();
@@ -136,14 +155,27 @@ public class InstancesScreen extends Screen {
 
         int listBottom = h - 156 * GUI;
         String empty = list.getItems().isEmpty() ? t("No instances yet. Click New Instance!") : null;
-        if (checkedAt < 0 || panel.getTime() - checkedAt >= 3) {
-            toFix.clear();
-            for (Instance instance : list.getItems()) {
-                if (instance.loader() != Loader.SQUID) continue; // Mod Doctor knows Squid mods
-                int count = ModDoctor.check(InstalledMod.list(instance.mods())).size();
-                if (count > 0) toFix.put(instance.id(), count);
-            }
+        if (!checking && (checkedAt < 0 || panel.getTime() - checkedAt >= 3)) {
+            // Reading every mod of every instance takes a moment, so it happens away from the screen
+            checking = true;
             checkedAt = panel.getTime();
+            java.util.List<Instance> instances = new java.util.ArrayList<>(list.getItems());
+            Thread.ofVirtual().start(() -> {
+                try {
+                    java.util.Map<String, Integer> found = new java.util.HashMap<>();
+                    for (Instance instance : instances) {
+                        if (instance.loader() != Loader.SQUID) continue; // Mod Doctor knows Squid mods
+                        int count = ModDoctor.check(InstalledMod.list(instance.mods()), instance.version().id()).size();
+                        if (count > 0) found.put(instance.id(), count);
+                    }
+                    toFix.keySet().retainAll(found.keySet());
+                    toFix.putAll(found);
+                } catch (RuntimeException e) {
+                    // a folder that can't be read right now: next time
+                } finally {
+                    checking = false;
+                }
+            });
         }
         list.draw(g, font, w, 32 * GUI, listBottom, empty, (gg, instance, x, y, width) -> {
             // Like Minecraft's world list: the name, and under it in grey, its version and loader.

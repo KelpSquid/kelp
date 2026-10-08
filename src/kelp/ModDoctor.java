@@ -48,6 +48,14 @@ public final class ModDoctor {
 
     /** Every mod with something wrong, and the most important thing wrong with it. */
     public static Map<Path, Finding> check(List<InstalledMod> mods) {
+        return check(mods, null);
+    }
+
+    /**
+     * The same, knowing the instance's Minecraft version (null for any), so it picks the copy Squid really loads:
+     * the best copy that works. A copy with a mistake or for another Minecraft gets skipped, and the next one loads.
+     */
+    public static Map<Path, Finding> check(List<InstalledMod> mods, String minecraftVersion) {
         Map<Path, Finding> found = new HashMap<>();
         // Two copies of one mod: Squid loads the newest (the first, if they're the same), so the others get turned off
         Map<String, List<InstalledMod>> byId = new LinkedHashMap<>();
@@ -67,13 +75,25 @@ public final class ModDoctor {
             // then the first by file name (sorted the way Squid sorts them)
             List<InstalledMod> sorted = new ArrayList<>(copies);
             sorted.sort(java.util.Comparator.comparing(InstalledMod::file));
+            sorted.sort((a, b) -> {
+                int c = compareVersions(version(b), version(a));
+                if (c != 0) return c;
+                if (a.source() != b.source()) return a.source() ? -1 : 1;
+                return a.file().compareTo(b.file());
+            });
             InstalledMod keep = sorted.getFirst();
-            for (InstalledMod copy : sorted.subList(1, sorted.size())) {
-                int c = compareVersions(version(copy), version(keep));
-                if (c > 0 || c == 0 && copy.source() && !keep.source()) keep = copy;
+            for (InstalledMod copy : sorted) {
+                boolean broken = copy.project() && checkProject(copy.file(), ALL_IDS) != null; // a missing mod it needs doesn't count here
+                boolean wrongVersion = minecraftVersion != null && !copy.worksOn(minecraftVersion);
+                if (!broken && !wrongVersion) {
+                    keep = copy;
+                    break;
+                }
             }
             for (InstalledMod copy : copies) {
                 if (copy == keep) continue;
+                // A copy that has its own mistake gets that pointed out instead (with its own Fix)
+                if (copy.project() && checkProject(copy.file(), ALL_IDS) != null) continue;
                 InstalledMod kept = keep;
                 found.put(copy.file(), new Finding(
                         t("{0} is another copy of this mod, so Squid skips this one.", kept.file().getFileName()),
@@ -90,6 +110,24 @@ public final class ModDoctor {
         }
         return found;
     }
+
+    /** A set that has every id, for checking a project as if every mod it needs were there. */
+    private static final Set<String> ALL_IDS = new java.util.AbstractSet<>() {
+        @Override
+        public boolean contains(Object o) {
+            return true;
+        }
+
+        @Override
+        public java.util.Iterator<String> iterator() {
+            return java.util.Collections.emptyIterator();
+        }
+
+        @Override
+        public int size() {
+            return 0;
+        }
+    };
 
     /** A mod's version as Squid sees it: your own code without one is "1.0". */
     static String version(InstalledMod mod) {

@@ -139,14 +139,16 @@ public class ModsScreen extends Screen {
                     continue;
                 }
                 Path target = instance.mods().resolve(name);
+                String renamedClass = null;
                 if (name.endsWith(".java")) {
-                    // Your own code is never written over: the new one gets a number instead
+                    // Your own code is never written over: the new one gets a number instead (and its class, to match)
                     String base = name.substring(0, name.length() - ".java".length());
                     for (int n = 2; ModProject.taken(instance.mods(), target.getFileName().toString().replace(".java", "")); n++) {
                         target = instance.mods().resolve(base + n + ".java");
                     }
+                    if (!target.getFileName().toString().equals(name)) renamedClass = base;
                 }
-                String id = InstalledMod.squidId(file);
+                String id = renamedClass != null ? null : InstalledMod.squidId(file); // a renamed one is its own mod now
                 InstalledMod dropped = InstalledMod.of(file);
                 String droppedVersion = dropped == null ? "" : ModDoctor.version(dropped);
                 String sameAsYours = null;
@@ -158,7 +160,7 @@ public class ModsScreen extends Screen {
                             String otherName = other.getFileName().toString();
                             if (justAdded.contains(other) || !id.equals(InstalledMod.squidId(other))) continue;
                             InstalledMod there = InstalledMod.of(other);
-                            if (there == null) continue;
+                            if (there == null || !there.enabled()) continue; // a copy you turned off doesn't count
                             if (there.source()) {
                                 sameAsYours = otherName; // your own code: left alone
                             } else if (ModDoctor.compareVersions(ModDoctor.version(there), droppedVersion) > 0) {
@@ -170,15 +172,28 @@ public class ModsScreen extends Screen {
                     }
                 }
                 if (newerHere != null) {
-                    notice = t("You already have a newer {0} ({1}), so Kelp kept it.", dropped.name(), newerHere);
+                    notice = t("You already have a newer {0} ({1}), so Kelp kept it.", dropped == null ? name : dropped.name(), newerHere);
                     wrongLoader = true;
                     continue;
                 }
                 // The new copy goes in first; only once it's there are older downloads turned off
-                Files.copy(file, target, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                if (renamedClass != null) {
+                    String newClass = target.getFileName().toString().replace(".java", "");
+                    String code = ModProject.text(Files.readAllBytes(file))
+                            .replaceFirst("\\bclass\\s+" + java.util.regex.Pattern.quote(renamedClass) + "\\b", "class " + newClass);
+                    Files.writeString(target, code);
+                } else {
+                    Files.copy(file, target, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                }
                 justAdded.add(target);
                 for (Path old : older) {
-                    if (!old.getFileName().toString().endsWith(".disabled")) Files.move(old, old.resolveSibling(old.getFileName() + ".disabled"));
+                    String oldName = old.getFileName().toString();
+                    if (oldName.endsWith(".disabled")) continue;
+                    // A turned-off copy with that name may already be there: then this one gets a number
+                    Path off = old.resolveSibling(oldName + ".disabled");
+                    int dot = oldName.lastIndexOf('.');
+                    for (int n = 2; Files.exists(off); n++) off = old.resolveSibling(oldName.substring(0, dot) + " (" + n + ")" + oldName.substring(dot) + ".disabled");
+                    Files.move(old, off);
                 }
                 added.add(target.getFileName().toString());
                 if (sameAsYours != null) twoCopies = t("{0} is the same mod as your {1}, so Squid will only load one of them.", target.getFileName(), sameAsYours);
@@ -207,7 +222,7 @@ public class ModsScreen extends Screen {
         double now = panel.getTime();
         if (listedAt < 0 || now - listedAt >= 1) {
             list.setItems(InstalledMod.list(instance.mods()));
-            findings = ModDoctor.check(list.getItems());
+            findings = ModDoctor.check(list.getItems(), minecraftVersion());
             listedAt = now;
         }
     }

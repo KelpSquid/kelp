@@ -25,9 +25,21 @@ public final class ModIcons {
     /** Pictures already read, by file and when it changed. Empty means it has none. */
     private static final Map<String, Optional<BufferedImage>> CACHE = new ConcurrentHashMap<>();
 
+    /** When each mod's files were last looked at, so a list drawn every frame checks each at most once a second. */
+    private static final Map<Path, Long> CHECKED = new ConcurrentHashMap<>();
+    private static final Map<Path, String> KEYS = new ConcurrentHashMap<>();
+
     /** The mod's icon, or null if it has none (or it can't be read). */
     public static BufferedImage of(InstalledMod mod) {
         Path file = mod.file();
+        long now = System.currentTimeMillis();
+        Long checked = CHECKED.get(file);
+        String known = KEYS.get(file);
+        if (known != null && checked != null && now - checked < 1000) {
+            Optional<BufferedImage> cached = CACHE.get(known);
+            if (cached != null) return cached.orElse(null);
+        }
+        CHECKED.put(file, now);
         String key;
         try {
             key = file + "|" + Files.getLastModifiedTime(file).toMillis();
@@ -47,8 +59,9 @@ public final class ModIcons {
         } catch (IOException e) {
             return null;
         }
-        Optional<BufferedImage> known = CACHE.get(key);
-        if (known != null) return known.orElse(null);
+        KEYS.put(file, key);
+        Optional<BufferedImage> hit = CACHE.get(key);
+        if (hit != null) return hit.orElse(null);
         // A changed picture replaces the old one, so the list of pictures doesn't keep growing
         String prefix = file + "|";
         CACHE.keySet().removeIf(k -> k.startsWith(prefix));

@@ -39,6 +39,7 @@ public final class ModpackExport {
 
         Path folder = instance.folder();
         Path temp = Files.createTempDirectory("kelp-share");
+        java.util.Set<String> written = new java.util.HashSet<>();
         try (OutputStream out = Files.newOutputStream(file); ZipOutputStream zip = new ZipOutputStream(out)) {
             put(zip, "modrinth.index.json", index(instance).getBytes(java.nio.charset.StandardCharsets.UTF_8));
             // Mods: files as they are; your own projects packed into .squid files
@@ -51,14 +52,14 @@ public final class ModpackExport {
                         if (Files.isDirectory(mod)) {
                             if (!ModProject.isProject(mod)) continue;
                             try {
-                                Path packed = ModProject.pack(mod, temp);
+                                Path packed = ModProject.pack(mod, Files.createTempDirectory(temp, "p"));
                                 String packedName = packed.getFileName().toString() + (name.endsWith(".disabled") ? ".disabled" : "");
-                                put(zip, "overrides/mods/" + packedName, Files.readAllBytes(packed));
+                                put(zip, free(written, "overrides/mods/" + packedName), packed);
                             } catch (IOException broken) {
                                 // a project that can't be packed yet (a mistake in it) stays out; the rest still go
                             }
                         } else {
-                            put(zip, "overrides/mods/" + name, Files.readAllBytes(mod));
+                            put(zip, free(written, "overrides/mods/" + name), mod);
                         }
                     }
                 }
@@ -68,13 +69,13 @@ public final class ModpackExport {
             for (String part : keep) {
                 Path path = folder.resolve(part);
                 if (Files.isRegularFile(path)) {
-                    put(zip, "overrides/" + part, Files.readAllBytes(path));
+                    put(zip, free(written, "overrides/" + part), path);
                 } else if (Files.isDirectory(path)) {
                     try (Stream<Path> walk = Files.walk(path)) {
                         for (Path p : walk.filter(Files::isRegularFile).sorted().toList()) {
                             String name = p.getFileName().toString().toLowerCase(Locale.ROOT);
                             if (name.equals("session.lock") || ModProject.junk(name)) continue; // a world's lock, and computer junk
-                            put(zip, "overrides/" + folder.relativize(p).toString().replace('\\', '/'), Files.readAllBytes(p));
+                            put(zip, free(written, "overrides/" + folder.relativize(p).toString().replace('\\', '/')), p);
                         }
                     }
                 }
@@ -131,5 +132,31 @@ public final class ModpackExport {
         zip.putNextEntry(new ZipEntry(name));
         zip.write(bytes);
         zip.closeEntry();
+    }
+
+    /** A file goes in a piece at a time, so a huge resource pack never has to fit in memory. */
+    private static void put(ZipOutputStream zip, String name, Path file) throws IOException {
+        zip.putNextEntry(new ZipEntry(name));
+        Files.copy(file, zip);
+        zip.closeEntry();
+    }
+
+    /**
+     * A name nothing else in the pack has yet. Your project and a downloaded .squid of the same mod would both be
+     * MegaMod.squid: the second becomes "MegaMod (2).squid" instead of breaking the whole file.
+     */
+    static String free(java.util.Set<String> written, String name) {
+        String candidate = name;
+        int dot = name.lastIndexOf('.');
+        int slash = name.lastIndexOf('/');
+        String stem = dot > slash ? name.substring(0, dot) : name;
+        String ext = dot > slash ? name.substring(dot) : "";
+        if (name.endsWith(".squid.disabled") || name.endsWith(".jar.disabled") || name.endsWith(".java.disabled")) {
+            int second = name.lastIndexOf('.', dot - 1);
+            stem = name.substring(0, second);
+            ext = name.substring(second);
+        }
+        for (int n = 2; !written.add(candidate.toLowerCase(Locale.ROOT)); n++) candidate = stem + " (" + n + ")" + ext;
+        return candidate;
     }
 }

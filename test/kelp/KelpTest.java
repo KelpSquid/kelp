@@ -930,6 +930,27 @@ public class KelpTest {
         ModpackImport.Plan sharedPlan = ModpackImport.read(pack);
         check("a shared pack comes back in as a Squid instance for the same Minecraft", sharedPlan.name() + " " + sharedPlan.minecraft() + " " + sharedPlan.loader(),
                 "Share Me! 26.3 SQUID");
+        // A project and a downloaded .squid of the same mod both fit in a shared pack
+        Path twinProject = ModProject.create(sharing.mods(), "Twin Mod", "26.3");
+        Files.copy(ModProject.pack(twinProject, Files.createDirectories(home.resolve("twin-pack"))), sharing.mods().resolve("TwinMod.squid"));
+        Path twinPack = ModpackExport.export(sharing, home.resolve("shared-out"), false);
+        List<String> twinEntries = new java.util.ArrayList<>();
+        try (java.util.zip.ZipFile zip = new java.util.zip.ZipFile(twinPack.toFile())) {
+            zip.stream().map(java.util.zip.ZipEntry::getName).filter(n -> n.contains("TwinMod")).forEach(twinEntries::add);
+        }
+        java.util.Collections.sort(twinEntries);
+        check("two mods with the same packed name both go in a shared pack", twinPack.getFileName() + " " + twinEntries,
+                "Share Me! 2.mrpack [overrides/mods/TwinMod (2).squid, overrides/mods/TwinMod.squid]");
+        // Mod Doctor knows Squid falls back to a working copy: the broken project is the one to fix, not the download
+        Path fallback = Files.createDirectories(home.resolve("fallback-mods"));
+        Path brokenTwin = ModProject.create(fallback, "Fall Mod", "26.3");
+        Files.writeString(brokenTwin.resolve("squid.json"), "{\"id\": \"fall-mod\", \"version\": \"1.1\", \"main\": \"Nope\"}");
+        Path goodSource = ModProject.create(Files.createDirectories(home.resolve("fallback-src")), "Fall Mod", "26.3");
+        Files.writeString(goodSource.resolve("squid.json"), "{\"id\": \"fall-mod\", \"version\": \"1.0\", \"main\": \"FallMod\"}");
+        Path goodCopy = Files.move(ModProject.pack(goodSource, Files.createDirectories(home.resolve("fallback-out"))), fallback.resolve("FallMod-1.0.squid"));
+        Map<Path, ModDoctor.Finding> fallbackFindings = ModDoctor.check(InstalledMod.list(fallback), "26.3");
+        check("Mod Doctor never offers to turn off the copy Squid falls back to", fallbackFindings.containsKey(goodCopy) + " "
+                + (fallbackFindings.get(brokenTwin) == null ? "none" : fallbackFindings.get(brokenTwin).message()), "false Squid looks for the class Nope, but it isn't in src.");
         check("loader versions are written the way packs write them", ModpackExport.loaderVersion("fabric-loader-0.19.5-26.3", "26.3") + " "
                 + ModpackExport.loaderVersion(null, "26.3"), "0.19.5 *");
         InstalledMod off = listed.toggle();
