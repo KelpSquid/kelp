@@ -55,7 +55,10 @@ public final class ModProject {
         json.put("name", shownName);
         json.put("version", "1.0");
         json.put("main", className);
+        json.put("icon", "icon.png");
         Files.writeString(folder.resolve("squid.json"), toJson(json));
+        // Its own little icon, made from its name, to paint over or replace
+        javax.imageio.ImageIO.write(ModIcons.generate(shownName), "png", folder.resolve("resources").resolve("icon.png").toFile());
         Files.writeString(folder.resolve("src").resolve(className + ".java"),
                 code(shownName, className).replace("\n", System.lineSeparator()));
         editorSettings(folder, className, minecraftVersion);

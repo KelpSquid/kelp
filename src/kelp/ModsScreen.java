@@ -213,14 +213,23 @@ public class ModsScreen extends Screen {
                 boolean over = mouseX >= packLeft && mouseX < packRight && list.itemAt(mouseX, mouseY) == mod;
                 font.draw(gg, t("Pack"), packLeft, y, GUI, over ? 0xFFFFA0 : 0x55FFFF);
             }
+            // Its icon, in front of the name (pixel art stays sharp)
+            java.awt.image.BufferedImage icon = ModIcons.of(mod);
+            if (icon != null) {
+                Object hint = gg.getRenderingHint(java.awt.RenderingHints.KEY_INTERPOLATION);
+                gg.setRenderingHint(java.awt.RenderingHints.KEY_INTERPOLATION, java.awt.RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+                gg.drawImage(icon, x, y - GUI, 9 * GUI, 9 * GUI, null);
+                if (hint != null) gg.setRenderingHint(java.awt.RenderingHints.KEY_INTERPOLATION, hint);
+            }
+            int nameX = x + 12 * GUI;
             // The name gets what's left of the row, and a long one ends in "..." instead of running under the links
-            int room = (mod.project() ? packLeft : mod.source() ? editLeft : x + width - font.width(state, GUI)) - x - 6 * GUI;
+            int room = (mod.project() ? packLeft : mod.source() ? editLeft : x + width - font.width(state, GUI)) - nameX - 6 * GUI;
             String name = mod.version().isEmpty() ? mod.name() : mod.name() + " " + mod.version();
             if (font.width(name, GUI) > room) {
                 while (name.length() > 1 && font.width(name.stripTrailing() + "...", GUI) > room) name = name.substring(0, name.length() - 1);
                 name = name.stripTrailing() + "...";
             }
-            font.draw(gg, name, x, y, GUI, mod.enabled() ? 0xFFFFFF : 0x808080);
+            font.draw(gg, name, nameX, y, GUI, mod.enabled() ? 0xFFFFFF : 0x808080);
         });
 
         // Under the list: who made the mod under the mouse and what it does, or a problem

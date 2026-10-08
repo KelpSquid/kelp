@@ -783,7 +783,7 @@ public class KelpTest {
             packedJson = Json.object(Json.parse(new String(zip.getInputStream(zip.getEntry("squid.json")).readAllBytes(), StandardCharsets.UTF_8)));
         }
         check("it has the code, pictures and squid.json, but not the editor settings", entries.toString(),
-                "[squid.json, src/MegaMod.java, resources/picture.png]");
+                "[squid.json, src/MegaMod.java, resources/icon.png, resources/picture.png]");
         check("its squid.json is filled in, so renaming the file can't break it",
                 packedJson.get("id") + " " + packedJson.get("name") + " " + packedJson.get("version") + " " + packedJson.get("main"),
                 "mega-mod Mega Mod! 1.0 MegaMod");
@@ -794,6 +794,13 @@ public class KelpTest {
         Map<String, Object> created = Json.object(Json.parse(Files.readString(folder.resolve("squid.json"))));
         check("a new project writes down its id and main class, so renaming its folder can't change them",
                 created.get("id") + " " + created.get("main"), "mega-mod MegaMod");
+        java.awt.image.BufferedImage madeIcon = javax.imageio.ImageIO.read(folder.resolve("resources/icon.png").toFile());
+        check("a new project gets its own 16x16 icon, made from its name (the same name makes the same icon)",
+                madeIcon.getWidth() + "x" + madeIcon.getHeight() + " " + java.util.Arrays.equals(
+                        ModIcons.generate("Mega Mod!").getRGB(0, 0, 16, 16, null, 0, 16), madeIcon.getRGB(0, 0, 16, 16, null, 0, 16))
+                        + " " + !java.util.Arrays.equals(ModIcons.generate("Other Mod").getRGB(0, 0, 16, 16, null, 0, 16), madeIcon.getRGB(0, 0, 16, 16, null, 0, 16)),
+                "16x16 true true");
+        check("Kelp shows a project's icon", ModIcons.of(listed) != null, true);
 
         // Packing twice makes the same file, without the junk computers add, and with every squid.json value kept
         Files.writeString(folder.resolve("resources/Thumbs.db"), "windows made this");
@@ -809,7 +816,7 @@ public class KelpTest {
             zip.stream().forEach(e -> packedNames.add(e.getName()));
             nested = Json.object(Json.parse(new String(zip.getInputStream(zip.getEntry("squid.json")).readAllBytes(), StandardCharsets.UTF_8)));
         }
-        check("Pack leaves out Thumbs.db and .DS_Store", packedNames.toString(), "[squid.json, src/MegaMod.java, resources/picture.png]");
+        check("Pack leaves out Thumbs.db and .DS_Store", packedNames.toString(), "[squid.json, src/MegaMod.java, resources/icon.png, resources/picture.png]");
         check("Pack keeps objects and line breaks in squid.json as real JSON", Json.object(nested.get("extra")).get("color") + " " + nested.get("note"),
                 "blue line\nbreak");
         Files.writeString(folder.resolve("squid.json"), "{\"main\": \"Missing\"}");
