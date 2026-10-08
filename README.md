@@ -17,7 +17,7 @@ A launcher for Minecraft: Java Edition, made from scratch, with an animated unde
 - **Mods screen:** each mod's name, icon, version and authors, with on/off switches, plus New Mod to make your own.
   Dropping in a newer download of a mod updates it (the old one is turned off, never deleted)
 - **New Mod:** start blank or from a starter mod (Rocket Boots, Creeper Alarm, Day Night Switch, Where Am I, Health
-  Alarm, Lucky Button, What's That, Biome Announcer, Chat Commands, Creeper Prank, Creeper Radar, Diamond Counter, Dance Party), as one file or a project ready for VS Code and IntelliJ. Every new
+  Alarm, Lucky Button, What's That, Biome Announcer, Chat Commands, Creeper Prank, Creeper Radar, Diamond Counter, Night Watch, Dance Party), as one file or a project ready for VS Code and IntelliJ. Every new
   project gets its own little pixel icon, made from its name
 - **Mod Doctor:** finds what would make Squid skip a mod before you play (two copies, a typo in squid.json, a missing
   main class, a bad id, a mod it needs) and fixes it with one click; Instances say how many mods need a fix
