@@ -492,3 +492,6 @@ Server name => Nazva siervera
 Servers in {0} => Sierviery ŭ {0}
 Servers... => Sierviery...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Spis zmianiŭsia ŭ Minecraft, tamu ničoha nie vydalena. Voś jon znoŭ.
+Potato Mode on! Render distance is now 6. => Bulbiany režym! Pramaloŭka ciapier 6.
+The loop has to be at least 0.1 seconds long. => Cykl pavinien doŭžycca nie mienš za 0,1 sekundy.
+The tempo should be beats a minute, like 120. => Temp — heta ŭdary za chvilinu, napryklad 120.

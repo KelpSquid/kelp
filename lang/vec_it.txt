@@ -492,3 +492,6 @@ Server name => Nome del server
 Servers in {0} => Server in {0}
 Servers... => Server...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Ła łista ła xe canbiada in Minecraft, quindi no xe stà cavà gnente. Ecoła qua de novo.
+Potato Mode on! Render distance is now 6. => Modo Patata inpisà! Ła distansa deso ła xe 6.
+The loop has to be at least 0.1 seconds long. => Ła ripetision ła ga da durar almanco 0,1 secondi.
+The tempo should be beats a minute, like 120. => El tenpo el ga da èsar i colpi al minuto, come 120.

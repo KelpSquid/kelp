@@ -492,3 +492,6 @@ Server name => Nom del server
 Servers in {0} => Server in {0}
 Servers... => Server...
 The list changed in Minecraft, so nothing was removed. Here it is again. => La lista l'è cambiada in Minecraft, inscì s'è tolt via nient. Eccola chì anmò.
+Potato Mode on! Render distance is now 6. => Modalità Patata pizzada! La distanza adess l'è 6.
+The loop has to be at least 0.1 seconds long. => El ripet el gh'ha de durà almanch 0,1 second.
+The tempo should be beats a minute, like 120. => El temp el gh'ha de vess in batud al minut, come 120.

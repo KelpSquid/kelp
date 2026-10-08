@@ -492,3 +492,6 @@ Server name => Numele serverului
 Servers in {0} => Servere în {0}
 Servers... => Servere...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Lista s-a schimbat în Minecraft, așa că nu s-a eliminat nimic. Iat-o din nou.
+Potato Mode on! Render distance is now 6. => Modul Cartof pornit! Distanța e acum 6.
+The loop has to be at least 0.1 seconds long. => Bucla trebuie să aibă cel puțin 0,1 secunde.
+The tempo should be beats a minute, like 120. => Tempoul e în bătăi pe minut, de exemplu 120.

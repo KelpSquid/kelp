@@ -492,3 +492,6 @@ Server name => சர்வர் பெயர்
 Servers in {0} => {0}-இல் உள்ள சர்வர்கள்
 Servers... => சர்வர்கள்...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Minecraft-இல் பட்டியல் மாறிவிட்டது, அதனால் எதுவும் நீக்கப்படவில்லை. இதோ மீண்டும்.
+Potato Mode on! Render distance is now 6. => உருளைக்கிழங்கு பயன்முறை இயக்கப்பட்டது! காட்சி தூரம் இப்போது 6.
+The loop has to be at least 0.1 seconds long. => சுழற்சி குறைந்தது 0.1 விநாடிகள் நீளமாக இருக்க வேண்டும்.
+The tempo should be beats a minute, like 120. => டெம்போ நிமிடத்துக்குத் துடிப்புகளாக இருக்க வேண்டும், 120 போல.

@@ -492,3 +492,6 @@ Server name => نام سرور
 Servers in {0} => سرورهای {0}
 Servers... => سرورها...
 The list changed in Minecraft, so nothing was removed. Here it is again. => فهرست در Minecraft تغییر کرد، پس چیزی حذف نشد. فهرست دوباره اینجاست.
+Potato Mode on! Render distance is now 6. => حالت سیب‌زمینی روشن شد! فاصله‌ی دید حالا 6 است.
+The loop has to be at least 0.1 seconds long. => حلقه باید دست‌کم 0.1 ثانیه طول بکشد.
+The tempo should be beats a minute, like 120. => تمپو باید بر حسب ضرب در دقیقه باشد، مثل 120.

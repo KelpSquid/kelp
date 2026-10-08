@@ -492,3 +492,6 @@ Server name => ಸರ್ವರ್ ಹೆಸರು
 Servers in {0} => {0} ನಲ್ಲಿರುವ ಸರ್ವರ್‌ಗಳು
 Servers... => ಸರ್ವರ್‌ಗಳು...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Minecraft ನಲ್ಲಿ ಪಟ್ಟಿ ಬದಲಾಗಿದೆ, ಆದ್ದರಿಂದ ಏನನ್ನೂ ತೆಗೆದುಹಾಕಲಿಲ್ಲ. ಇಲ್ಲಿದೆ ಮತ್ತೆ.
+Potato Mode on! Render distance is now 6. => ಆಲೂಗಡ್ಡೆ ಮೋಡ್ ಆನ್! ರೆಂಡರ್ ದೂರ ಈಗ 6.
+The loop has to be at least 0.1 seconds long. => ಲೂಪ್ ಕನಿಷ್ಠ 0.1 ಸೆಕೆಂಡ್ ಉದ್ದವಿರಬೇಕು.
+The tempo should be beats a minute, like 120. => ಟೆಂಪೋ ನಿಮಿಷಕ್ಕೆ ಬೀಟ್‌ಗಳಲ್ಲಿರಬೇಕು, ಉದಾ. 120.

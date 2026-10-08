@@ -492,3 +492,6 @@ Server name => Hanow an servyer
 Servers in {0} => Servyers yn {0}
 Servers... => Servyers...
 The list changed in Minecraft, so nothing was removed. Here it is again. => An rol a janjyas yn Minecraft, ytho ny veu travyth removys. Ottomma ev arta.
+Potato Mode on! Render distance is now 6. => Modh Aval-dor war! An pellder yw 6 lemmyn.
+The loop has to be at least 0.1 seconds long. => Res yw dhe'n kylgh bos 0.1 eylen hirder dhe'n lyha.
+The tempo should be beats a minute, like 120. => An tempo a dal bos tolghow yn mynysen, kepar ha 120.

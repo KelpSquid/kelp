@@ -492,3 +492,6 @@ Server name => Host name
 Servers in {0} => Hosts in {0}
 Servers... => Hosts...
 The list changed in Minecraft, so nothing was removed. Here it is again. => The list changed in Minecraft, so nothing was taken away. Here it is again.
+Potato Mode on! Render distance is now 6. => Earthapple Setting on! Sight farness is now 6.
+The loop has to be at least 0.1 seconds long. => The loop has to be at least 0.1 seconds long.
+The tempo should be beats a minute, like 120. => The beat speed should be beats a minute, like 120.

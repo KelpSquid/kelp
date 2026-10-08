@@ -492,3 +492,6 @@ Server name => Servernamn
 Servers in {0} => Servrar i {0}
 Servers... => Servrar...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Listan ändrades i Minecraft, så inget togs bort. Här är den igen.
+Potato Mode on! Render distance is now 6. => Potatisläge på! Siktavståndet är nu 6.
+The loop has to be at least 0.1 seconds long. => Loopen måste vara minst 0,1 sekunder lång.
+The tempo should be beats a minute, like 120. => Tempot ska vara slag per minut, som 120.

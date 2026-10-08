@@ -492,3 +492,6 @@ Server name => Aha sava
 Servers in {0} => Sava dị na {0}
 Servers... => Sava...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Ndepụta ahụ gbanwere na Minecraft, ya mere ewepụghị ihe ọ bụla. Lee ya ọzọ.
+Potato Mode on! Render distance is now 6. => Ọnọdụ Nduku agbanyela! Anya ọhụụ bụ 6 ugbu a.
+The loop has to be at least 0.1 seconds long. => Mgbagharị ga-adị ogologo opekata mpe sekọnd 0.1.
+The tempo should be beats a minute, like 120. => Tempo kwesịrị ịbụ iti n'otu nkeji, dị ka 120.

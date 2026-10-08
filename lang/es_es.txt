@@ -492,3 +492,6 @@ Server name => Nombre del servidor
 Servers in {0} => Servidores de {0}
 Servers... => Servidores...
 The list changed in Minecraft, so nothing was removed. Here it is again. => La lista cambió en Minecraft, así que no se quitó nada. Aquí la tienes otra vez.
+Potato Mode on! Render distance is now 6. => ¡Modo Patata activado! La distancia ahora es 6.
+The loop has to be at least 0.1 seconds long. => El bucle tiene que durar al menos 0,1 segundos.
+The tempo should be beats a minute, like 120. => El tempo va en pulsos por minuto, como 120.

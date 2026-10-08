@@ -492,3 +492,6 @@ Server name => Inoa kikowaena
 Servers in {0} => Nā kikowaena ma {0}
 Servers... => Nā kikowaena...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Ua loli ka papa inoa ma Minecraft, no laila ʻaʻohe mea i kāpae ʻia. Eia hou nō ia.
+Potato Mode on! Render distance is now 6. => Ua ā ke ʻAno ʻUala! He 6 ka mamao ʻike i kēia manawa.
+The loop has to be at least 0.1 seconds long. => Pono ke kaʻapuni he 0.1 kekona ka lōʻihi ma ka liʻiliʻi loa.
+The tempo should be beats a minute, like 120. => Pono ke tempo he mau paʻi i ka minuke, e like me 120.

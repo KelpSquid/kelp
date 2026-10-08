@@ -492,3 +492,6 @@ Server name => Ainm an fhrithealaiche
 Servers in {0} => Frithealaichean ann an {0}
 Servers... => Frithealaichean...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Dh'atharraich an liosta ann am Minecraft, mar sin cha deach dad a thoirt air falbh. Seo an liosta a-rithist.
+Potato Mode on! Render distance is now 6. => Modh Buntàta air! Tha an t-astar a-nis 6.
+The loop has to be at least 0.1 seconds long. => Feumaidh an lùb a bhith co-dhiù 0.1 diog a dh'fhaid.
+The tempo should be beats a minute, like 120. => Bu chòir an luaths a bhith ann am buillean sa mhionaid, mar 120.

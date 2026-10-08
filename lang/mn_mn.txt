@@ -492,3 +492,6 @@ Server name => Серверийн нэр
 Servers in {0} => {0} доторх серверүүд
 Servers... => Серверүүд...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Жагсаалт Minecraft-д өөрчлөгдсөн тул юу ч хасаагүй. Дахин харуулж байна.
+Potato Mode on! Render distance is now 6. => Төмсний горим асаалаа! Харах зай одоо 6.
+The loop has to be at least 0.1 seconds long. => Давталт дор хаяж 0.1 секунд урт байх ёстой.
+The tempo should be beats a minute, like 120. => Хэмнэлийг минутын цохилтоор бичнэ, жишээ нь 120.

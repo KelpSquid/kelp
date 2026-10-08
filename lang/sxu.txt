@@ -492,3 +492,6 @@ Server name => Servername
 Servers in {0} => Server in {0}
 Servers... => Server...
 The list changed in Minecraft, so nothing was removed. Here it is again. => De Lisde had sich in Minecraft geändord, drum is nischd wechgemachd wordn. Hier isse widdor.
+Potato Mode on! Render distance is now 6. => Ärdäbbl-Modus an! De Sichdweide is jädzd 6.
+The loop has to be at least 0.1 seconds long. => De Schleife muss mindesdns 0,1 Segundn lang sin.
+The tempo should be beats a minute, like 120. => 's Dembo solld Schläsche bro Minude sin, wie 120.

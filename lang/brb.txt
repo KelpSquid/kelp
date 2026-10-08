@@ -492,3 +492,6 @@ Server name => Servernaam
 Servers in {0} => Servers in {0}
 Servers... => Servers...
 The list changed in Minecraft, so nothing was removed. Here it is again. => De lijst is in Minecraft veranderd, dus er is niks weggedaan. Hier is ie weer.
+Potato Mode on! Render distance is now 6. => Petattenmodus aon! Zichtafstand is nou 6.
+The loop has to be at least 0.1 seconds long. => De lus mot minstens 0,1 seconde lang zijn.
+The tempo should be beats a minute, like 120. => 't Tempo mot in tikken per minuut, zoas 120.

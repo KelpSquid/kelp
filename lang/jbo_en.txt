@@ -492,3 +492,6 @@ Server name => lo cmene be lo samse'u
 Servers in {0} => samse'u pe {0}
 Servers... => samse'u...
 The list changed in Minecraft, so nothing was removed. Here it is again. => lo liste pu se galfi bu'u la Minecraft .i ja'e bo no da pu se vimcu .i ko catlu ri za'u re'u
+Potato Mode on! Render distance is now 6. => patlu tadji ca gunka .i lo viska kuspe ca du li xa
+The loop has to be at least 0.1 seconds long. => lo rapli cu bilga lo ka clani su'o li no pi pa snidu
+The tempo should be beats a minute, like 120. => lo sutra cu bilga lo ka namcu lo dandu ze'a pa mentu .i mu'a li pa re no

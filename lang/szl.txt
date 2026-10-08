@@ -492,3 +492,6 @@ Server name => Miano serwera
 Servers in {0} => Serwery w {0}
 Servers... => Serwery...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Lista sie zmiyniła w grze Minecraft, tōż nic niy zostało wyciepniōne. Ôto ôna zaś.
+Potato Mode on! Render distance is now 6. => Kartoflowy tryb załōnczōny! Zasiyng to je teraz 6.
+The loop has to be at least 0.1 seconds long. => Pętla musi trwać przinojmnij 0,1 sekundy.
+The tempo should be beats a minute, like 120. => Tempo mŏ być w uderzyniach na minuta, np. 120.

@@ -492,3 +492,6 @@ Server name => Nama server
 Servers in {0} => Server di {0}
 Servers... => Server...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Daftarnya berubah di Minecraft, jadi tidak ada yang dihapus. Ini daftarnya lagi.
+Potato Mode on! Render distance is now 6. => Mode Kentang aktif! Jarak render sekarang 6.
+The loop has to be at least 0.1 seconds long. => Pengulangan harus paling sedikit 0,1 detik.
+The tempo should be beats a minute, like 120. => Tempo harus berupa ketukan per menit, seperti 120.

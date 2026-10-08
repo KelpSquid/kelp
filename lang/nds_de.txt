@@ -492,3 +492,6 @@ Server name => Servernaam
 Servers in {0} => Servers in {0}
 Servers... => Servers...
 The list changed in Minecraft, so nothing was removed. Here it is again. => De List hett sik in Minecraft ännert, dorüm is nix wegdaan worrn. Hier is se noch mal.
+Potato Mode on! Render distance is now 6. => Kantüffel-Modus an! De Sichtwiet is nu 6.
+The loop has to be at least 0.1 seconds long. => De Slööp mutt tominnst 0.1 Sekunnen lang wesen.
+The tempo should be beats a minute, like 120. => Dat Tempo warrt in Slääg per Minuut angeven, as 120.

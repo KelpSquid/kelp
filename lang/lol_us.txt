@@ -492,3 +492,6 @@ Server name => Servur naem
 Servers in {0} => Servurz in {0}
 Servers... => Servurz...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Teh list changd in Minecraft, so nuthin got remuvd. Heer it iz agen.
+Potato Mode on! Render distance is now 6. => Potatoe Moed on! Render distanz iz 6 nao.
+The loop has to be at least 0.1 seconds long. => Teh loop haz 2 b at leest 0.1 secondz long.
+The tempo should be beats a minute, like 120. => Teh tempo shud b beetz a minit, liek 120.

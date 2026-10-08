@@ -492,3 +492,6 @@ Server name => Bedienernaam
 Servers in {0} => Bedieners in {0}
 Servers... => Bedieners...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Die lys het in Minecraft verander, so niks is verwyder nie. Hier is dit weer.
+Potato Mode on! Render distance is now 6. => Aartappelmodus aan! Sigafstand is nou 6.
+The loop has to be at least 0.1 seconds long. => Die lus moet minstens 0,1 sekondes lank wees.
+The tempo should be beats a minute, like 120. => Die tempo moet slae per minuut wees, soos 120.

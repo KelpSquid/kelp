@@ -492,3 +492,6 @@ Server name => Ime poslužitelja
 Servers in {0} => Poslužitelji u {0}
 Servers... => Poslužitelji...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Popis se promijenio u Minecraftu, pa ništa nije uklonjeno. Evo ga ponovno.
+Potato Mode on! Render distance is now 6. => Krumpir-način uključen! Udaljenost je sada 6.
+The loop has to be at least 0.1 seconds long. => Petlja mora trajati barem 0,1 sekundu.
+The tempo should be beats a minute, like 120. => Tempo treba biti u otkucajima u minuti, npr. 120.

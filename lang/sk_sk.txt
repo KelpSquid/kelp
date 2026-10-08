@@ -492,3 +492,6 @@ Server name => Názov servera
 Servers in {0} => Servery v {0}
 Servers... => Servery...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Zoznam sa v Minecrafte zmenil, takže sa nič neodstránilo. Tu je znova.
+Potato Mode on! Render distance is now 6. => Zemiakový režim zapnutý! Dohľad je teraz 6.
+The loop has to be at least 0.1 seconds long. => Slučka musí trvať aspoň 0,1 sekundy.
+The tempo should be beats a minute, like 120. => Tempo má byť v úderoch za minútu, napríklad 120.

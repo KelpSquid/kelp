@@ -492,3 +492,6 @@ Server name => Servername
 Servers in {0} => Server in {0}
 Servers... => Server...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Die Lisdn hod si in Minecraft g'änderd, drum is nix wechgmachd worn. Do is' widder.
+Potato Mode on! Render distance is now 6. => Grumbern-Modus aa! Die Sichdweidn is edz 6.
+The loop has to be at least 0.1 seconds long. => Die Schleifn muss mindesdens 0,1 Sekundn lang sei.
+The tempo should be beats a minute, like 120. => Es Tempo soll Schläch pro Minudn sei, wie 120.

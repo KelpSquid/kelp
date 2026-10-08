@@ -492,3 +492,6 @@ Server name => Սերվերի անուն
 Servers in {0} => {0}-ի սերվերները
 Servers... => Սերվերներ...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Ցանկը փոխվել է Minecraft-ում, ուստի ոչինչ չհեռացվեց։ Ահա այն նորից։
+Potato Mode on! Render distance is now 6. => Կարտոֆիլի ռեժիմը միացված է! Հեռավորությունն այժմ 6 է։
+The loop has to be at least 0.1 seconds long. => Կրկնումը պետք է տևի առնվազն 0,1 վայրկյան։
+The tempo should be beats a minute, like 120. => Տեմպը պետք է լինի զարկեր րոպեում, օրինակ՝ 120։

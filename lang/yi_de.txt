@@ -492,3 +492,6 @@ Server name => סערווער־נאָמען
 Servers in {0} => סערווערס אין {0}
 Servers... => סערווערס...
 The list changed in Minecraft, so nothing was removed. Here it is again. => די רשימה האָט זיך געביטן אין Minecraft, איז גאָרנישט ניט אַוועקגענומען געוואָרן. אָט איז זי ווידער.
+Potato Mode on! Render distance is now 6. => קאַרטאָפֿל־מאָדוס אָן! די זע־ווײַטקייט איז איצט 6.
+The loop has to be at least 0.1 seconds long. => דער שלייף מוז זײַן כאָטש 0.1 סעקונדע לאַנג.
+The tempo should be beats a minute, like 120. => דער טעמפּאָ זאָל זײַן קלאַפּן אַ מינוט, למשל 120.

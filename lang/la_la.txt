@@ -492,3 +492,6 @@ Server name => Nomen ministri
 Servers in {0} => Ministri in {0}
 Servers... => Ministri...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Index in Minecraft mutatus est, itaque nihil remotum est. Ecce iterum.
+Potato Mode on! Render distance is now 6. => Modus Batatae accensus! Spatium nunc est 6.
+The loop has to be at least 0.1 seconds long. => Circulus saltem 0.1 secundae longus esse debet.
+The tempo should be beats a minute, like 120. => Tempus ictus per minutam esse debet, ut 120.

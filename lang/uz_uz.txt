@@ -492,3 +492,6 @@ Server name => Server nomi
 Servers in {0} => {0} serverlari
 Servers... => Serverlar...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Ro'yxat Minecraft'da o'zgardi, shuning uchun hech narsa olib tashlanmadi. Mana, yana.
+Potato Mode on! Render distance is now 6. => Kartoshka rejimi yoqildi! Ko'rish masofasi endi 6.
+The loop has to be at least 0.1 seconds long. => Takror kamida 0,1 soniya uzunlikda bo'lishi kerak.
+The tempo should be beats a minute, like 120. => Temp daqiqadagi zarblar soni bo'lishi kerak, masalan 120.

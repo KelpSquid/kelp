@@ -492,3 +492,6 @@ Server name => Сервер атауы
 Servers in {0} => {0} серверлері
 Servers... => Серверлер...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Тізім Minecraft-та өзгерді, сондықтан ештеңе алынбады. Міне, қайтадан.
+Potato Mode on! Render distance is now 6. => Картоп режимі қосулы! Қашықтық енді 6.
+The loop has to be at least 0.1 seconds long. => Қайталау кемінде 0,1 секунд болуы керек.
+The tempo should be beats a minute, like 120. => Қарқын минутына соққы санымен жазылады, мысалы 120.

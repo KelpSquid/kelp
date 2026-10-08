@@ -492,3 +492,6 @@ Server name => nimi pi tomo kulupu
 Servers in {0} => tomo kulupu lon {0}
 Servers... => tomo kulupu...
 The list changed in Minecraft, so nothing was removed. Here it is again. => lipu li ante lon Minecraft, la mi weka ala e ijo. lipu li lon sin.
+Potato Mode on! Render distance is now 6. => nasin kili ma li open! lukin weka li 6 lon tenpo ni.
+The loop has to be at least 0.1 seconds long. => sike kalama o awen lon tenpo lili 0.1 anu mute.
+The tempo should be beats a minute, like 120. => tenpo kalama o nanpa pi kalama utala lon tenpo 60 s, sama 120.

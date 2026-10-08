@@ -492,3 +492,6 @@ Server name => Enw'r gweinydd
 Servers in {0} => Gweinyddion yn {0}
 Servers... => Gweinyddion...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Newidiodd y rhestr yn Minecraft, felly ni thynnwyd dim. Dyma hi eto.
+Potato Mode on! Render distance is now 6. => Modd Tatws ymlaen! Y pellter nawr yw 6.
+The loop has to be at least 0.1 seconds long. => Rhaid i'r ddolen fod o leiaf 0.1 eiliad o hyd.
+The tempo should be beats a minute, like 120. => Dylai'r tempo fod yn guriadau y funud, fel 120.

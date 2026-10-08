@@ -492,3 +492,6 @@ Server name => Име на серверот
 Servers in {0} => Сервери во {0}
 Servers... => Сервери...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Листата се смени во Minecraft, па ништо не е отстрането. Еве ја повторно.
+Potato Mode on! Render distance is now 6. => Режим Компир вклучен! Далечината сега е 6.
+The loop has to be at least 0.1 seconds long. => Повторувањето мора да трае најмалку 0.1 секунди.
+The tempo should be beats a minute, like 120. => Темпото се пишува во удари во минута, на пр. 120.

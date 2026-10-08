@@ -492,3 +492,6 @@ Server name => Anv ar servijer
 Servers in {0} => Servijerioù e {0}
 Servers... => Servijerioù...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Cheñchet eo bet ar roll e Minecraft, setu n'eo bet lamet netra. Setu anezhañ en-dro.
+Potato Mode on! Render distance is now 6. => Mod Avaloù-douar enaouet ! Ar pellder a zo 6 bremañ.
+The loop has to be at least 0.1 seconds long. => Ar c'helc'h a rank padout 0,1 eilenn da nebeutañ.
+The tempo should be beats a minute, like 120. => An tempo a rank bezañ taolioù bep munutenn, evel 120.

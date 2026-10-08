@@ -492,3 +492,6 @@ Server name => Harbor name
 Servers in {0} => Harbors of {0}
 Servers... => Harbors...
 The list changed in Minecraft, so nothing was removed. Here it is again. => The list be changed in Minecraft, so nothin' walked the plank. Here she be again!
+Potato Mode on! Render distance is now 6. => Spud Mode be on! Sight range be 6 now.
+The loop has to be at least 0.1 seconds long. => The loop must be at least 0.1 seconds long, matey.
+The tempo should be beats a minute, like 120. => The tempo be beats a minute, like 120.

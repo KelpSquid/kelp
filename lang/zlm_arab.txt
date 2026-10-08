@@ -492,3 +492,6 @@ Server name => نام ڤلاين
 Servers in {0} => ڤلاين دالم {0}
 Servers... => ڤلاين...
 The list changed in Minecraft, so nothing was removed. Here it is again. => سنارای ايت بروبه دالم Minecraft، جادي تيادا اڤ٢ يڠ دبواڠ. اين دي سکالي لاڬي.
+Potato Mode on! Render distance is now 6. => مود کنتڠ دهيدوڤکن! جارق ڤاڤرن کيني 6.
+The loop has to be at least 0.1 seconds long. => ݢلوڠ مستي ڤنجڠ سکورڠ٢ڽ 0.1 ساٴت.
+The tempo should be beats a minute, like 120. => تيمڤو هاروس دالم رنتق سمينيت، سڤرتي 120.

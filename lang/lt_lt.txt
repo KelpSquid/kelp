@@ -492,3 +492,6 @@ Server name => Serverio pavadinimas
 Servers in {0} => {0} serveriai
 Servers... => Serveriai...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Sąrašas buvo pakeistas Minecraft žaidime, todėl niekas nepašalinta. Štai jis vėl.
+Potato Mode on! Render distance is now 6. => Bulvės režimas įjungtas! Atstumas dabar 6.
+The loop has to be at least 0.1 seconds long. => Kartojimas turi trukti bent 0.1 sekundės.
+The tempo should be beats a minute, like 120. => Tempas nurodomas dūžiais per minutę, pvz., 120.

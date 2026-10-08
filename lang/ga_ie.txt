@@ -492,3 +492,6 @@ Server name => Ainm an fhreastalaí
 Servers in {0} => Freastalaithe in {0}
 Servers... => Freastalaithe...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Athraíodh an liosta in Minecraft, mar sin níor baineadh aon rud. Seo arís é.
+Potato Mode on! Render distance is now 6. => Mód Prátaí ar siúl! Is é 6 an fad rindreála anois.
+The loop has to be at least 0.1 seconds long. => Caithfidh an lúb a bheith 0.1 soicind ar fhad ar a laghad.
+The tempo should be beats a minute, like 120. => Ba chóir go mbeadh an luas i mbuillí sa nóiméad, mar 120.

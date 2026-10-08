@@ -492,3 +492,6 @@ Server name => Nomo di servilo
 Servers in {0} => Servili en {0}
 Servers... => Servili...
 The list changed in Minecraft, so nothing was removed. Here it is again. => La listo chanjesis en Minecraft, do nulo esis removita. Hike ol esas itere.
+Potato Mode on! Render distance is now 6. => Terpomo-modo aktiva! La disto nun esas 6.
+The loop has to be at least 0.1 seconds long. => La ripeto mustas durar adminime 0,1 sekundo.
+The tempo should be beats a minute, like 120. => La tempo devas esar batadi per minuto, exemple 120.

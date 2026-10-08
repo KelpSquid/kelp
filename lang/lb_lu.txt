@@ -492,3 +492,6 @@ Server name => Servernumm
 Servers in {0} => Serveren an {0}
 Servers... => Serveren...
 The list changed in Minecraft, so nothing was removed. Here it is again. => D'Lëscht huet sech am Minecraft geännert, dofir gouf näischt ewechgeholl. Hei ass se nach eng Kéier.
+Potato Mode on! Render distance is now 6. => Gromperen-Modus un! D'Siichtwäit ass elo 6.
+The loop has to be at least 0.1 seconds long. => D'Schleif muss mindestens 0,1 Sekonne laang sinn.
+The tempo should be beats a minute, like 120. => Den Tempo soll a Schléi pro Minutt sinn, wéi 120.

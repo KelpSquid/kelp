@@ -492,3 +492,6 @@ Server name => Tenarnamn
 Servers in {0} => Tenarar i {0}
 Servers... => Tenarar...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Lista vart brigd i Minecraft, so ingenting vart teke burt. Her er ho att.
+Potato Mode on! Render distance is now 6. => Jordeple-modus er på! Synsvidda er no 6.
+The loop has to be at least 0.1 seconds long. => Lykkja lyt vera minst 0,1 sekund lang.
+The tempo should be beats a minute, like 120. => Tempoet bør vera slag i minuttet, som 120.

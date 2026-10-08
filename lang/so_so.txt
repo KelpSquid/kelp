@@ -492,3 +492,6 @@ Server name => Magaca seerfarka
 Servers in {0} => Seerfarrada {0}
 Servers... => Seerfarro...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Liiska ayaa isbeddelay gudaha Minecraft, sidaas darteed waxba lama saarin. Waa kan mar kale.
+Potato Mode on! Render distance is now 6. => Habka Baradhada waa shidan yahay! Fogaantu hadda waa 6.
+The loop has to be at least 0.1 seconds long. => Wareeggu waa inuu ahaadaa ugu yaraan 0.1 ilbiriqsi.
+The tempo should be beats a minute, like 120. => Garaaca waa inuu noqdaa garaacyo daqiiqadkii, sida 120.

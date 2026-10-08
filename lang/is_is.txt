@@ -492,3 +492,6 @@ Server name => Heiti þjóns
 Servers in {0} => Þjónar í {0}
 Servers... => Þjónar...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Listinn breyttist í Minecraft, svo ekkert var fjarlægt. Hér er hann aftur.
+Potato Mode on! Render distance is now 6. => Kartöfluhamur á! Sjónlengd er nú 6.
+The loop has to be at least 0.1 seconds long. => Lykkjan þarf að vera að minnsta kosti 0,1 sekúnda að lengd.
+The tempo should be beats a minute, like 120. => Takturinn á að vera slög á mínútu, eins og 120.

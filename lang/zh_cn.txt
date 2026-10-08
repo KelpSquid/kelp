@@ -492,3 +492,6 @@ Server name => 服务器名称
 Servers in {0} => {0} 中的服务器
 Servers... => 服务器...
 The list changed in Minecraft, so nothing was removed. Here it is again. => 列表在 Minecraft 中有变动，所以没有移除任何东西。这是更新后的列表。
+Potato Mode on! Render distance is now 6. => 土豆模式已开启！渲染距离现在是 6。
+The loop has to be at least 0.1 seconds long. => 循环至少要 0.1 秒长。
+The tempo should be beats a minute, like 120. => 速度应该是每分钟的节拍数，比如 120。

@@ -492,3 +492,6 @@ Server name => Orúkọ sáfà
 Servers in {0} => Àwọn sáfà nínú {0}
 Servers... => Àwọn sáfà...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Àtòkọ náà yí padà nínú Minecraft, nítorí náà a kò yọ nǹkan kan kúrò. Òun nìyí lẹ́ẹ̀kan sí i.
+Potato Mode on! Render distance is now 6. => Ipò Ọ̀dùnkún ti tàn! Ìjìnnà ìríran jẹ́ 6 báyìí.
+The loop has to be at least 0.1 seconds long. => Àtúnṣe gbọ́dọ̀ gùn tó ìṣẹ́jú-àáyá 0.1 ó kéré tán.
+The tempo should be beats a minute, like 120. => Ìyára gbọ́dọ̀ jẹ́ iye lílù ní ìṣẹ́jú kan, bíi 120.

@@ -492,3 +492,6 @@ Server name => Sunucu adı
 Servers in {0} => {0} sunucuları
 Servers... => Sunucular...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Liste Minecraft'ta değişti, bu yüzden hiçbir şey kaldırılmadı. İşte yeniden.
+Potato Mode on! Render distance is now 6. => Patates Modu açık! Görüş mesafesi artık 6.
+The loop has to be at least 0.1 seconds long. => Döngü en az 0,1 saniye uzunluğunda olmalı.
+The tempo should be beats a minute, like 120. => Tempo dakikadaki vuruş sayısı olmalı, örneğin 120.

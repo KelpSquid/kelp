@@ -492,3 +492,6 @@ Server name => Emri i serverit
 Servers in {0} => Serverët në {0}
 Servers... => Serverët...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Lista ndryshoi në Minecraft, ndaj nuk u hoq asgjë. Ja ku është përsëri.
+Potato Mode on! Render distance is now 6. => Modaliteti Patate u ndez! Largësia tani është 6.
+The loop has to be at least 0.1 seconds long. => Përsëritja duhet të zgjasë të paktën 0,1 sekonda.
+The tempo should be beats a minute, like 120. => Tempo duhet të jetë rrahje në minutë, si 120.

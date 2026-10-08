@@ -492,3 +492,6 @@ Server name => サーバー名
 Servers in {0} => {0} のサーバー
 Servers... => サーバー...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Minecraft でリストが変わったので、何も削除しませんでした。改めて表示します。
+Potato Mode on! Render distance is now 6. => ポテトモード オン！描画距離は 6 です。
+The loop has to be at least 0.1 seconds long. => ループは 0.1 秒以上にしてね。
+The tempo should be beats a minute, like 120. => テンポは 1 分あたりの拍数で入れてね（例：120）。

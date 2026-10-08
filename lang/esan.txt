@@ -492,3 +492,6 @@ Server name => Nombre der çerbidôh
 Servers in {0} => Çerbidorê de {0}
 Servers... => Çerbidorê...
 The list changed in Minecraft, so nothing was removed. Here it is again. => La lîhta cambió en Minecraft, açí que no se quitó ná. Aquí la tiêh otra bêh.
+Potato Mode on! Render distance is now 6. => ¡Modo Patata ençendío! La dihtançia ahora ê 6.
+The loop has to be at least 0.1 seconds long. => Er bucle tiene que durâh como mínimo 0,1 çegundô.
+The tempo should be beats a minute, like 120. => Er tempo ba en purçô por minuto, como 120.

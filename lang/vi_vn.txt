@@ -492,3 +492,6 @@ Server name => Tên máy chủ
 Servers in {0} => Máy chủ trong {0}
 Servers... => Máy chủ...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Danh sách đã thay đổi trong Minecraft, nên không có gì bị xóa. Đây là danh sách hiện tại.
+Potato Mode on! Render distance is now 6. => Đã bật Chế độ Khoai tây! Tầm nhìn giờ là 6.
+The loop has to be at least 0.1 seconds long. => Vòng lặp phải dài ít nhất 0,1 giây.
+The tempo should be beats a minute, like 120. => Nhịp độ nên là số nhịp mỗi phút, ví dụ 120.

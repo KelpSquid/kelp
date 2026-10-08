@@ -492,3 +492,6 @@ Server name => Сервер аты
 Servers in {0} => {0} серверлери
 Servers... => Серверлер...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Тизме Minecraft'та өзгөрдү, ошондуктан эч нерсе алынган жок. Мына, кайрадан.
+Potato Mode on! Render distance is now 6. => Картошка режими күйдү! Аралык эми 6.
+The loop has to be at least 0.1 seconds long. => Кайталоо жок дегенде 0,1 секунд болушу керек.
+The tempo should be beats a minute, like 120. => Темп мүнөтүнө ыргак менен жазылат, мисалы 120.

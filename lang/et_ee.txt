@@ -492,3 +492,6 @@ Server name => Serveri nimi
 Servers in {0} => Serverid: {0}
 Servers... => Serverid...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Nimekiri muutus Minecraftis, seega midagi ei eemaldatud. Siin see on uuesti.
+Potato Mode on! Render distance is now 6. => Kartulirežiim sees! Vaatekaugus on nüüd 6.
+The loop has to be at least 0.1 seconds long. => Kordus peab olema vähemalt 0,1 sekundit pikk.
+The tempo should be beats a minute, like 120. => Tempo peaks olema löökides minutis, näiteks 120.

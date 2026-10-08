@@ -492,3 +492,6 @@ Server name => Сервер исеме
 Servers in {0} => {0} серверлары
 Servers... => Серверлар...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Исемлек Minecraft-та үзгәрде, шуңа күрә бернәрсә дә бетерелмәде. Менә ул яңадан.
+Potato Mode on! Render distance is now 6. => Бәрәңге режимы кабынды! Күрү ераклыгы хәзер 6.
+The loop has to be at least 0.1 seconds long. => Кабатлау ким дигәндә 0,1 секунд озынлыкта булырга тиеш.
+The tempo should be beats a minute, like 120. => Темп минуттагы бит саны булырга тиеш, мәсәлән 120.

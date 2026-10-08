@@ -492,3 +492,6 @@ Server name => Ime servera
 Servers in {0} => Servery v {0}
 Servers... => Servery...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Spisok izměnil sę v Minecraft, zato ničto ne bylo odstranjeno. Ovo jest on opęt.
+Potato Mode on! Render distance is now 6. => Kartofeljny režim vključeny! Daljina jest teper 6.
+The loop has to be at least 0.1 seconds long. => Petlja musi trajati najmenje 0,1 sekundy.
+The tempo should be beats a minute, like 120. => Tempo musi byti v udarah na minutu, napriklad 120.

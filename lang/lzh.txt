@@ -492,3 +492,6 @@ Server name => 伺服之名
 Servers in {0} => {0} 之伺服
 Servers... => 伺服...
 The list changed in Minecraft, so nothing was removed. Here it is again. => 其錄已易於 Minecraft，故無所去。今復示之。
+Potato Mode on! Render distance is now 6. => 薯式已啟！視距今為 6。
+The loop has to be at least 0.1 seconds long. => 循至少當長 0.1 秒。
+The tempo should be beats a minute, like 120. => 速當以每分之拍計，如 120。

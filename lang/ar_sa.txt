@@ -492,3 +492,6 @@ Server name => اسم الخادم
 Servers in {0} => الخوادم في {0}
 Servers... => الخوادم...
 The list changed in Minecraft, so nothing was removed. Here it is again. => تغيّرت القائمة في Minecraft، لذا لم تتم إزالة أي شيء. ها هي من جديد.
+Potato Mode on! Render distance is now 6. => وضع البطاطس مفعّل! مسافة العرض الآن 6.
+The loop has to be at least 0.1 seconds long. => يجب أن يكون التكرار 0.1 ثانية على الأقل.
+The tempo should be beats a minute, like 120. => يجب أن يكون الإيقاع بعدد النبضات في الدقيقة، مثل 120.

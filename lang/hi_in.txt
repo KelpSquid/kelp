@@ -492,3 +492,6 @@ Server name => सर्वर का नाम
 Servers in {0} => {0} के सर्वर
 Servers... => सर्वर...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Minecraft में सूची बदल गई, इसलिए कुछ नहीं हटाया गया। यह रही फिर से।
+Potato Mode on! Render distance is now 6. => आलू मोड चालू! रेंडर दूरी अब 6 है।
+The loop has to be at least 0.1 seconds long. => लूप कम से कम 0.1 सेकंड लंबा होना चाहिए।
+The tempo should be beats a minute, like 120. => टेम्पो प्रति मिनट बीट में होना चाहिए, जैसे 120।

@@ -492,3 +492,6 @@ Server name => Server adı
 Servers in {0} => {0} serverləri
 Servers... => Serverlər...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Siyahı Minecraft-da dəyişdi, ona görə heç nə silinmədi. Budur, yenidən.
+Potato Mode on! Render distance is now 6. => Kartof rejimi açıqdır! Görmə məsafəsi indi 6-dır.
+The loop has to be at least 0.1 seconds long. => Dövr ən azı 0,1 saniyə uzunluğunda olmalıdır.
+The tempo should be beats a minute, like 120. => Temp dəqiqədəki vuruş sayı olmalıdır, məsələn 120.

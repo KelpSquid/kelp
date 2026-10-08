@@ -492,3 +492,6 @@ Server name => Servername
 Servers in {0} => Server in {0}
 Servers... => Server...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Die Liste hat sich in Minecraft geändert, also wurde nichts entfernt. Hier ist sie noch mal.
+Potato Mode on! Render distance is now 6. => Kartoffelmodus an! Die Sichtweite ist jetzt 6.
+The loop has to be at least 0.1 seconds long. => Die Schleife muss mindestens 0,1 Sekunden lang sein.
+The tempo should be beats a minute, like 120. => Das Tempo wird in Schlägen pro Minute angegeben, zum Beispiel 120.

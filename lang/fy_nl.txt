@@ -492,3 +492,6 @@ Server name => Tsjinnernamme
 Servers in {0} => Tsjinners yn {0}
 Servers... => Tsjinners...
 The list changed in Minecraft, so nothing was removed. Here it is again. => De list is yn Minecraft feroare, dus der is neat fuortsmiten. Hjir is er wer.
+Potato Mode on! Render distance is now 6. => Ierappelmodus oan! Sichtôfstân is no 6.
+The loop has to be at least 0.1 seconds long. => De lus moat op syn minst 0,1 sekonde lang wêze.
+The tempo should be beats a minute, like 120. => It tempo moat yn tellen yn 'e minút wêze, lykas 120.

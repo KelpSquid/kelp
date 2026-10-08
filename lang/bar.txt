@@ -492,3 +492,6 @@ Server name => Servernam
 Servers in {0} => Server in {0}
 Servers... => Server...
 The list changed in Minecraft, so nothing was removed. Here it is again. => D'Listn hod si in Minecraft g'ändat, drum is nix weg doa worn. Do is's wieda.
+Potato Mode on! Render distance is now 6. => Erdäpfe-Modus o! De Sichtweitn is jetz 6.
+The loop has to be at least 0.1 seconds long. => D'Schleifn muass mindestens 0,1 Sekundn lang sei.
+The tempo should be beats a minute, like 120. => As Tempo soit Schläg pro Minutn sei, wia 120.

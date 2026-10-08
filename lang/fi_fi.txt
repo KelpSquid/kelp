@@ -492,3 +492,6 @@ Server name => Palvelimen nimi
 Servers in {0} => Palvelimet: {0}
 Servers... => Palvelimet...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Lista muuttui Minecraftissa, joten mitään ei poistettu. Tässä se taas on.
+Potato Mode on! Render distance is now 6. => Perunatila päällä! Näköetäisyys on nyt 6.
+The loop has to be at least 0.1 seconds long. => Silmukan pitää olla vähintään 0,1 sekuntia pitkä.
+The tempo should be beats a minute, like 120. => Tempo annetaan iskuina minuutissa, esimerkiksi 120.

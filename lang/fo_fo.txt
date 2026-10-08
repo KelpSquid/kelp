@@ -492,3 +492,6 @@ Server name => Navn á ambætara
 Servers in {0} => Ambætarar í {0}
 Servers... => Ambætarar...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Listin broyttist í Minecraft, so einki varð tikið burtur. Her er hann aftur.
+Potato Mode on! Render distance is now 6. => Eplamodus á! Sjónfjarstøðan er nú 6.
+The loop has to be at least 0.1 seconds long. => Endurtøkan má vera í minsta lagi 0,1 sekund long.
+The tempo should be beats a minute, like 120. => Tempoið skal vera í slagum um minuttin, t.d. 120.

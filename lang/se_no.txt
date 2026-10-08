@@ -492,3 +492,6 @@ Server name => Bálvá namma
 Servers in {0} => Bálvát {0}:s
 Servers... => Bálvát...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Listu rievdadii Minecraft:s, nu ahte ii mihkkige váldojuvvon eret. Dá lea dat fas.
+Potato Mode on! Render distance is now 6. => Buđetmodus lea alde! Gaska lea dál 6.
+The loop has to be at least 0.1 seconds long. => Geardduheapmi ferte leat unnimusat 0,1 sekundda guhku.
+The tempo should be beats a minute, like 120. => Tempo lea čuojahusat juohke minuhtas, nugo 120.

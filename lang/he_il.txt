@@ -492,3 +492,6 @@ Server name => שם השרת
 Servers in {0} => שרתים ב-{0}
 Servers... => שרתים...
 The list changed in Minecraft, so nothing was removed. Here it is again. => הרשימה השתנתה ב-Minecraft, אז שום דבר לא הוסר. הנה היא שוב.
+Potato Mode on! Render distance is now 6. => מצב תפוח אדמה פועל! טווח הרינדור עכשיו 6.
+The loop has to be at least 0.1 seconds long. => הלולאה צריכה להיות באורך 0.1 שניות לפחות.
+The tempo should be beats a minute, like 120. => הקצב צריך להיות בפעימות לדקה, כמו 120.

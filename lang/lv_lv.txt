@@ -492,3 +492,6 @@ Server name => Servera nosaukums
 Servers in {0} => {0} serveri
 Servers... => Serveri...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Saraksts mainījās Minecraft spēlē, tāpēc nekas netika noņemts. Lūk, tas atkal.
+Potato Mode on! Render distance is now 6. => Kartupeļa režīms ieslēgts! Attālums tagad ir 6.
+The loop has to be at least 0.1 seconds long. => Cilpai jābūt vismaz 0.1 sekundi garai.
+The tempo should be beats a minute, like 120. => Tempam jābūt sitienos minūtē, piemēram, 120.

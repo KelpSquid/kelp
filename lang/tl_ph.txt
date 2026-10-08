@@ -492,3 +492,6 @@ Server name => Pangalan ng server
 Servers in {0} => Mga server sa {0}
 Servers... => Mga server...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Nagbago ang listahan sa Minecraft, kaya walang natanggal. Heto ulit ito.
+Potato Mode on! Render distance is now 6. => Bukas ang Modong Patatas! 6 na ang layo ng tanaw.
+The loop has to be at least 0.1 seconds long. => Dapat hindi bababa sa 0.1 segundo ang haba ng ulit-ulit.
+The tempo should be beats a minute, like 120. => Dapat bilang ng kumpas bawat minuto ang tempo, gaya ng 120.

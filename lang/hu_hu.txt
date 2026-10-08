@@ -492,3 +492,6 @@ Server name => Szerver neve
 Servers in {0} => Szerverek: {0}
 Servers... => Szerverek...
 The list changed in Minecraft, so nothing was removed. Here it is again. => A lista megváltozott a Minecraftban, ezért semmi sem lett eltávolítva. Itt van újra.
+Potato Mode on! Render distance is now 6. => Krumpli mód bekapcsolva! A látótáv most 6.
+The loop has to be at least 0.1 seconds long. => Az ismétlésnek legalább 0,1 másodperc hosszúnak kell lennie.
+The tempo should be beats a minute, like 120. => A tempó percenkénti ütésszám legyen, például 120.

@@ -492,3 +492,6 @@ Server name => 서버 이름
 Servers in {0} => {0}의 서버
 Servers... => 서버...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Minecraft에서 목록이 바뀌어서 아무것도 제거하지 않았어요. 다시 보여 드릴게요.
+Potato Mode on! Render distance is now 6. => 감자 모드 켜짐! 렌더 거리는 이제 6이에요.
+The loop has to be at least 0.1 seconds long. => 반복은 최소 0.1초 이상이어야 해요.
+The tempo should be beats a minute, like 120. => 템포는 1분당 박자 수로 써 주세요. 예: 120.

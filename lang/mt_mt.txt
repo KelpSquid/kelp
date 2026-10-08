@@ -492,3 +492,6 @@ Server name => Isem tas-server
 Servers in {0} => Servers f'{0}
 Servers... => Servers...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Il-lista nbidlet f'Minecraft, allura ma tneħħa xejn. Hawn hi mill-ġdid.
+Potato Mode on! Render distance is now 6. => Modalità Patata mixgħula! Id-distanza issa hi 6.
+The loop has to be at least 0.1 seconds long. => Il-loop irid ikun twil mill-inqas 0.1 sekondi.
+The tempo should be beats a minute, like 120. => It-tempo għandu jkun taħbitiet kull minuta, bħal 120.

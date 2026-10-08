@@ -492,3 +492,6 @@ Server name => Ime strežnika
 Servers in {0} => Strežniki v {0}
 Servers... => Strežniki...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Seznam se je v Minecraftu spremenil, zato ni bilo nič odstranjeno. Tukaj je spet.
+Potato Mode on! Render distance is now 6. => Krompirjev način vklopljen! Razdalja je zdaj 6.
+The loop has to be at least 0.1 seconds long. => Zanka mora trajati vsaj 0,1 sekunde.
+The tempo should be beats a minute, like 120. => Tempo naj bo v udarcih na minuto, na primer 120.

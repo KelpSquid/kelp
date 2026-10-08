@@ -492,3 +492,6 @@ Server name => Назва сервера
 Servers in {0} => Сервери в {0}
 Servers... => Сервери...
 The list changed in Minecraft, so nothing was removed. Here it is again. => Список змінився в Minecraft, тож нич не забрали. Ади він знов.
+Potato Mode on! Render distance is now 6. => Режим Бараболі ввімкнено! Промальовка типер 6.
+The loop has to be at least 0.1 seconds long. => Петля мусит тривати найменше 0,1 секунди.
+The tempo should be beats a minute, like 120. => Темп мусит бути в ударах на хвилину, як 120.

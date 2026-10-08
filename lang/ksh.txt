@@ -492,3 +492,6 @@ Server name => Servername
 Servers in {0} => Server en {0}
 Servers... => Server...
 The list changed in Minecraft, so nothing was removed. Here it is again. => De Liss hätt sich en Minecraft jeändert, dröm es nix fottjemaat woode. Hee es se widder.
+Potato Mode on! Render distance is now 6. => Ääpel-Modus aan! De Seechwigg es jetz 6.
+The loop has to be at least 0.1 seconds long. => De Schleif muss winnichstens 0,1 Sekunde lang sin.
+The tempo should be beats a minute, like 120. => Et Tempo es Schläch pro Minutt, wie 120.
