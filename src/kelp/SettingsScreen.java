@@ -18,7 +18,6 @@ public class SettingsScreen extends Screen {
     private final McButton themeButton = new McButton("", () -> panel.setScreen(new ThemeScreen(panel, this)));
     private final McButton parentButton = new McButton(t("Parent Controls"), () -> panel.setScreen(new ParentControlsScreen(panel, this)));
     private final McButton soundButton = new McButton(t("Sound Maker"), () -> panel.setScreen(new SoundMakerScreen(panel, this)));
-    private final McButton emblemButton = new McButton(t("Emblem"), () -> panel.setScreen(new EmblemScreen(panel, this)));
     private final McButton doneButton = new McButton(t("Done"), this::done);
 
     public SettingsScreen(OceanPanel panel, Screen parent) {
@@ -30,7 +29,6 @@ public class SettingsScreen extends Screen {
         buttons.add(backupButton);
         buttons.add(folderButton);
         buttons.add(themeButton);
-        buttons.add(emblemButton);
         buttons.add(soundButton);
         buttons.add(parentButton);
         buttons.add(doneButton);
@@ -70,9 +68,7 @@ public class SettingsScreen extends Screen {
 
         Account account = Accounts.active();
         accountButton.setLabel(t("Account: {0}", account.name()));
-        accountButton.setBounds(left, top + 6 * GUI, 140 * GUI, 20 * GUI);
-        emblemButton.setBounds(left + 144 * GUI, top + 6 * GUI, 56 * GUI, 20 * GUI);
-        EmblemScreen.drawSmall(g, account.id(), left - 24 * GUI, top + 6 * GUI, 20 * GUI); // the emblem, next to the name
+        accountButton.setBounds(left, top + 6 * GUI, 200 * GUI, 20 * GUI);
         String kind = account.microsoft() ? t("Signed in with Microsoft.") : t("Offline names show in single player and LAN.");
         centered(g, kind, w, top + 30 * GUI, 0x808080);
 

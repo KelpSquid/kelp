@@ -21,11 +21,12 @@ public final class PlayerData {
     public static void delete(Account account) throws IOException {
         String id = account.id();
         String plain = id.replace("-", "");
-        Files.deleteIfExists(Emblem.file(id));
-        Files.deleteIfExists(Emblem.file(plain));
-        Files.deleteIfExists(Badges.file(id));
-        Emblem.forget(id);
-        Emblem.forget(plain);
+        // Their emblem and badges (made and shown in Squid, kept in Kelp's folder)
+        for (String name : new String[] {id, plain}) {
+            String file = name.replaceAll("[^A-Za-z0-9_-]", "") + ".txt";
+            Files.deleteIfExists(Folders.home().resolve("emblems").resolve(file));
+            Files.deleteIfExists(Folders.home().resolve("badges").resolve(file));
+        }
         removePlayer(SquidCount.file(), true, id, plain);
         removePlayer(Folders.home().resolve("squid-skins.json"), false, id, plain);
         Accounts.remove(account);

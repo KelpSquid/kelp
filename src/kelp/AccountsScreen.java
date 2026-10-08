@@ -87,9 +87,7 @@ public class AccountsScreen extends Screen {
         int listBottom = h - 92 * GUI;
         list.draw(g, font, w, 32 * GUI, listBottom, null, (gg, account, x, y, width) -> {
             boolean playing = account.id().equals(active.id());
-            EmblemScreen.drawSmall(gg, account.id(), x, y - GUI, 9 * GUI);
-            font.draw(gg, account.name(), x + 12 * GUI, y, GUI, playing ? 0x55FF55 : 0xFFFFFF);
-            Badges.draw(gg, account.id(), x + 16 * GUI + font.width(account.name(), GUI), y - GUI, 9 * GUI); // badges after the name
+            font.draw(gg, account.name(), x, y, GUI, playing ? 0x55FF55 : 0xFFFFFF);
             String kind = (playing ? t("Playing") + " - " : "") + (account.microsoft() ? "Microsoft" : t("Offline"));
             font.draw(gg, kind, x + width - font.width(kind, GUI), y, GUI, playing ? 0x55FF55 : 0xA0A0A0);
         });

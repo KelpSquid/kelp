@@ -54,7 +54,7 @@ public class KelpTest {
         folders();
         settings();
         languages();
-        emblems();
+        playerData();
         instances();
         gameOptions();
         mods();
@@ -143,47 +143,23 @@ public class KelpTest {
 
     // ---- Languages ----
 
-    static void emblems() throws Exception {
-        Emblem emblem = Emblem.starter();
-        emblem.layers.add(new Emblem.Layer(Emblem.Shape.SQUID, 0x202020, 0.25, 0.75, 0.4, 90, true, false));
-        emblem.save("test-account");
-        Emblem back = Emblem.load("test-account");
-        Emblem.Layer squid = back.layers.get(2);
-        check("an emblem is saved and read back, layer by layer", back.layers.size() + " " + squid.shape + " " + Integer.toHexString(squid.color)
-                + " " + squid.x + " " + squid.y + " " + squid.turn + " " + squid.flipX + " " + squid.flipY, "3 SQUID 202020 0.25 0.75 90.0 true false");
-        check("a broken emblem file is read as far as it makes sense", Emblem.parse("CIRCLE ff0000 9 0.5 1 0 0 0\nNOT_A_SHAPE 1 1 1 1 1 1 1\nhi").layers.size()
-                + " " + Emblem.parse("CIRCLE ff0000 9 0.5 1 0 0 0").layers.get(0).x, "1 1.5");
-        java.awt.image.BufferedImage picture = back.draw();
-        int filled = 0;
-        for (int x = 0; x < Emblem.SIZE; x++) {
-            for (int y = 0; y < Emblem.SIZE; y++) if ((picture.getRGB(x, y) >>> 24) != 0) filled++;
-        }
-        check("an emblem draws as a 64x64 picture, with its corners see-through", picture.getWidth() + " " + (filled > 1000) + " " + (picture.getRGB(0, 0) >>> 24),
-                "64 true 0");
-        check("more Squid Count unlocks more layers", Emblem.UNLOCKS.layers(0) + " " + Emblem.UNLOCKS.layers(49) + " " + Emblem.UNLOCKS.layers(50)
-                + " " + Emblem.UNLOCKS.layers(5000), "3 3 5 32");
-        check("someone without an emblem has none", Emblem.load("nobody") == null && Emblem.picture("nobody") == null, true);
-
+    static void playerData() throws Exception {
         // Deleting a player's data takes out only theirs
         Account leaving = Account.offline("Leaving");
         Accounts.add(leaving);
-        Emblem.starter().save(leaving.id());
+        java.nio.file.Files.createDirectories(Folders.home().resolve("emblems"));
+        java.nio.file.Files.writeString(Folders.home().resolve("emblems").resolve(leaving.id() + ".txt"), "CIRCLE ff0000 0.5 0.5 1 0 0 0\n");
         java.nio.file.Files.writeString(SquidCount.file(), "{\"players\": {\"" + leaving.id() + "\": {\"name\": \"Leaving\", \"points\": 40},"
                 + " \"someone-else\": {\"name\": \"Stays\", \"points\": 70}}}");
         java.nio.file.Files.writeString(Folders.home().resolve("squid-skins.json"), "{\"" + leaving.id() + "\": {\"skin\": \"a.png\"}, \"x\": {\"skin\": \"b.png\"}}");
         PlayerData.delete(leaving);
         check("deleting a player's data removes their emblem, count, wardrobe and sign-in, and nobody else's",
-                (Emblem.load(leaving.id()) == null) + " " + SquidCount.points(leaving.id()) + " " + SquidCount.points("someone-else") + " "
+                !java.nio.file.Files.exists(Folders.home().resolve("emblems").resolve(leaving.id() + ".txt")) + " " + SquidCount.points(leaving.id()) + " " + SquidCount.points("someone-else") + " "
                         + java.nio.file.Files.readString(Folders.home().resolve("squid-skins.json")).contains("b.png") + " "
                         + java.nio.file.Files.readString(Folders.home().resolve("squid-skins.json")).contains("a.png") + " "
                         + Accounts.all().stream().anyMatch(a -> a.id().equals(leaving.id())), "true 0 70 true false false");
         check("JSON is written back the way it was read", PlayerData.write(Json.parse("{\"a\": [1, 2.5, \"x\\\"y\"], \"b\": {\"c\": true, \"d\": null}}"), ""),
                 "{\n    \"a\": [1, 2.5, \"x\\\"y\"],\n    \"b\": {\n        \"c\": true,\n        \"d\": null\n    }\n}");
-        // Badges: the ones the server handed out, in Kelp's order, ignoring ones it doesn't know
-        java.nio.file.Files.createDirectories(Badges.file("badge-test").getParent());
-        java.nio.file.Files.writeString(Badges.file("badge-test"), "birthday\nmade-up\ndev\n");
-        check("badges show in Kelp's order, only real ones", Badges.of("badge-test") + " " + Badges.of("nobody"), "[dev, birthday] []");
-        for (String badge : Badges.ALL) Textures.load("badges/" + badge + ".png");
 
         // Parent Controls: a PIN kept hashed, and Minecraft's own switches when something's off
         check("without Parent Controls everything is allowed", ParentControls.hasPin() + " " + ParentControls.gameArguments(), "false []");
@@ -196,10 +172,6 @@ public class KelpTest {
         check("multiplayer and chat off become Minecraft's own switches", ParentControls.gameArguments().toString(), "[--disableMultiplayer, --disableChat]");
         ParentControls.remove();
         check("turning Parent Controls off allows everything again", ParentControls.hasPin() + " " + ParentControls.gameArguments(), "false []");
-
-        for (Emblem.Shape shape : Emblem.Shape.values()) {
-            if (Emblem.outline(shape).getBounds2D().isEmpty()) throw new AssertionError("empty shape " + shape);
-        }
     }
 
     static void languages() throws Exception {
