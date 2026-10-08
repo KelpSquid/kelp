@@ -175,6 +175,22 @@ public final class ModStarters {
                         }
                     }
                     """),
+            new Starter("Creeper Prank", "Press P and a creeper hisses right behind you. Gotcha!", """
+                    // %1$s: press P and a creeper hisses right behind you. Then, a second and a half later: Gotcha!
+                    // Try other sounds: "entity.ghast.scream", "entity.warden.roar", "entity.tnt.primed".
+
+                    public class %2$s extends EasyMod {
+                        void start() {
+                            onKey("P", () -> {
+                                playSound("entity.creeper.primed");
+                                after(1.5, () -> {
+                                    title("Gotcha!", "It was only " + playerName());
+                                    particles("happy_villager", 15);
+                                });
+                            });
+                        }
+                    }
+                    """),
             new Starter("Diamond Counter", "Counts every diamond you mine, forever.", """
                     // %1$s: counts the diamonds you mine, and remembers them even after you quit.
                     // Try counting something else: "ancient_debris", "oak_log", or "" for every block.
