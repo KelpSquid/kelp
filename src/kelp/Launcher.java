@@ -205,6 +205,18 @@ public final class Launcher {
     }
 
     /**
+     * Whether this version (once it's downloaded) can open a world by itself, skipping the title screen, for Play
+     * World and Continue. Minecraft can since 1.20.
+     */
+    static boolean canOpenWorld(String versionId) {
+        try {
+            return Files.readString(Folders.versions().resolve(versionId).resolve(versionId + ".json")).contains("quickPlaySingleplayer");
+        } catch (IOException | RuntimeException e) {
+            return false;
+        }
+    }
+
+    /**
      * squid.jar and its libraries. A packaged Kelp brings its own Squid in a squid folder next to kelp.jar;
      * otherwise Kelp uses the one Squid's build.bat installs.
      */

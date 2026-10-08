@@ -646,6 +646,8 @@ public class KelpTest {
         check("Squid can't start versions older than Java 21",
                 problem(() -> Launcher.buildCommand("test-old", home.resolve("game-old"), Account.offline("Player"), true, 0)),
                 "Squid needs Java 21, but Minecraft test-old runs on Java 8. Pick the Vanilla loader to play it.");
+        check("Continue and Play World only show for versions that can open a world", Launcher.canOpenWorld("test-new") + " "
+                + Launcher.canOpenWorld("test-old") + " " + Launcher.canOpenWorld("not-downloaded"), "true false false");
         check("a version too old to open a world by itself says so", problem(() -> Launcher.buildCommand("test-old", home.resolve("game-old"),
                 Account.offline("Player"), Loader.VANILLA, null, 0, true, "My World")), "Minecraft test-old can't open a world by itself. Play it, then pick the world.");
         Account signedIn = new Account("0123456789abcdef0123456789abcdef", "Samuel", true, "refresh", "mc-token", Long.MAX_VALUE);

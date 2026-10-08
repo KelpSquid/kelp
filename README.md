@@ -25,7 +25,8 @@ A launcher for Minecraft: Java Edition, made from scratch, with an animated unde
 - **Modpacks:** import Modrinth (.mrpack), CurseForge and Prism modpacks
 - **Share:** save an instance as a .mrpack for a friend, mods and settings included (worlds stay home)
 - **Game options:** render distance, FOV, volume and more, changed from Kelp
-- **Play World:** pick a world in Worlds and the game opens straight into it, skipping the title screen (1.20 and newer)
+- **Play World and Continue:** pick a world in Worlds, or press Continue on Kelp's title screen for the one you played
+  last, and the game opens straight into it, skipping Minecraft's title screen (1.20 and newer)
 - **World backups:** every 15 minutes while you play, like Legacy Console Edition, with one-click restore
 - **Crash helper:** when the game crashes, Kelp says why in plain words and which mod caused it
 - **Stats and Gallery:** play time, blocks mined, mobs defeated and more; your screenshots, clips and replay videos

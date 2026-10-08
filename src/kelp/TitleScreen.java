@@ -3,10 +3,12 @@ package kelp;
 import static kelp.Lang.t;
 
 import java.awt.Graphics2D;
+import java.util.List;
 
 /** The first thing you see: the Kelp title, a splash and the main buttons. */
 public class TitleScreen extends Screen {
     private final McButton play = new McButton(t("Play"), this::play);
+    private final McButton resume = new McButton(t("Continue"), this::resume);
     private final McButton instances = new McButton(t("Instances"), () -> panel.setScreen(new InstancesScreen(panel, this)));
     private final McButton settings = new McButton(t("Options..."), () -> panel.setScreen(new SettingsScreen(panel, this)));
     private final McButton quit = new McButton(t("Quit Game"), () -> System.exit(0));
@@ -14,12 +16,14 @@ public class TitleScreen extends Screen {
     private String updateProblem;
 
     private Instance last; // what Play starts: the default instance, or the one played last
+    private Worlds.World lastWorld; // what Continue opens: that instance's most recently played world
     private int count;
     private double countReadAt = -1;
 
     public TitleScreen(OceanPanel panel) {
         super(panel);
         buttons.add(play);
+        buttons.add(resume);
         buttons.add(instances);
         buttons.add(settings);
         buttons.add(quit);
@@ -38,6 +42,18 @@ public class TitleScreen extends Screen {
     @Override
     public void shown() {
         last = Instance.toPlay(); // the default instance, or else the one played last
+        lastWorld = null;
+        if (last != null && Launcher.canOpenWorld(last.version().id())) {
+            List<Worlds.World> worlds = Worlds.list(Worlds.saves(last));
+            if (!worlds.isEmpty()) lastWorld = worlds.getFirst();
+        }
+    }
+
+    /** Straight back into the world played last, skipping Minecraft's title screen and world list. */
+    private void resume() {
+        if (last != null && lastWorld != null && !RunningGames.isRunning(last)) {
+            panel.setScreen(new DownloadScreen(panel, this, last, lastWorld.name()));
+        }
     }
 
     /** Plays the last instance again, or opens the instance list if there isn't one yet. */
@@ -53,7 +69,15 @@ public class TitleScreen extends Screen {
         // The buttons, laid out like Minecraft's title screen (sizes are in GUI pixels, times GUI)
         int buttonsY = h / 4 + 48 * GUI;
         int left = w / 2 - 100 * GUI;
-        play.setBounds(left, buttonsY, 200 * GUI, 20 * GUI);
+        if (lastWorld != null) {
+            // Play, and next to it Continue, which goes straight back into the last world
+            play.setBounds(left, buttonsY, 98 * GUI, 20 * GUI);
+            resume.setBounds(left + 102 * GUI, buttonsY, 98 * GUI, 20 * GUI);
+            resume.setActive(!RunningGames.isRunning(last));
+        } else {
+            play.setBounds(left, buttonsY, 200 * GUI, 20 * GUI);
+            resume.setBounds(-1000, -1000, 0, 0);
+        }
         instances.setBounds(left, buttonsY + 24 * GUI, 200 * GUI, 20 * GUI);
         settings.setBounds(left, buttonsY + 60 * GUI, 98 * GUI, 20 * GUI);
         quit.setBounds(left + 102 * GUI, buttonsY + 60 * GUI, 98 * GUI, 20 * GUI);
@@ -92,6 +116,7 @@ public class TitleScreen extends Screen {
         // What Play will start, in the bottom-left corner where Minecraft shows its own version
         String playing = last == null ? t("No instances yet") : t("Play: {0}", last.summary());
         font.draw(g, playing, 2 * GUI, h - 10 * GUI, GUI, 0xFFFFFF);
+        if (lastWorld != null) font.draw(g, t("Continue: {0}", lastWorld.name()), 2 * GUI, h - 30 * GUI, GUI, 0xA0A0A0);
         // The Squid Count of whoever is playing, read again about once a second
         if (panel.getTime() - countReadAt > 1 || countReadAt < 0) {
             count = SquidCount.points(Accounts.active().id());
