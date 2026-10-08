@@ -666,6 +666,11 @@ public class KelpTest {
         Files.writeString(continueHome.resolve("squid-last-played.txt"), "server\nplay.example.com:25565\nMy Server\n");
         Continue.Target joined = Continue.find(continueHome);
         check("Continue goes back to a server", joined.server() + " " + joined.id() + " " + joined.shown(), "true play.example.com:25565 My Server");
+        Files.createDirectories(Folders.squid());
+        if (!Files.exists(Folders.squid().resolve("squid.jar"))) Files.writeString(Folders.squid().resolve("squid.jar"), "pretend Squid");
+        check("Play Without Mods starts Squid with every mod off", Launcher.buildCommand("test-new", game, Account.offline("Samuel_A"),
+                Loader.SQUID, null, 0, false, null, null, true).contains("-Dsquid.safeMode=true") + " " + Launcher.buildCommand("test-new", game,
+                Account.offline("Samuel_A"), Loader.SQUID, null, 0, false, null, null, false).contains("-Dsquid.safeMode=true"), "true false");
         check("joining a server straight away", String.join(" ", Launcher.buildCommand("test-new", game, Account.offline("Samuel_A"),
                 Loader.VANILLA, null, 0, true, null, "play.example.com").subList(cmd.size(), cmd.size() + 2)), "--quickPlayMultiplayer play.example.com");
         check("a version too old to open a world by itself says so", problem(() -> Launcher.buildCommand("test-old", home.resolve("game-old"),

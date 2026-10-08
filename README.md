@@ -28,7 +28,8 @@ A launcher for Minecraft: Java Edition, made from scratch, with an animated unde
 - **Play World and Continue:** pick a world in Worlds, or press Continue on Kelp's title screen for the one you played
   last (a world or a server), and the game goes straight into it, skipping Minecraft's menus (1.20 and newer)
 - **World backups:** every 15 minutes while you play, like Legacy Console Edition, with one-click restore
-- **Crash helper:** when the game crashes, Kelp says why in plain words and which mod caused it
+- **Crash helper:** when the game crashes, Kelp says why in plain words and which mod caused it, and Play Without
+  Mods starts it with every mod off this time, so a broken mod never keeps you out of your world
 - **Stats and Gallery:** play time, blocks mined, mobs defeated and more; your screenshots, clips and replay videos
 - **Themes:** change Kelp's look (ocean, lava, sky, Nether, End), make your own with a picture and music (WAV, MP3,
   FLAC, Ogg or .sqda, which loops at its own loop points), or get one

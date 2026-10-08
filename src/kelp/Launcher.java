@@ -55,7 +55,13 @@ public final class Launcher {
     /** Like the others; server (an address, or null) is a server the game joins straight away. */
     public static Process launch(String versionId, Path gameFolder, Account account, Loader loader, String loaderVersion,
                                  int memoryGb, boolean fast, String world, String server) throws IOException {
-        List<String> command = buildCommand(versionId, gameFolder, account, loader, loaderVersion, memoryGb, fast, world, server);
+        return launch(versionId, gameFolder, account, loader, loaderVersion, memoryGb, fast, world, server, false);
+    }
+
+    /** Like the others; safe starts Squid with every mod off (Play Without Mods, after a crash). */
+    public static Process launch(String versionId, Path gameFolder, Account account, Loader loader, String loaderVersion,
+                                 int memoryGb, boolean fast, String world, String server, boolean safe) throws IOException {
+        List<String> command = buildCommand(versionId, gameFolder, account, loader, loaderVersion, memoryGb, fast && !safe, world, server, safe);
         Files.deleteIfExists(SquidReport.file(gameFolder)); // so Kelp never shows last time's report
         Process game = new ProcessBuilder(command)
                 .directory(gameFolder.toFile())
@@ -95,6 +101,13 @@ public final class Launcher {
     /** The full command; server (an address, or null) makes the game join that server straight away. */
     public static List<String> buildCommand(String versionId, Path gameFolder, Account account, Loader loader,
                                             String loaderVersion, int memoryGb, boolean fast, String world, String server) throws IOException {
+        return buildCommand(versionId, gameFolder, account, loader, loaderVersion, memoryGb, fast, world, server, false);
+    }
+
+    /** The full command; safe starts Squid with every mod off, so a broken mod can't stop the game. */
+    public static List<String> buildCommand(String versionId, Path gameFolder, Account account, Loader loader,
+                                            String loaderVersion, int memoryGb, boolean fast, String world, String server,
+                                            boolean safe) throws IOException {
         boolean withSquid = loader == Loader.SQUID;
         Path versionFolder = Folders.versions().resolve(versionId);
         Map<String, Object> details = Json.object(Json.parse(Files.readString(versionFolder.resolve(versionId + ".json"))));
@@ -157,6 +170,7 @@ public final class Launcher {
             squidSettings.add("-Dsquid.mainClass=" + mainClass);
             squidSettings.add("-Dsquid.home=" + Folders.home()); // where Squid keeps things shared by every instance, like the Squid Count
             if (!ParentControls.voiceAllowed()) squidSettings.add("-Dsquid.voice=off"); // a parent turned voice chat off
+            if (safe) squidSettings.add("-Dsquid.safeMode=true"); // Play Without Mods
             mainClass = "squid.Main";
             Files.createDirectories(gameFolder.resolve("mods"));
         } else {

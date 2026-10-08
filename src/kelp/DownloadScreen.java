@@ -21,6 +21,8 @@ public class DownloadScreen extends Screen {
     private final McButton copyButton = new McButton(t("Copy Report"), this::copyReport);
     private final McButton logButton = new McButton(t("Open Log"), this::openLog);
     private final McButton turnOffButton = new McButton("", this::turnOffCulprit);
+    // After a crash with Squid: play anyway, with every mod off this time
+    private final McButton safeButton = new McButton(t("Play Without Mods"), this::playWithoutMods);
     private volatile long startedAt = System.currentTimeMillis();
     private CrashHelper.Diagnosis diagnosis; // worked out once, the first time the crash is shown
     private String crashNote; // what happened after pressing one of the crash buttons
@@ -44,6 +46,11 @@ public class DownloadScreen extends Screen {
 
     /** Like the others; server (an address, or null) is joined straight away. */
     public DownloadScreen(OceanPanel panel, Screen parent, Instance instance, String world, String server) {
+        this(panel, parent, instance, world, server, false);
+    }
+
+    /** Like the others; safe starts Squid with every mod off (Play Without Mods). */
+    public DownloadScreen(OceanPanel panel, Screen parent, Instance instance, String world, String server, boolean safe) {
         super(panel);
         this.parent = parent;
         this.instance = instance;
@@ -53,6 +60,7 @@ public class DownloadScreen extends Screen {
         buttons.add(copyButton);
         buttons.add(logButton);
         buttons.add(turnOffButton);
+        buttons.add(safeButton);
         Settings.setLastInstance(instance.id()); // so the title screen's Play button starts this one next time
 
         // If this instance's game is already open, just keep an eye on it instead of starting a second copy
@@ -71,7 +79,7 @@ public class DownloadScreen extends Screen {
                     Account account = Accounts.readyToPlay();
                     if (cancelled) return;
                     game = Launcher.launch(version.id(), instance.folder(), account, instance.loader(),
-                            instance.loaderVersion(), Settings.memoryGb(), true, world, server);
+                            instance.loaderVersion(), Settings.memoryGb(), true, world, server, safe);
                     if (cancelled) { // pressed in the split second while the game was starting
                         game.destroy();
                         return;
@@ -85,7 +93,7 @@ public class DownloadScreen extends Screen {
                     // Squid's fast boot didn't match the mods anymore: start it the normal way (which makes a new one)
                     FastBoot.forget(instance.folder());
                     game = Launcher.launch(version.id(), instance.folder(), Accounts.readyToPlay(), instance.loader(),
-                            instance.loaderVersion(), Settings.memoryGb(), false, world, server);
+                            instance.loaderVersion(), Settings.memoryGb(), false, world, server, safe);
                     RunningGames.add(instance, game);
                     exitCode = game.waitFor();
                 }
@@ -134,6 +142,12 @@ public class DownloadScreen extends Screen {
     }
 
     /** Turns off the mod the crash helper blamed, so the game can be tried again without it. */
+    /** Starts the game again with every mod off (Squid's safe mode), so a broken mod can't keep it from opening. */
+    private void playWithoutMods() {
+        if (RunningGames.isRunning(instance)) return;
+        panel.setScreen(new DownloadScreen(panel, parent, instance, null, null, true));
+    }
+
     private void turnOffCulprit() {
         if (diagnosis == null || diagnosis.culprit() == null) return;
         try {
@@ -224,6 +238,13 @@ public class DownloadScreen extends Screen {
                         centered(g, font, part, w, y, 0xFFFFFF);
                         y += 12 * GUI;
                     }
+                    for (McButton b : new McButton[] {copyButton, logButton, turnOffButton}) b.setBounds(-1000, -1000, 0, 0);
+                    safeButton.setBounds(w / 2 - 100 * GUI, centerY + 30 * GUI, 200 * GUI, 20 * GUI);
+                    safeButton.draw(g, font, GUI);
+                    button.setLabel(t("Back"));
+                    button.setBounds(w / 2 - 100 * GUI, centerY + 54 * GUI, 200 * GUI, 20 * GUI);
+                    button.draw(g, font, GUI);
+                    return;
                 } else {
                     // The crash helper says why, in plain words, and what to try
                     if (diagnosis == null) diagnosis = CrashHelper.diagnose(instance, exitCode, startedAt);
@@ -250,12 +271,19 @@ public class DownloadScreen extends Screen {
                     } else {
                         turnOffButton.setBounds(-1000, -1000, 0, 0);
                     }
+                    int backY = buttonsY + 48 * GUI;
+                    if (withSquid) {
+                        safeButton.setBounds(w / 2 - 100 * GUI, backY, 200 * GUI, 20 * GUI);
+                        safeButton.draw(g, font, GUI);
+                        backY += 24 * GUI;
+                    } else {
+                        safeButton.setBounds(-1000, -1000, 0, 0);
+                    }
                     button.setLabel(t("Back"));
-                    button.setBounds(w / 2 - 100 * GUI, buttonsY + 48 * GUI, 200 * GUI, 20 * GUI);
+                    button.setBounds(w / 2 - 100 * GUI, backY, 200 * GUI, 20 * GUI);
                     button.draw(g, font, GUI);
                     return;
                 }
-                button.setLabel(t("Back"));
             }
             case FAILED -> {
                 centered(g, font, t("Something went wrong:"), w, titleY, 0xFF5555);
@@ -264,7 +292,7 @@ public class DownloadScreen extends Screen {
             }
         }
 
-        for (McButton b : new McButton[] {copyButton, logButton, turnOffButton}) b.setBounds(-1000, -1000, 0, 0); // only after a crash
+        for (McButton b : new McButton[] {copyButton, logButton, turnOffButton, safeButton}) b.setBounds(-1000, -1000, 0, 0); // only after a crash
         button.setBounds(w / 2 - 100 * GUI, centerY + 30 * GUI, 200 * GUI, 20 * GUI);
         button.draw(g, font, GUI);
     }
