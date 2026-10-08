@@ -833,6 +833,17 @@ public class KelpTest {
                 .findFirst().orElseThrow().authors().toString(), "[Sam]");
         check("Kelp reads Squid mod ids like Squid does", InstalledMod.squidId(folder) + " " + InstalledMod.squidId(instance.mods().resolve("Shared.squid"))
                 + " " + InstalledMod.squidId(instance.mods().resolve("MegaMod3.java")), "mega-mod mega-mod mega-mod-3");
+        // Starter mods: New Mod can begin from one that already does something
+        Path rocketFile = ModTemplate.create(Files.createDirectories(home.resolve("starter-mods")), "Rocket Boots", ModStarters.ALL.getFirst());
+        String rocketCode = Files.readString(rocketFile);
+        Path alarmProject = ModProject.create(home.resolve("starter-mods"), "Creeper Alarm", "26.3", ModStarters.ALL.get(1));
+        String alarmCode = Files.readString(alarmProject.resolve("src/CreeperAlarm.java"));
+        check("a starter mod is a working mod named after you", rocketFile.getFileName() + " " + rocketCode.contains("public class RocketBoots extends EasyMod")
+                + " " + rocketCode.contains("onKey(\"R\"") + " " + alarmCode.contains("public class CreeperAlarm extends EasyMod") + " "
+                + alarmCode.startsWith("import squid.api.*;"), "RocketBoots.java true true true true");
+        check("every starter has a name, a line about it, and code with a class to fill in", ModStarters.ALL.stream()
+                .allMatch(s -> !s.name().isBlank() && !s.about().isBlank() && s.code().contains("public class %2$s extends EasyMod")), true);
+
         // Mod Doctor: things Squid would skip a mod for, found before playing, and fixed with a click
         Path doctorMods = Files.createDirectories(home.resolve("doctor-mods"));
         Path typo = ModProject.create(doctorMods, "Typo Mod", "26.3");

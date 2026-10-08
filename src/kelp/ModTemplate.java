@@ -34,13 +34,19 @@ public final class ModTemplate {
 
     /** Makes the mod file in the folder and gives back where it is. A taken name gets a number: MyMod2.java. */
     public static Path create(Path modsFolder, String name) throws IOException {
+        return create(modsFolder, name, null);
+    }
+
+    /** The same, starting from a starter mod (null for a blank one). */
+    public static Path create(Path modsFolder, String name, ModStarters.Starter starter) throws IOException {
         Files.createDirectories(modsFolder);
         String base = className(name);
         String className = base;
         for (int n = 2; ModProject.taken(modsFolder, className); n++) className = base + n;
         String shownName = name.isBlank() ? "My Mod" : name.trim();
         Path file = modsFolder.resolve(className + ".java");
-        Files.writeString(file, text(shownName, className).replace("\n", System.lineSeparator()));
+        String code = starter != null ? starter.codeFor(shownName, className) : text(shownName, className);
+        Files.writeString(file, code.replace("\n", System.lineSeparator()));
         return file;
     }
 

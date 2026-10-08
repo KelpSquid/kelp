@@ -39,6 +39,11 @@ public final class ModProject {
 
     /** Makes a working project from a name and gives back its folder. A taken name gets a number: MegaMod2. */
     public static Path create(Path modsFolder, String name, String minecraftVersion) throws IOException {
+        return create(modsFolder, name, minecraftVersion, null);
+    }
+
+    /** The same, starting from a starter mod (null for a blank one). */
+    public static Path create(Path modsFolder, String name, String minecraftVersion, ModStarters.Starter starter) throws IOException {
         Files.createDirectories(modsFolder);
         String base = ModTemplate.className(name);
         String className = base;
@@ -59,8 +64,8 @@ public final class ModProject {
         Files.writeString(folder.resolve("squid.json"), toJson(json));
         // Its own little icon, made from its name, to paint over or replace
         javax.imageio.ImageIO.write(ModIcons.generate(shownName), "png", folder.resolve("resources").resolve("icon.png").toFile());
-        Files.writeString(folder.resolve("src").resolve(className + ".java"),
-                code(shownName, className).replace("\n", System.lineSeparator()));
+        String code = starter != null ? "import squid.api.*;\n\n" + starter.codeFor(shownName, className) : code(shownName, className);
+        Files.writeString(folder.resolve("src").resolve(className + ".java"), code.replace("\n", System.lineSeparator()));
         editorSettings(folder, className, minecraftVersion);
         return folder;
     }
