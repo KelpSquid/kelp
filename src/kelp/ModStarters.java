@@ -8,6 +8,8 @@ import java.util.List;
  *
  * In the code, %1$s is the mod's name and %2$s its class name. Some use commands, which need cheats on in that world;
  * the comment at the top says so.
+ *
+ * Squid's in-game Mod Maker has the same list (squid/builtin/mods/src/squidmods/ModStarters.java); keep the two the same.
  */
 public final class ModStarters {
     private ModStarters() {
