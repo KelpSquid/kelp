@@ -1381,6 +1381,9 @@ public class KelpTest {
         Theme musical = Theme.save("Loud Cave", Theme.Scene.END, -1, 0x220033, 280, null, song);
         check("a theme's music keeps its kind (MP3, FLAC, Ogg, .sqda all play)", musical.music().getFileName() + " " + ThemeMusic.isMusic(home.resolve("x.sqda"))
                 + " " + ThemeMusic.isMusic(home.resolve("x.txt")), "music.mp3 true false");
+        check("a .sqda's loop in theme music plays like Squid plays it: kept inside the sound, too short loops the whole song",
+                java.util.Arrays.toString(ThemeMusic.clipLoop(1000, 9000, 48000)) + " " + java.util.Arrays.toString(ThemeMusic.clipLoop(-5, 99999, 48000))
+                        + " " + ThemeMusic.clipLoop(1000, 1200, 48000), "[1000, 8999] [0, 47999] null");
         check("an unknown theme is the Ocean", Theme.find("nope").id(), "ocean");
         java.awt.image.BufferedImage red = new java.awt.image.BufferedImage(1, 1, java.awt.image.BufferedImage.TYPE_INT_ARGB);
         red.setRGB(0, 0, 0xFFFF0000);

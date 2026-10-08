@@ -107,6 +107,7 @@ public final class ThemeMusic {
                 for (Object l : (List<?>) loopsField.get(file)) {
                     if ((int) l.getClass().getMethod("variant").invoke(l) != 0) continue;
                     loop = new long[] {(long) l.getClass().getMethod("start").invoke(l), (long) l.getClass().getMethod("end").invoke(l)};
+                    break; // the first one, like Squid
                 }
             }
             ByteBuffer bytes = ByteBuffer.allocate(samples.length * 2).order(ByteOrder.LITTLE_ENDIAN);
@@ -116,11 +117,20 @@ public final class ThemeMusic {
             try (AudioInputStream in = new AudioInputStream(new ByteArrayInputStream(bytes.array()), format, samples.length / channels)) {
                 clip.open(in);
             }
-            int frames = samples.length / channels;
-            if (loop != null && loop[1] - loop[0] >= 512 && loop[1] <= frames) {
-                clip.setLoopPoints((int) loop[0], (int) loop[1] - 1);
-            }
+            int[] points = loop == null ? null : clipLoop(loop[0], loop[1], samples.length / channels);
+            if (points != null) clip.setLoopPoints(points[0], points[1]);
             return clip;
         }
+    }
+
+    /**
+     * A .sqda's loop as a Clip's loop points (first and last frame), the way Squid plays it: kept inside the sound, and
+     * a loop shorter than 512 samples loops the whole sound (null).
+     */
+    static int[] clipLoop(long start, long end, int frames) {
+        start = Math.clamp(start, 0, frames);
+        end = Math.clamp(end, 0, frames);
+        if (end - start < 512) return null;
+        return new int[] {(int) start, (int) end - 1};
     }
 }
