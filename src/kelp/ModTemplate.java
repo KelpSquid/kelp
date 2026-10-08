@@ -72,6 +72,7 @@ public final class ModTemplate {
                 //   every(10, () -> { ... });              every 10 seconds
                 //   onTick(() -> { ... });                 20 times a second
                 //   onHurt(() -> { ... });  onDeath(() -> { ... });   when you get hurt, or die
+                //   onBeat(() -> { ... });                 on every beat of the music (Jukebox songs too)
                 //
                 // Settings players can change in the game's Mods screen (ask for them whenever you need them):
                 //   setting("Play a sound", true)          ON or OFF

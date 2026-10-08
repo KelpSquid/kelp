@@ -155,5 +155,25 @@ public final class ModStarters {
                             });
                         }
                     }
+                    """),
+            new Starter("Dance Party", "Notes and hearts jump to the beat of your music.", """
+                    // %1$s: play a song in Squid > Jukebox, and notes and hearts jump to its beat!
+                    // Try other particles: "flame", "happy_villager", "end_rod". Or make the effect bigger when it's loud.
+
+                    public class %2$s extends EasyMod {
+                        String song = "";
+
+                        void start() {
+                            onBeat(() -> {
+                                particles("note", 4);
+                                if (musicLevel() > 0.6) particles("heart", 2); // the loud parts get hearts too
+                            });
+                            every(1, () -> {
+                                String now = nowPlaying();
+                                if (!now.isEmpty() && !now.equals(song)) title("", "Now dancing to " + now);
+                                song = now;
+                            });
+                        }
+                    }
                     """));
 }
