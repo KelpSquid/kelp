@@ -1000,6 +1000,16 @@ public class KelpTest {
         dropScreen.filesDropped(List.of(friendJava));
         check("a dropped .java with the same name as yours gets a number, and yours stays",
                 Files.readString(ownJava).contains("mine") + " " + Files.exists(dropInstance.mods().resolve("Helper2.java")), "true true");
+        // A different mod that happens to have the same file name isn't written over: the new one gets a number
+        Path diceFolder = Files.createDirectories(home.resolve("dice-a"));
+        Path diceProject = ModProject.create(diceFolder, "Dice", "26.3");
+        Files.copy(ModProject.pack(diceProject, Files.createDirectories(home.resolve("dice-out-a"))), dropInstance.mods().resolve("Dice.squid"));
+        Files.writeString(diceProject.resolve("squid.json"), "{\"id\": \"other-dice\", \"name\": \"Other Dice\", \"main\": \"Dice\"}");
+        Path otherDice = ModProject.pack(diceProject, Files.createDirectories(home.resolve("dice-out-b")));
+        dropScreen.filesDropped(List.of(otherDice));
+        check("a different mod with the same file name is kept, and the new one gets a number",
+                InstalledMod.squidId(dropInstance.mods().resolve("Dice.squid")) + " " + InstalledMod.squidId(dropInstance.mods().resolve("Dice (2).squid")),
+                "dice other-dice");
         // Share: an instance becomes one .mrpack that Kelp (and other launchers) can import
         Instance sharing = Instance.create("Share Me!", dropVersion, Loader.SQUID);
         ModProject.create(sharing.mods(), "Lava Walker", "26.3");

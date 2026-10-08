@@ -176,6 +176,15 @@ public class ModsScreen extends Screen {
                     wrongLoader = true;
                     continue;
                 }
+                // A different mod that happens to have the same file name stays: the new one gets a number instead.
+                // (Two mods for another loader with the same name are taken to be one mod's update, as before.)
+                if (renamedClass == null && Files.exists(target) && !Files.isSameFile(file, target)
+                        && !java.util.Objects.equals(id, InstalledMod.squidId(target))) {
+                    int dot = name.lastIndexOf('.');
+                    for (int n = 2; Files.exists(target) || Files.exists(target.resolveSibling(target.getFileName() + ".disabled")); n++) {
+                        target = instance.mods().resolve(name.substring(0, dot) + " (" + n + ")" + name.substring(dot));
+                    }
+                }
                 // The new copy goes in first; only once it's there are older downloads turned off
                 if (renamedClass != null) {
                     String newClass = target.getFileName().toString().replace(".java", "");
