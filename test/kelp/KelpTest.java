@@ -1010,6 +1010,26 @@ public class KelpTest {
         check("a different mod with the same file name is kept, and the new one gets a number",
                 InstalledMod.squidId(dropInstance.mods().resolve("Dice.squid")) + " " + InstalledMod.squidId(dropInstance.mods().resolve("Dice (2).squid")),
                 "dice other-dice");
+        // Packing a folder named only in another alphabet: named after its main class, and it asks for an id if it has none
+        Path alphabet = Files.createDirectories(home.resolve("alphabet").resolve("日本語").resolve("src"));
+        Files.writeString(alphabet.resolve("Nihongo.java"), "public class Nihongo extends EasyMod { void start() {} }");
+        Files.writeString(alphabet.getParent().resolve("squid.json"), "{\"name\": \"Nihongo\"}");
+        String noId;
+        try {
+            ModProject.pack(alphabet.getParent(), home.resolve("alphabet-out"));
+            noId = "packed";
+        } catch (java.io.IOException e) {
+            noId = e.getMessage();
+        }
+        Files.writeString(alphabet.getParent().resolve("squid.json"), "{\"id\": \"nihongo\", \"name\": \"Nihongo\", \"main\": \"Nihongo\"}");
+        Path packedAlphabet = ModProject.pack(alphabet.getParent(), home.resolve("alphabet-out"));
+        List<String> alphabetOut = new java.util.ArrayList<>();
+        try (java.util.stream.Stream<Path> s = Files.list(home.resolve("alphabet-out"))) {
+            s.forEach(p -> alphabetOut.add(p.getFileName().toString()));
+        }
+        check("a folder named in another alphabet packs under its main class's name (and nothing half-made is left)",
+                noId + " | " + packedAlphabet.getFileName() + " " + alphabetOut,
+                "its folder's name has no letters from a to z, so its squid.json needs an \"id\" and a \"main\" | Nihongo.squid [Nihongo.squid]");
         // Share: an instance becomes one .mrpack that Kelp (and other launchers) can import
         Instance sharing = Instance.create("Share Me!", dropVersion, Loader.SQUID);
         ModProject.create(sharing.mods(), "Lava Walker", "26.3");

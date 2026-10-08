@@ -219,8 +219,12 @@ public final class ModProject {
         }
         String spaced = ModTemplate.spaced(className);
         if (json.get("id") instanceof String blank && blank.isBlank()) json.remove("id"); // Squid treats a blank id as none
+        if (className.isEmpty() && (!json.containsKey("id") || !json.containsKey("main"))) {
+            // Nothing in the folder's name to make them from (like Squid, which would skip the mod)
+            throw new IOException("its folder's name has no letters from a to z, so its squid.json needs an \"id\" and a \"main\"");
+        }
         json.putIfAbsent("id", idFor(className));
-        json.putIfAbsent("name", spaced);
+        json.putIfAbsent("name", spaced.isEmpty() ? String.valueOf(json.get("id")) : spaced);
         json.putIfAbsent("version", "1.0");
         json.putIfAbsent("main", className);
         // Checked before packing, so nobody shares a mod that can't load
@@ -232,9 +236,14 @@ public final class ModProject {
             throw new IOException("its main class " + main + " isn't in src. Put \"main\": \"YourClass\" in squid.json");
         }
 
+        // A folder named only in another alphabet leaves nothing for a file name: it's named after its main class
+        String fileName = !className.isEmpty() ? className : main.substring(main.lastIndexOf('.') + 1).replaceAll("[^A-Za-z0-9_]", "");
+        if (fileName.isEmpty()) fileName = "MyMod";
         Files.createDirectories(outFolder);
-        Path file = outFolder.resolve(className + ".squid");
-        try (OutputStream out = Files.newOutputStream(file); ZipOutputStream zip = new ZipOutputStream(out)) {
+        Path file = outFolder.resolve(fileName + ".squid");
+        // Written next to it first, then put in place, so a pack that fails halfway never leaves a broken .squid
+        Path partial = outFolder.resolve(fileName + ".squid.part");
+        try (OutputStream out = Files.newOutputStream(partial); ZipOutputStream zip = new ZipOutputStream(out)) {
             put(zip, "squid.json");
             zip.write(toJson(json).getBytes(StandardCharsets.UTF_8));
             zip.closeEntry();
@@ -255,7 +264,11 @@ public final class ModProject {
                     zip.closeEntry();
                 }
             }
+        } catch (IOException | RuntimeException e) {
+            Files.deleteIfExists(partial);
+            throw e;
         }
+        Files.move(partial, file, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
         return file;
     }
 
