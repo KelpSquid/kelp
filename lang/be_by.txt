@@ -491,3 +491,4 @@ Server address => Адрас сервера
 Server name => Назва сервера
 Servers in {0} => Серверы ў {0}
 Servers... => Серверы...
+The list changed in Minecraft, so nothing was removed. Here it is again. => Спіс змяніўся ў Minecraft, таму нічога не выдалена. Вось ён зноў.

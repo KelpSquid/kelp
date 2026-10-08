@@ -491,3 +491,4 @@ Server address => Bálvá čujuhus
 Server name => Bálvá namma
 Servers in {0} => Bálvát {0}:s
 Servers... => Bálvát...
+The list changed in Minecraft, so nothing was removed. Here it is again. => Listu rievdadii Minecraft:s, nu ahte ii mihkkige váldojuvvon eret. Dá lea dat fas.

@@ -491,3 +491,4 @@ Server address => Palvelimen osoite
 Server name => Palvelimen nimi
 Servers in {0} => Palvelimet: {0}
 Servers... => Palvelimet...
+The list changed in Minecraft, so nothing was removed. Here it is again. => Lista muuttui Minecraftissa, joten mitään ei poistettu. Tässä se taas on.

@@ -491,3 +491,4 @@ Server address => Địa chỉ máy chủ
 Server name => Tên máy chủ
 Servers in {0} => Máy chủ trong {0}
 Servers... => Máy chủ...
+The list changed in Minecraft, so nothing was removed. Here it is again. => Danh sách đã thay đổi trong Minecraft, nên không có gì bị xóa. Đây là danh sách hiện tại.

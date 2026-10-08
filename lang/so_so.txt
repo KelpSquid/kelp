@@ -491,3 +491,4 @@ Server address => Cinwaanka seerfarka
 Server name => Magaca seerfarka
 Servers in {0} => Seerfarrada {0}
 Servers... => Seerfarro...
+The list changed in Minecraft, so nothing was removed. Here it is again. => Liiska ayaa isbeddelay gudaha Minecraft, sidaas darteed waxba lama saarin. Waa kan mar kale.

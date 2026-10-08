@@ -491,3 +491,4 @@ Server address => Seòladh an fhrithealaiche
 Server name => Ainm an fhrithealaiche
 Servers in {0} => Frithealaichean ann an {0}
 Servers... => Frithealaichean...
+The list changed in Minecraft, so nothing was removed. Here it is again. => Dh'atharraich an liosta ann am Minecraft, mar sin cha deach dad a thoirt air falbh. Seo an liosta a-rithist.

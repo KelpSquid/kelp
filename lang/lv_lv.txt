@@ -491,3 +491,4 @@ Server address => Servera adrese
 Server name => Servera nosaukums
 Servers in {0} => {0} serveri
 Servers... => Serveri...
+The list changed in Minecraft, so nothing was removed. Here it is again. => Saraksts mainījās Minecraft spēlē, tāpēc nekas netika noņemts. Lūk, tas atkal.

@@ -491,3 +491,4 @@ Server address => Serveradress
 Server name => Servernumm
 Servers in {0} => Serveren an {0}
 Servers... => Serveren...
+The list changed in Minecraft, so nothing was removed. Here it is again. => D'Lëscht huet sech am Minecraft geännert, dofir gouf näischt ewechgeholl. Hei ass se nach eng Kéier.

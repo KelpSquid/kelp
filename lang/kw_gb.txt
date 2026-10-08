@@ -491,3 +491,4 @@ Server address => Trigva an servyer
 Server name => Hanow an servyer
 Servers in {0} => Servyers yn {0}
 Servers... => Servyers...
+The list changed in Minecraft, so nothing was removed. Here it is again. => An rol a janjyas yn Minecraft, ytho ny veu travyth removys. Ottomma ev arta.

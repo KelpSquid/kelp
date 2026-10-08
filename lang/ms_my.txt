@@ -491,3 +491,4 @@ Server address => Alamat pelayan
 Server name => Nama pelayan
 Servers in {0} => Pelayan dalam {0}
 Servers... => Pelayan...
+The list changed in Minecraft, so nothing was removed. Here it is again. => Senarai itu berubah dalam Minecraft, jadi tiada apa-apa yang dibuang. Ini dia sekali lagi.

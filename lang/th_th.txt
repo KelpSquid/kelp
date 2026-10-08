@@ -491,3 +491,4 @@ Server address => ที่อยู่เซิร์ฟเวอร์
 Server name => ชื่อเซิร์ฟเวอร์
 Servers in {0} => เซิร์ฟเวอร์ใน {0}
 Servers... => เซิร์ฟเวอร์...
+The list changed in Minecraft, so nothing was removed. Here it is again. => รายการเปลี่ยนไปใน Minecraft จึงไม่ได้ลบอะไรออก นี่คือรายการอีกครั้ง

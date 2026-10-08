@@ -491,3 +491,4 @@ Server address => Inscriptio ministri
 Server name => Nomen ministri
 Servers in {0} => Ministri in {0}
 Servers... => Ministri...
+The list changed in Minecraft, so nothing was removed. Here it is again. => Index in Minecraft mutatus est, itaque nihil remotum est. Ecce iterum.

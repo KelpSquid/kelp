@@ -491,3 +491,4 @@ Server address => Helu wahi kikowaena
 Server name => Inoa kikowaena
 Servers in {0} => Nā kikowaena ma {0}
 Servers... => Nā kikowaena...
+The list changed in Minecraft, so nothing was removed. Here it is again. => Ua loli ka papa inoa ma Minecraft, no laila ʻaʻohe mea i kāpae ʻia. Eia hou nō ia.

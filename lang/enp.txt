@@ -491,3 +491,4 @@ Server address => Host spot
 Server name => Host name
 Servers in {0} => Hosts in {0}
 Servers... => Hosts...
+The list changed in Minecraft, so nothing was removed. Here it is again. => The list changed in Minecraft, so nothing was taken away. Here it is again.

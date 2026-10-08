@@ -491,3 +491,4 @@ Server address => Servur adres
 Server name => Servur naem
 Servers in {0} => Servurz in {0}
 Servers... => Servurz...
+The list changed in Minecraft, so nothing was removed. Here it is again. => Teh list changd in Minecraft, so nuthin got remuvd. Heer it iz agen.

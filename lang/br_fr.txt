@@ -491,3 +491,4 @@ Server address => Chomlec'h ar servijer
 Server name => Anv ar servijer
 Servers in {0} => Servijerioù e {0}
 Servers... => Servijerioù...
+The list changed in Minecraft, so nothing was removed. Here it is again. => Cheñchet eo bet ar roll e Minecraft, setu n'eo bet lamet netra. Setu anezhañ en-dro.

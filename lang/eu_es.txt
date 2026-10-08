@@ -491,3 +491,4 @@ Server address => Zerbitzariaren helbidea
 Server name => Zerbitzariaren izena
 Servers in {0} => Zerbitzariak: {0}
 Servers... => Zerbitzariak...
+The list changed in Minecraft, so nothing was removed. Here it is again. => Zerrenda aldatu egin da Minecraft-en, beraz ez da ezer kendu. Hemen duzu berriro.

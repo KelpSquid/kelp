@@ -491,3 +491,4 @@ Server address => Adreesị sava
 Server name => Aha sava
 Servers in {0} => Sava dị na {0}
 Servers... => Sava...
+The list changed in Minecraft, so nothing was removed. Here it is again. => Ndepụta ahụ gbanwere na Minecraft, ya mere ewepụghị ihe ọ bụla. Lee ya ọzọ.

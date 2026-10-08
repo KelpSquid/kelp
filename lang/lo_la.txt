@@ -491,3 +491,4 @@ Server address => ທີ່ຢູ່ເຊີບເວີ
 Server name => ຊື່ເຊີບເວີ
 Servers in {0} => ເຊີບເວີໃນ {0}
 Servers... => ເຊີບເວີ...
+The list changed in Minecraft, so nothing was removed. Here it is again. => ລາຍການປ່ຽນໃນ Minecraft ແລ້ວ ຈຶ່ງບໍ່ໄດ້ລຶບຫຍັງອອກ. ນີ້ແມ່ນລາຍການອີກຄັ້ງ.

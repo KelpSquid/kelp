@@ -491,3 +491,4 @@ Server address => Direzion dal servidôr
 Server name => Non dal servidôr
 Servers in {0} => Servidôrs in {0}
 Servers... => Servidôrs...
+The list changed in Minecraft, so nothing was removed. Here it is again. => La liste e je cambiade in Minecraft, duncje nol è stât gjavât nuie. Ve chi di gnûf.

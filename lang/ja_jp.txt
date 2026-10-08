@@ -491,3 +491,4 @@ Server address => サーバーアドレス
 Server name => サーバー名
 Servers in {0} => {0} のサーバー
 Servers... => サーバー...
+The list changed in Minecraft, so nothing was removed. Here it is again. => Minecraft でリストが変わったので、何も削除しませんでした。改めて表示します。

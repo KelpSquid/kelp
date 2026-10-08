@@ -491,3 +491,4 @@ Server address => lo judri be lo samse'u
 Server name => lo cmene be lo samse'u
 Servers in {0} => samse'u pe {0}
 Servers... => samse'u...
+The list changed in Minecraft, so nothing was removed. Here it is again. => lo liste pu se galfi bu'u la Minecraft .i ja'e bo no da pu se vimcu .i ko catlu ri za'u re'u

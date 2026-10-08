@@ -491,3 +491,4 @@ Server address => Serveradress
 Server name => Servanaum
 Servers in {0} => Server in {0}
 Servers... => Server...
+The list changed in Minecraft, so nothing was removed. Here it is again. => D'Listn hot si in Minecraft g'ändat, drum is nix weggtaun wordn. Do is' wieda.

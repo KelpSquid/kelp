@@ -491,3 +491,4 @@ Server address => Tenaradressa
 Server name => Tenarnamn
 Servers in {0} => Tenarar i {0}
 Servers... => Tenarar...
+The list changed in Minecraft, so nothing was removed. Here it is again. => Lista vart brigd i Minecraft, so ingenting vart teke burt. Her er ho att.

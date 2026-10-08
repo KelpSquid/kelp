@@ -491,3 +491,4 @@ Server address => آدرس سرور
 Server name => نام سرور
 Servers in {0} => سرورهای {0}
 Servers... => سرورها...
+The list changed in Minecraft, so nothing was removed. Here it is again. => فهرست در Minecraft تغییر کرد، پس چیزی حذف نشد. فهرست دوباره اینجاست.

@@ -491,3 +491,4 @@ Server address => Серверийн хаяг
 Server name => Серверийн нэр
 Servers in {0} => {0} доторх серверүүд
 Servers... => Серверүүд...
+The list changed in Minecraft, so nothing was removed. Here it is again. => Жагсаалт Minecraft-д өөрчлөгдсөн тул юу ч хасаагүй. Дахин харуулж байна.

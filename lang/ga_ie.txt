@@ -491,3 +491,4 @@ Server address => Seoladh an fhreastalaí
 Server name => Ainm an fhreastalaí
 Servers in {0} => Freastalaithe in {0}
 Servers... => Freastalaithe...
+The list changed in Minecraft, so nothing was removed. Here it is again. => Athraíodh an liosta in Minecraft, mar sin níor baineadh aon rud. Seo arís é.

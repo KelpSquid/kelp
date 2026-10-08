@@ -491,3 +491,4 @@ Server address => Szerver címe
 Server name => Szerver neve
 Servers in {0} => Szerverek: {0}
 Servers... => Szerverek...
+The list changed in Minecraft, so nothing was removed. Here it is again. => A lista megváltozott a Minecraftban, ezért semmi sem lett eltávolítva. Itt van újra.

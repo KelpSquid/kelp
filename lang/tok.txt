@@ -491,3 +491,4 @@ Server address => nasin pi tomo kulupu
 Server name => nimi pi tomo kulupu
 Servers in {0} => tomo kulupu lon {0}
 Servers... => tomo kulupu...
+The list changed in Minecraft, so nothing was removed. Here it is again. => lipu li ante lon Minecraft, la mi weka ala e ijo. lipu li lon sin.

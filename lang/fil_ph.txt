@@ -491,3 +491,4 @@ Server address => Address ng server
 Server name => Pangalan ng server
 Servers in {0} => Mga server sa {0}
 Servers... => Mga server...
+The list changed in Minecraft, so nothing was removed. Here it is again. => Nagbago ang listahan sa Minecraft, kaya walang naalis. Heto ulit ito.

@@ -491,3 +491,4 @@ Server address => Adresa servera
 Server name => Ime servera
 Servers in {0} => Servery v {0}
 Servers... => Servery...
+The list changed in Minecraft, so nothing was removed. Here it is again. => Spisok izměnil sę v Minecraft, zato ničto ne bylo odstranjeno. Ovo jest on opęt.

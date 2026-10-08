@@ -491,3 +491,4 @@ Server address => Serverio adresas
 Server name => Serverio pavadinimas
 Servers in {0} => {0} serveriai
 Servers... => Serveriai...
+The list changed in Minecraft, so nothing was removed. Here it is again. => Sąrašas buvo pakeistas Minecraft žaidime, todėl niekas nepašalinta. Štai jis vėl.

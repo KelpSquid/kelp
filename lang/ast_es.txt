@@ -491,3 +491,4 @@ Server address => Direición del sirvidor
 Server name => Nome del sirvidor
 Servers in {0} => Sirvidores de {0}
 Servers... => Sirvidores...
+The list changed in Minecraft, so nothing was removed. Here it is again. => La llista camudó en Minecraft, asina que nun se quitó nada. Equí la tienes otra vegada.

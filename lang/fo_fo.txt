@@ -491,3 +491,4 @@ Server address => Adressa hjá ambætara
 Server name => Navn á ambætara
 Servers in {0} => Ambætarar í {0}
 Servers... => Ambætarar...
+The list changed in Minecraft, so nothing was removed. Here it is again. => Listin broyttist í Minecraft, so einki varð tikið burtur. Her er hann aftur.

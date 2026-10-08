@@ -491,3 +491,4 @@ Server address => Direçión der çerbidôh
 Server name => Nombre der çerbidôh
 Servers in {0} => Çerbidorê de {0}
 Servers... => Çerbidorê...
+The list changed in Minecraft, so nothing was removed. Here it is again. => La lîhta cambió en Minecraft, açí que no se quitó ná. Aquí la tiêh otra bêh.

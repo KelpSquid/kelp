@@ -491,3 +491,4 @@ Server address => Àdírẹ́sì sáfà
 Server name => Orúkọ sáfà
 Servers in {0} => Àwọn sáfà nínú {0}
 Servers... => Àwọn sáfà...
+The list changed in Minecraft, so nothing was removed. Here it is again. => Àtòkọ náà yí padà nínú Minecraft, nítorí náà a kò yọ nǹkan kan kúrò. Òun nìyí lẹ́ẹ̀kan sí i.

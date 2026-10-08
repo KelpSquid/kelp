@@ -491,3 +491,4 @@ Server address => عنوان الخادم
 Server name => اسم الخادم
 Servers in {0} => الخوادم في {0}
 Servers... => الخوادم...
+The list changed in Minecraft, so nothing was removed. Here it is again. => تغيّرت القائمة في Minecraft، لذا لم تتم إزالة أي شيء. ها هي من جديد.

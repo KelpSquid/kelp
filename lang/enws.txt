@@ -491,3 +491,4 @@ Server address => Server's address
 Server name => Server's name
 Servers in {0} => Servers in {0}
 Servers... => Servers...
+The list changed in Minecraft, so nothing was removed. Here it is again. => The list hath changed in Minecraft, so naught was banished. Here it is once more.

@@ -491,3 +491,4 @@ Server address => סערווער־אַדרעס
 Server name => סערווער־נאָמען
 Servers in {0} => סערווערס אין {0}
 Servers... => סערווערס...
+The list changed in Minecraft, so nothing was removed. Here it is again. => די רשימה האָט זיך געביטן אין Minecraft, איז גאָרנישט ניט אַוועקגענומען געוואָרן. אָט איז זי ווידער.

@@ -491,3 +491,4 @@ Server address => Serveradresse
 Server name => Servername
 Servers in {0} => Server in {0}
 Servers... => Server...
+The list changed in Minecraft, so nothing was removed. Here it is again. => De Lisde had sich in Minecraft geändord, drum is nischd wechgemachd wordn. Hier isse widdor.

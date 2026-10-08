@@ -491,3 +491,4 @@ Server address => सर्वर का पता
 Server name => सर्वर का नाम
 Servers in {0} => {0} के सर्वर
 Servers... => सर्वर...
+The list changed in Minecraft, so nothing was removed. Here it is again. => Minecraft में सूची बदल गई, इसलिए कुछ नहीं हटाया गया। यह रही फिर से।

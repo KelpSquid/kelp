@@ -491,3 +491,4 @@ Server address => Alamat server
 Server name => Nama server
 Servers in {0} => Server di {0}
 Servers... => Server...
+The list changed in Minecraft, so nothing was removed. Here it is again. => Daftarnya berubah di Minecraft, jadi tidak ada yang dihapus. Ini daftarnya lagi.

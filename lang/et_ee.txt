@@ -491,3 +491,4 @@ Server address => Serveri aadress
 Server name => Serveri nimi
 Servers in {0} => Serverid: {0}
 Servers... => Serverid...
+The list changed in Minecraft, so nothing was removed. Here it is again. => Nimekiri muutus Minecraftis, seega midagi ei eemaldatud. Siin see on uuesti.

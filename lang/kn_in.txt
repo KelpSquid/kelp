@@ -491,3 +491,4 @@ Server address => ಸರ್ವರ್ ವಿಳಾಸ
 Server name => ಸರ್ವರ್ ಹೆಸರು
 Servers in {0} => {0} ನಲ್ಲಿರುವ ಸರ್ವರ್‌ಗಳು
 Servers... => ಸರ್ವರ್‌ಗಳು...
+The list changed in Minecraft, so nothing was removed. Here it is again. => Minecraft ನಲ್ಲಿ ಪಟ್ಟಿ ಬದಲಾಗಿದೆ, ಆದ್ದರಿಂದ ಏನನ್ನೂ ತೆಗೆದುಹಾಕಲಿಲ್ಲ. ಇಲ್ಲಿದೆ ಮತ್ತೆ.

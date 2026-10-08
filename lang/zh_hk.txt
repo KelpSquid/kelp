@@ -491,3 +491,4 @@ Server address => 伺服器地址
 Server name => 伺服器名稱
 Servers in {0} => {0} 中的伺服器
 Servers... => 伺服器...
+The list changed in Minecraft, so nothing was removed. Here it is again. => 列表在 Minecraft 中有變動，所以沒有移除任何東西。這是更新後的列表。

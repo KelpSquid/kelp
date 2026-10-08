@@ -491,3 +491,4 @@ Server address => Сервер адресы
 Server name => Сервер исеме
 Servers in {0} => {0} серверлары
 Servers... => Серверлар...
+The list changed in Minecraft, so nothing was removed. Here it is again. => Исемлек Minecraft-та үзгәрде, шуңа күрә бернәрсә дә бетерелмәде. Менә ул яңадан.

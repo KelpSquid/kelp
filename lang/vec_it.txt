@@ -491,3 +491,4 @@ Server address => Indiriso del server
 Server name => Nome del server
 Servers in {0} => Server in {0}
 Servers... => Server...
+The list changed in Minecraft, so nothing was removed. Here it is again. => Ła łista ła xe canbiada in Minecraft, quindi no xe stà cavà gnente. Ecoła qua de novo.

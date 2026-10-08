@@ -491,3 +491,4 @@ Server address => Adreso di servilo
 Server name => Nomo di servilo
 Servers in {0} => Servili en {0}
 Servers... => Servili...
+The list changed in Minecraft, so nothing was removed. Here it is again. => La listo chanjesis en Minecraft, do nulo esis removita. Hike ol esas itere.

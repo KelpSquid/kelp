@@ -491,3 +491,4 @@ Server address => Server manzili
 Server name => Server nomi
 Servers in {0} => {0} serverlari
 Servers... => Serverlar...
+The list changed in Minecraft, so nothing was removed. Here it is again. => Ro'yxat Minecraft'da o'zgardi, shuning uchun hech narsa olib tashlanmadi. Mana, yana.

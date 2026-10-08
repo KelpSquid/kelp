@@ -491,3 +491,4 @@ Server address => Sunucu adresi
 Server name => Sunucu adı
 Servers in {0} => {0} sunucuları
 Servers... => Sunucular...
+The list changed in Minecraft, so nothing was removed. Here it is again. => Liste Minecraft'ta değişti, bu yüzden hiçbir şey kaldırılmadı. İşte yeniden.

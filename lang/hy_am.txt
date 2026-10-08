@@ -491,3 +491,4 @@ Server address => Սերվերի հասցե
 Server name => Սերվերի անուն
 Servers in {0} => {0}-ի սերվերները
 Servers... => Սերվերներ...
+The list changed in Minecraft, so nothing was removed. Here it is again. => Ցանկը փոխվել է Minecraft-ում, ուստի ոչինչ չհեռացվեց։ Ահա այն նորից։

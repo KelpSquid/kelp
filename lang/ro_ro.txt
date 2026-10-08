@@ -491,3 +491,4 @@ Server address => Adresa serverului
 Server name => Numele serverului
 Servers in {0} => Servere în {0}
 Servers... => Servere...
+The list changed in Minecraft, so nothing was removed. Here it is again. => Lista s-a schimbat în Minecraft, așa că nu s-a eliminat nimic. Iat-o din nou.

@@ -491,3 +491,4 @@ Server address => כתובת השרת
 Server name => שם השרת
 Servers in {0} => שרתים ב-{0}
 Servers... => שרתים...
+The list changed in Minecraft, so nothing was removed. Here it is again. => הרשימה השתנתה ב-Minecraft, אז שום דבר לא הוסר. הנה היא שוב.

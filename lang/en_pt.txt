@@ -491,3 +491,4 @@ Server address => Harbor address
 Server name => Harbor name
 Servers in {0} => Harbors of {0}
 Servers... => Harbors...
+The list changed in Minecraft, so nothing was removed. Here it is again. => The list be changed in Minecraft, so nothin' walked the plank. Here she be again!

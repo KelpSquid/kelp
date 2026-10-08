@@ -491,3 +491,4 @@ Server address => علامت ڤلاين
 Server name => نام ڤلاين
 Servers in {0} => ڤلاين دالم {0}
 Servers... => ڤلاين...
+The list changed in Minecraft, so nothing was removed. Here it is again. => سنارای ايت بروبه دالم Minecraft، جادي تيادا اڤ٢ يڠ دبواڠ. اين دي سکالي لاڬي.

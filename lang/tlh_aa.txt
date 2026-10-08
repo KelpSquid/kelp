@@ -491,3 +491,4 @@ Server address => jabwI' Daq
 Server name => jabwI' pong
 Servers in {0} => {0} jabwI'mey
 Servers... => jabwI'mey...
+The list changed in Minecraft, so nothing was removed. Here it is again. => Minecraft Daq tetlh choHlu'pu', vaj pagh teqlu'be'. naDev tetlh vIcha'qa'.

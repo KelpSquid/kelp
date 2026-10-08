@@ -491,3 +491,4 @@ Server address => 伺服之址
 Server name => 伺服之名
 Servers in {0} => {0} 之伺服
 Servers... => 伺服...
+The list changed in Minecraft, so nothing was removed. Here it is again. => 其錄已易於 Minecraft，故無所去。今復示之。

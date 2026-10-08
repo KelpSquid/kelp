@@ -491,3 +491,4 @@ Server address => Διεύθυνση διακομιστή
 Server name => Όνομα διακομιστή
 Servers in {0} => Διακομιστές στο {0}
 Servers... => Διακομιστές...
+The list changed in Minecraft, so nothing was removed. Here it is again. => Η λίστα άλλαξε στο Minecraft, οπότε δεν αφαιρέθηκε τίποτα. Ορίστε την ξανά.

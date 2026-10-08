@@ -491,3 +491,4 @@ Server address => Сервер дареги
 Server name => Сервер аты
 Servers in {0} => {0} серверлери
 Servers... => Серверлер...
+The list changed in Minecraft, so nothing was removed. Here it is again. => Тизме Minecraft'та өзгөрдү, ошондуктан эч нерсе алынган жок. Мына, кайрадан.

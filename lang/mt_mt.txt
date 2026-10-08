@@ -491,3 +491,4 @@ Server address => Indirizz tas-server
 Server name => Isem tas-server
 Servers in {0} => Servers f'{0}
 Servers... => Servers...
+The list changed in Minecraft, so nothing was removed. Here it is again. => Il-lista nbidlet f'Minecraft, allura ma tneħħa xejn. Hawn hi mill-ġdid.

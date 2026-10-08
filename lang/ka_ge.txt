@@ -491,3 +491,4 @@ Server address => სერვერის მისამართი
 Server name => სერვერის სახელი
 Servers in {0} => სერვერები: {0}
 Servers... => სერვერები...
+The list changed in Minecraft, so nothing was removed. Here it is again. => სია შეიცვალა Minecraft-ში, ამიტომ არაფერი მოხსნილა. აი, ისევ.
