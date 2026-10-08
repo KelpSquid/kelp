@@ -673,6 +673,24 @@ public class KelpTest {
         check("Play Without Mods starts Squid with every mod off", Launcher.buildCommand("test-new", game, Account.offline("Samuel_A"),
                 Loader.SQUID, null, 0, false, null, null, true).contains("-Dsquid.safeMode=true") + " " + Launcher.buildCommand("test-new", game,
                 Account.offline("Samuel_A"), Loader.SQUID, null, 0, false, null, null, false).contains("-Dsquid.safeMode=true"), "true false");
+        // Servers: Minecraft's servers.dat, read and changed one entry at a time, keeping everything else as it was
+        Path serversFile = continueHome.resolve("servers.dat");
+        check("no server list yet is an empty list", Servers.list(serversFile).size(), 0);
+        Servers.add(serversFile, "Friend's Server", "play.example.com");
+        Servers.add(serversFile, "", "192.168.1.5:25565");
+        java.util.Map<String, Object> serversRoot = Nbt.read(Files.readAllBytes(serversFile));
+        ((java.util.Map<String, Object>) ((Nbt.ListTag) serversRoot.get("servers")).items().getFirst()).put("icon", "iVBORw0K");
+        serversRoot.put("somethingElse", new int[] {1, 2, 3});
+        Files.write(serversFile, Nbt.write(serversRoot));
+        Servers.remove(serversFile, 1);
+        Servers.add(serversFile, "Third", "[::1]:25565");
+        java.util.Map<String, Object> afterChanges = Nbt.read(Files.readAllBytes(serversFile));
+        check("servers are added and removed, and what Kelp doesn't know about stays", Servers.list(serversFile) + " "
+                + ((java.util.Map<?, ?>) ((Nbt.ListTag) afterChanges.get("servers")).items().getFirst()).get("icon") + " "
+                + java.util.Arrays.toString((int[]) afterChanges.get("somethingElse")),
+                "[Server[name=Friend's Server, address=play.example.com], Server[name=Third, address=[::1]:25565]] iVBORw0K [1, 2, 3]");
+        check("only plain server addresses", Servers.validAddress("mc.example.com:25565") + " " + Servers.validAddress("a\" --demo \"b") + " "
+                + Servers.validAddress("-x") + " " + Servers.validAddress(""), "true false false false");
         check("joining a server straight away", String.join(" ", Launcher.buildCommand("test-new", game, Account.offline("Samuel_A"),
                 Loader.VANILLA, null, 0, true, null, "play.example.com").subList(cmd.size(), cmd.size() + 2)), "--quickPlayMultiplayer play.example.com");
         check("a version too old to open a world by itself says so", problem(() -> Launcher.buildCommand("test-old", home.resolve("game-old"),

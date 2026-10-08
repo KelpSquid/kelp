@@ -26,6 +26,7 @@ public class WorldsScreen extends Screen {
     private final McButton openButton = new McButton(t("Open Folder"), this::openFolder);
     private final McButton doneButton = new McButton(t("Done"), this::back);
     private final McButton playButton = new McButton(t("Play World"), this::playWorld);
+    private final McButton serversButton = new McButton(t("Servers..."), this::openServers);
     private Boolean canOpenWorld; // whether this version can open a world by itself (1.20 and newer), looked up once
     private final McButton backUpButton = new McButton(t("Back Up Now"), this::backUpNow);
     private final McButton backupsButton = new McButton(t("Backups..."), this::openBackups);
@@ -41,8 +42,14 @@ public class WorldsScreen extends Screen {
         buttons.add(openButton);
         buttons.add(doneButton);
         buttons.add(playButton);
+        buttons.add(serversButton);
         buttons.add(backUpButton);
         buttons.add(backupsButton);
+    }
+
+    /** This instance's server list (Minecraft's Multiplayer list), to join or add servers. */
+    private void openServers() {
+        panel.setScreen(new ServersScreen(panel, this, instance));
     }
 
     /** Starts the game straight into the picked world, skipping the title screen. */
@@ -189,6 +196,7 @@ public class WorldsScreen extends Screen {
         playButton.setActive(picked && !importing && canOpenWorld && !RunningGames.isRunning(instance));
         playButton.setBounds(w / 2 - 100 * GUI, y + 24 * GUI, 98 * GUI, 20 * GUI);
         doneButton.setBounds(w / 2 + 2 * GUI, y + 24 * GUI, 98 * GUI, 20 * GUI);
+        serversButton.setBounds(w - 84 * GUI, 4 * GUI, 80 * GUI, 20 * GUI); // the instance's servers, top-right
         for (McButton b : buttons) b.draw(g, font, GUI);
     }
 

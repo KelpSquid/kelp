@@ -34,8 +34,7 @@ public final class Continue {
                 String id = lines.size() < 2 ? "" : lines.get(1).strip();
                 // A server only when a parent hasn't turned multiplayer off, and only a plain address (letters,
                 // numbers, dots, dashes, a :port), so nothing odd can sneak into the game's command line
-                if (kind.equals("server") && ParentControls.multiplayerAllowed() && id.matches("[A-Za-z0-9._\\-]+(:[0-9]{1,5})?|\\[[0-9A-Fa-f:.]+](:[0-9]{1,5})?")
-                        && !id.startsWith("-")) {
+                if (kind.equals("server") && ParentControls.multiplayerAllowed() && Servers.validAddress(id)) {
                     String name = lines.size() >= 3 && !lines.get(2).isBlank() ? lines.get(2).strip() : id;
                     return new Target(true, id, name);
                 }
