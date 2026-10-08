@@ -833,6 +833,33 @@ public class KelpTest {
                 .findFirst().orElseThrow().authors().toString(), "[Sam]");
         check("Kelp reads Squid mod ids like Squid does", InstalledMod.squidId(folder) + " " + InstalledMod.squidId(instance.mods().resolve("Shared.squid"))
                 + " " + InstalledMod.squidId(instance.mods().resolve("MegaMod3.java")), "mega-mod mega-mod mega-mod-3");
+        // Mod Doctor: things Squid would skip a mod for, found before playing, and fixed with a click
+        Path doctorMods = Files.createDirectories(home.resolve("doctor-mods"));
+        Path typo = ModProject.create(doctorMods, "Typo Mod", "26.3");
+        Files.writeString(typo.resolve("squid.json"), "{\"name\": \"Typo Mod\", \"author\": \"Sam\", \"main\": \"TypoMod\"}");
+        Path lost = ModProject.create(doctorMods, "Lost Main", "26.3");
+        Files.writeString(lost.resolve("squid.json"), "{\"name\": \"Lost Main\", \"main\": \"Nope\"}");
+        Path badId = ModProject.create(doctorMods, "Bad Id", "26.3");
+        Files.writeString(badId.resolve("squid.json"), "{\"id\": \"Bad Id!\", \"main\": \"BadId\"}");
+        Path needy = ModProject.create(doctorMods, "Needy", "26.3");
+        Files.writeString(needy.resolve("squid.json"), "{\"main\": \"Needy\", \"depends\": [\"missing-lib\", \"squid-net\"]}");
+        Path twinA = ModProject.pack(ModProject.create(doctorMods, "Twin", "26.3"), Files.createDirectories(home.resolve("twin-a")));
+        Files.copy(twinA, doctorMods.resolve("Twin Old.squid"));
+        Map<Path, ModDoctor.Finding> findings = ModDoctor.check(InstalledMod.list(doctorMods));
+        check("Mod Doctor spots a typo key, a missing main class, a bad id and a missing mod", List.of(
+                findings.get(typo).message(), findings.get(lost).message(), findings.get(badId).message(), findings.get(needy).message()).toString(),
+                "[squid.json has \"author\". Did you mean \"authors\"?, Squid looks for the class Nope, but it isn't in src., "
+                        + "Its id \"Bad Id!\" can only use a-z, 0-9, _ and -., It needs the mod \"missing-lib\", which isn't in the mods folder.]");
+        check("two copies of a mod: one of them gets turned off, not deleted", findings.keySet().stream()
+                .filter(p -> p.getFileName().toString().startsWith("Twin")).count() + " " + findings.get(needy).fix(), "1 null");
+        for (Path p : List.of(typo, lost, badId)) findings.get(p).fix().apply();
+        Map<String, Object> fixedTypo = Json.object(Json.parse(Files.readString(typo.resolve("squid.json"))));
+        check("its fixes: the key renamed, main pointed at the real class, and a usable id",
+                fixedTypo.keySet() + " " + Json.object(Json.parse(Files.readString(lost.resolve("squid.json")))).get("main") + " "
+                        + Json.object(Json.parse(Files.readString(badId.resolve("squid.json")))).get("id"),
+                "[name, authors, main] LostMain bad-id");
+        Map<Path, ModDoctor.Finding> after = ModDoctor.check(InstalledMod.list(doctorMods));
+        check("after the fixes, those mods are fine", after.containsKey(typo) + " " + after.containsKey(lost) + " " + after.containsKey(badId), "false false false");
         InstalledMod off = listed.toggle();
         check("a project can be turned off", off.file().getFileName() + " " + InstalledMod.list(instance.mods()).stream()
                 .filter(m -> m.file().equals(off.file())).findFirst().map(InstalledMod::enabled).orElse(null), "MegaMod.disabled false");

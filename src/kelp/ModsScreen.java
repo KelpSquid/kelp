@@ -32,6 +32,9 @@ public class ModsScreen extends Screen {
     private int editRight;
     private int packLeft; // and "Pack", on the rows of projects
     private int packRight;
+    /** What Mod Doctor found wrong, by mod, and where each row's "Fix" is. */
+    private java.util.Map<Path, ModDoctor.Finding> findings = java.util.Map.of();
+    private final java.util.Map<Path, int[]> fixAt = new java.util.HashMap<>();
 
     public ModsScreen(OceanPanel panel, Screen parent, Instance instance) {
         super(panel);
@@ -171,6 +174,7 @@ public class ModsScreen extends Screen {
         double now = panel.getTime();
         if (listedAt < 0 || now - listedAt >= 1) {
             list.setItems(InstalledMod.list(instance.mods()));
+            findings = ModDoctor.check(list.getItems());
             listedAt = now;
         }
     }
@@ -213,6 +217,19 @@ public class ModsScreen extends Screen {
                 boolean over = mouseX >= packLeft && mouseX < packRight && list.itemAt(mouseX, mouseY) == mod;
                 font.draw(gg, t("Pack"), packLeft, y, GUI, over ? 0xFFFFA0 : 0x55FFFF);
             }
+            // Mod Doctor: a mod Squid would skip gets a "Fix" link when it can be fixed with a click
+            ModDoctor.Finding finding = findings.get(mod.file());
+            int linksLeft = mod.project() ? packLeft : mod.source() ? editLeft : x + width - font.width(state, GUI);
+            if (finding != null && finding.fix() != null) {
+                int fixRight = linksLeft - 8 * GUI;
+                int fixLeft = fixRight - font.width(finding.fixLabel(), GUI);
+                fixAt.put(mod.file(), new int[] {fixLeft, fixRight});
+                boolean over = mouseX >= fixLeft && mouseX < fixRight && list.itemAt(mouseX, mouseY) == mod;
+                font.draw(gg, finding.fixLabel(), fixLeft, y, GUI, over ? 0xFFFFA0 : 0xFFFF55);
+                linksLeft = fixLeft;
+            } else {
+                fixAt.remove(mod.file());
+            }
             // Its icon, in front of the name (pixel art stays sharp)
             java.awt.image.BufferedImage icon = ModIcons.of(mod);
             if (icon != null) {
@@ -223,19 +240,22 @@ public class ModsScreen extends Screen {
             }
             int nameX = x + 12 * GUI;
             // The name gets what's left of the row, and a long one ends in "..." instead of running under the links
-            int room = (mod.project() ? packLeft : mod.source() ? editLeft : x + width - font.width(state, GUI)) - nameX - 6 * GUI;
+            int room = linksLeft - nameX - 6 * GUI;
             String name = mod.version().isEmpty() ? mod.name() : mod.name() + " " + mod.version();
             if (font.width(name, GUI) > room) {
                 while (name.length() > 1 && font.width(name.stripTrailing() + "...", GUI) > room) name = name.substring(0, name.length() - 1);
                 name = name.stripTrailing() + "...";
             }
-            font.draw(gg, name, nameX, y, GUI, mod.enabled() ? 0xFFFFFF : 0x808080);
+            font.draw(gg, name, nameX, y, GUI, !mod.enabled() ? 0x808080 : finding != null ? 0xFFFF55 : 0xFFFFFF);
         });
 
         // Under the list: who made the mod under the mouse and what it does, or a problem
         String info = problem;
         InstalledMod hovered = list.itemAt(mouseX, mouseY);
-        if (info == null && hovered != null) {
+        ModDoctor.Finding hoveredFinding = hovered == null ? null : findings.get(hovered.file());
+        if (info == null && hoveredFinding != null) {
+            info = hoveredFinding.message();
+        } else if (info == null && hovered != null) {
             info = hovered.description();
             if (!hovered.authors().isEmpty()) {
                 info = t("By {0}", String.join(", ", hovered.authors())) + (info.isEmpty() ? "" : ". " + info);
@@ -253,7 +273,8 @@ public class ModsScreen extends Screen {
         }
         if (info != null && !info.isEmpty()) {
             while (info.length() > 3 && font.width(info, GUI) > w - 8 * GUI) info = info.substring(0, info.length() - 4) + "...";
-            int color = problem != null ? 0xFF5555 : info == notice ? (good ? 0x55FF55 : 0xFFFF55) : 0xA0A0A0;
+            int color = problem != null ? 0xFF5555 : info == notice ? (good ? 0x55FF55 : 0xFFFF55)
+                    : hoveredFinding != null ? 0xFFFF55 : 0xA0A0A0;
             centered(g, info, w, listBottom + 6 * GUI, color);
         }
 
@@ -300,6 +321,19 @@ public class ModsScreen extends Screen {
         }
         if (mod.kind() == null) {
             problem = t("Kelp can't tell what this jar is, so no loader will load it.");
+            return;
+        }
+        ModDoctor.Finding finding = findings.get(mod.file());
+        int[] fix = fixAt.get(mod.file());
+        if (finding != null && finding.fix() != null && fix != null && x >= fix[0] && x < fix[1]) {
+            try {
+                notice = finding.fix().apply();
+                wrongLoader = false;
+                problem = null;
+            } catch (IOException e) {
+                problem = t("Couldn't fix it: {0}", e.getMessage());
+            }
+            listedAt = -1;
             return;
         }
         if (mod.project() && x >= packLeft && x < packRight) {
