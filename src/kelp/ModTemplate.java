@@ -68,6 +68,10 @@ public final class ModTemplate {
                 //   keepShowing(() -> "Health: " + health());   a line that stays in the top-left corner
                 //   glow("creeper");  stopGlowing("creeper");   outlines a kind of mob through walls
                 //   remember("score", 5);  remembered("score", 0)   a number kept for next time you play
+                //   markBlock(x(), y() - 1, z(), "gold");  waypoint("Home", 0, 64, 0);   marks you see in the world
+                //   floatingText("Hi!", x(), y() + 2, z());   text floating in the world
+                //   screen("My Menu").button("Day", () -> command("time set day")).open();   your own menu
+                //   send("score", 10);  signal("found-it");   to your mod on a server, or to other mods
                 //
                 // When things happen:
                 //   onJoin(() -> { ... });                 when you join a world
@@ -84,6 +88,8 @@ public final class ModTemplate {
                 //   after(3, () -> { ... });               once, 3 seconds from now
                 //   onLevelUp(level -> { ... });           when your XP level goes up
                 //   onNight(() -> { ... });  onDay(() -> { ... });   when night falls, or morning comes
+                //   onMessage("score", (from, data) -> { ... });   a message from your mod on the server (or a player)
+                //   onSignal("found-it", value -> { ... });         a signal from another mod
                 //
                 // Settings players can change in the game's Mods screen (ask for them whenever you need them):
                 //   setting("Play a sound", true)          ON or OFF
