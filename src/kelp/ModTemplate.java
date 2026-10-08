@@ -65,6 +65,9 @@ public final class ModTemplate {
                 //   title("Hello!", "smaller text");       big text in the middle of the screen
                 //   boost(1.2);  dash(2);                  shoots you up, or forward the way you look
                 //   particles("heart", 10);                particles around you ("flame", "note"...)
+                //   keepShowing(() -> "Health: " + health());   a line that stays in the top-left corner
+                //   glow("creeper");  stopGlowing("creeper");   outlines a kind of mob through walls
+                //   remember("score", 5);  remembered("score", 0)   a number kept for next time you play
                 //
                 // When things happen:
                 //   onJoin(() -> { ... });                 when you join a world
@@ -75,13 +78,17 @@ public final class ModTemplate {
                 //   onBeat(() -> { ... });                 on every beat of the music (Jukebox songs too)
                 //   onCommand("dance", () -> { ... });     your own chat command: type !dance
                 //   onChat(text -> { ... });               every chat message you see
+                //   onBreak(block -> { ... });             when you break a block ("stone", "diamond_ore"...)
+                //   onPickup(item -> { ... });             when you pick something up ("diamond"...)
+                //   onAttack(mob -> { ... });              when you hit a mob ("zombie"...)
+                //   after(3, () -> { ... });               once, 3 seconds from now
                 //
                 // Settings players can change in the game's Mods screen (ask for them whenever you need them):
                 //   setting("Play a sound", true)          ON or OFF
                 //   setting("Zoom", 4, 1, 10)              a number from 1 to 10, starting at 4
                 //   setting("Corner", "Top left", "Top left", "Top right")   one of a few choices
                 //
-                // Things to know: x(), y(), z(), health(), playerName(), random(1, 6), biome(), isNight(),
+                // Things to know: x(), y(), z(), health(), playerName(), random(1, 6), biome(), dimension(), isNight(), isRaining(),
                 //   holding() (what's in your hand), lookingAt() (the block or mob you look at),
                 //   nearby("creeper", 16) (how many are near you)
 
