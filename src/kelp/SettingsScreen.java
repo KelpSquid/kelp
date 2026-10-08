@@ -14,9 +14,10 @@ public class SettingsScreen extends Screen {
     private final McButton accountButton = new McButton("", () -> panel.setScreen(new AccountsScreen(panel, this)));
     private final McButton memoryButton = new McButton("", this::nextMemory);
     private final McButton backupButton = new McButton("", () -> Settings.setAutoBackup(!Settings.autoBackup()));
-    private final McButton folderButton = new McButton(t("Open Kelp Folder"), this::openFolder);
+    private final McButton folderButton = new McButton(t("Kelp Folder"), this::openFolder);
     private final McButton themeButton = new McButton("", () -> panel.setScreen(new ThemeScreen(panel, this)));
     private final McButton parentButton = new McButton(t("Parent Controls"), () -> panel.setScreen(new ParentControlsScreen(panel, this)));
+    private final McButton soundButton = new McButton(t("Sound Maker"), () -> panel.setScreen(new SoundMakerScreen(panel, this)));
     private final McButton emblemButton = new McButton(t("Emblem"), () -> panel.setScreen(new EmblemScreen(panel, this)));
     private final McButton doneButton = new McButton(t("Done"), this::done);
 
@@ -30,6 +31,7 @@ public class SettingsScreen extends Screen {
         buttons.add(folderButton);
         buttons.add(themeButton);
         buttons.add(emblemButton);
+        buttons.add(soundButton);
         buttons.add(parentButton);
         buttons.add(doneButton);
     }
@@ -83,7 +85,8 @@ public class SettingsScreen extends Screen {
         backupButton.setBounds(left, top + 100 * GUI, 200 * GUI, 20 * GUI);
         themeButton.setLabel(t("Theme: {0}", Theme.current().label()));
         themeButton.setBounds(left, top + 124 * GUI, 200 * GUI, 20 * GUI);
-        folderButton.setBounds(left, top + 148 * GUI, 200 * GUI, 20 * GUI);
+        folderButton.setBounds(left, top + 148 * GUI, 98 * GUI, 20 * GUI);
+        soundButton.setBounds(left + 102 * GUI, top + 148 * GUI, 98 * GUI, 20 * GUI);
         parentButton.setBounds(left, top + 172 * GUI, 200 * GUI, 20 * GUI); // still clear of Done in the smallest window
         doneButton.setBounds(left, h - 28 * GUI, 200 * GUI, 20 * GUI);
         for (McButton b : buttons) b.draw(g, font, GUI);
