@@ -321,6 +321,26 @@ public class KelpTest {
         check("Make It Faster picks Minecraft's own Fast preset", options.get("graphicsPreset", "") + " " + options.get("renderDistance", "")
                 + " " + options.get("simulationDistance", ""), "\"fast\" 8 6");
 
+        options.usePotatoPreset();
+        check("Potato Mode turns down what Fast leaves alone", options.get("renderDistance", "") + " " + options.get("renderClouds", "")
+                + " " + options.get("ao", "") + " " + options.get("enableVsync", "") + " " + options.get("graphicsPreset", ""),
+                "6 \"false\" false false \"custom\"");
+        Files.createDirectories(instance.folder().resolve("logs"));
+        Files.writeString(instance.folder().resolve("logs").resolve("latest.log"), "[11:41:24] [Render thread/INFO]: Using graphics backend OpenGL\n"
+                + "[11:41:24] [Render thread/INFO]: Using graphics device: Intel(R) UHD Graphics 620/PCIe/SSE2 (Intel)\n");
+        check("reads which graphics the game used from its log", Hardware.graphicsDevice(instance), "Intel(R) UHD Graphics 620");
+        check("built-in graphics are weak, graphics cards aren't",
+                Hardware.weak("Intel(R) UHD Graphics 620", 16) + " " + Hardware.weak("Intel(R) Iris(R) Xe Graphics", 16) + " "
+                        + Hardware.weak("AMD Radeon(TM) Graphics", 16) + " " + Hardware.weak("NVIDIA GeForce RTX 5050 Laptop GPU", 16) + " "
+                        + Hardware.weak("Intel(R) Arc(TM) A770 Graphics", 16) + " " + Hardware.weak("AMD Radeon RX 7600", 16),
+                "true true true false false false");
+        check("without the game's word, a little memory means a weak computer", Hardware.weak(null, 8) + " " + Hardware.weak(null, 32)
+                + " " + Hardware.weak(null, 0), "true false false");
+
+        check("small computers get less memory, big ones keep Mojang's", Launcher.smallComputerMemoryGb(3.8) + " "
+                + Launcher.smallComputerMemoryGb(5.9) + " " + Launcher.smallComputerMemoryGb(7.9) + " " + Launcher.smallComputerMemoryGb(15.7)
+                + " " + Launcher.smallComputerMemoryGb(0), "2 3 0 0 0");
+
         Instance fresh = Instance.create("Never Played", v, false);
         check("an unplayed, undownloaded instance explains itself", problem(() -> GameOptions.load(fresh)),
                 "Play this instance once first, then its game options can be changed here.");

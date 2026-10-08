@@ -193,6 +193,15 @@ public final class Launcher {
             command.removeIf(arg -> arg.startsWith("-Xmx") || arg.startsWith("-Xms"));
             command.add("-Xms" + Math.min(2, memoryGb) + "G");
             command.add("-Xmx" + memoryGb + "G");
+        } else {
+            int small = smallComputerMemoryGb(Hardware.memoryGb());
+            if (small > 0) {
+                // Mojang's 4 GB (all of it claimed as the game starts) leaves too little for Windows on a computer with
+                // 4 or 6 GB, and everything slows to a crawl as it swaps to disk
+                command.removeIf(arg -> arg.startsWith("-Xmx") || arg.startsWith("-Xms") || arg.equals("-XX:+AlwaysPreTouch"));
+                command.add("-Xms1G");
+                command.add("-Xmx" + small + "G");
+            }
         }
         if (arguments != null) {
             addArguments(command, arguments.get("jvm"), vars);
@@ -305,6 +314,17 @@ public final class Launcher {
         }
         paths.add(gameJar.toString());
         return new ArrayList<>(paths);
+    }
+
+    /**
+     * How much memory to give the game on a computer with little of it (when the player hasn't picked an amount), or 0
+     * to keep Mojang's. 2 GB on a 4 GB computer and 3 GB on a 6 GB one leave Windows enough room.
+     */
+    static int smallComputerMemoryGb(double computerGb) {
+        if (computerGb <= 0) return 0; // Java couldn't tell
+        if (computerGb <= 5) return 2;
+        if (computerGb <= 7) return 3;
+        return 0;
     }
 
     /** Adds Mojang's list of arguments, skipping the ones whose rules say they aren't for this computer. */

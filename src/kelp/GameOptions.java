@@ -103,6 +103,32 @@ public final class GameOptions {
         save();
     }
 
+    /**
+     * For weak computers (graphics built into the processor): Minecraft's Fast settings and then everything else that
+     * costs frames turned down too, which Fast leaves alone. The game shows these as a Custom preset.
+     */
+    public void usePotatoPreset() throws IOException {
+        put("graphicsPreset", "\"custom\"");
+        put("renderDistance", "6");
+        put("simulationDistance", "5");
+        put("renderClouds", "\"false\"");
+        put("particles", "2"); // Minimal
+        put("entityShadows", "false");
+        put("entityDistanceScaling", "0.75");
+        put("biomeBlendRadius", "0");
+        put("ao", "false"); // smooth lighting makes every chunk slower to build
+        put("cutoutLeaves", "false"); // solid leaves, like Fast
+        put("improvedTransparency", "false");
+        put("mipmapLevels", "0");
+        put("weatherRadius", "5");
+        put("chunkSectionFadeInTime", "0.0");
+        put("menuBackgroundBlurriness", "0");
+        put("prioritizeChunkUpdates", "0");
+        put("enableVsync", "false"); // VSync holds frames back to the screen's speed and adds waiting on slow graphics
+        put("maxFps", "260"); // Unlimited
+        save();
+    }
+
     private void put(String key, String value) {
         String line = key + ":" + value;
         boolean found = false;

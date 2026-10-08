@@ -59,12 +59,18 @@ public class GameOptionsScreen extends Screen {
         add(new McButton(t("Make It Faster"), this::makeFaster));
     }
 
-    /** Minecraft's own Fast graphics: shorter render distance, simpler clouds, leaves and particles, no shadows. */
+    /**
+     * Minecraft's own Fast graphics: shorter render distance, simpler clouds, leaves and particles, no shadows. On a weak
+     * computer (built-in graphics, going by what the game said it used last time) Potato Mode goes further.
+     */
     private void makeFaster() {
         try {
-            options.useFastPreset();
+            boolean potato = Hardware.weak(Hardware.graphicsDevice(instance), Hardware.memoryGb());
+            if (potato) options.usePotatoPreset();
+            else options.useFastPreset();
             GameOptionsScreen fresh = new GameOptionsScreen(panel, parent, instance); // so the sliders show the new values
-            fresh.notice = t("Fast graphics on! Render distance is now 8.");
+            fresh.notice = potato ? t("Potato Mode on! Render distance is now 6.")
+                    : t("Fast graphics on! Render distance is now 8.");
             panel.setScreen(fresh);
         } catch (IOException e) {
             problem = t("Couldn't save: {0}", e.getMessage());
