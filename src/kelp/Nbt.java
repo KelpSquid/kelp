@@ -60,14 +60,14 @@ public final class Nbt {
             case FLOAT -> in.readFloat();
             case DOUBLE -> in.readDouble();
             case BYTES -> {
-                byte[] b = new byte[length(in)];
+                byte[] b = new byte[length(in, 1)];
                 in.readFully(b);
                 yield b;
             }
             case STRING -> in.readUTF();
             case LIST -> {
                 int itemType = in.readUnsignedByte();
-                int count = length(in);
+                int count = length(in, 1);
                 List<Object> items = new ArrayList<>();
                 for (int i = 0; i < count; i++) items.add(value(in, itemType, depth + 1));
                 yield new ListTag(itemType, items);
@@ -83,12 +83,12 @@ public final class Nbt {
                 yield map;
             }
             case INTS -> {
-                int[] a = new int[length(in)];
+                int[] a = new int[length(in, 4)];
                 for (int i = 0; i < a.length; i++) a[i] = in.readInt();
                 yield a;
             }
             case LONGS -> {
-                long[] a = new long[length(in)];
+                long[] a = new long[length(in, 8)];
                 for (int i = 0; i < a.length; i++) a[i] = in.readLong();
                 yield a;
             }
@@ -96,9 +96,10 @@ public final class Nbt {
         };
     }
 
-    private static int length(DataInputStream in) throws IOException {
+    /** A length, checked against what's left of the file (each thing takes at least `size` bytes), so a damaged one can't ask for gigabytes. */
+    private static int length(DataInputStream in, int size) throws IOException {
         int n = in.readInt();
-        if (n < 0 || n > 16_000_000) throw new IOException("a broken NBT length: " + n);
+        if (n < 0 || (long) n * size > in.available()) throw new IOException("a broken NBT length: " + n);
         return n;
     }
 

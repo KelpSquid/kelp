@@ -682,15 +682,29 @@ public class KelpTest {
         ((java.util.Map<String, Object>) ((Nbt.ListTag) serversRoot.get("servers")).items().getFirst()).put("icon", "iVBORw0K");
         serversRoot.put("somethingElse", new int[] {1, 2, 3});
         Files.write(serversFile, Nbt.write(serversRoot));
-        Servers.remove(serversFile, 1);
+        check("a server is only removed if it's still the one shown", Servers.remove(serversFile, new Servers.Server("x", "elsewhere.example", 1)), false);
+        Servers.remove(serversFile, Servers.list(serversFile).get(1));
         Servers.add(serversFile, "Third", "[::1]:25565");
         java.util.Map<String, Object> afterChanges = Nbt.read(Files.readAllBytes(serversFile));
-        check("servers are added and removed, and what Kelp doesn't know about stays", Servers.list(serversFile) + " "
+        check("servers are added and removed, and what Kelp doesn't know about stays", Servers.list(serversFile).stream().map(s -> s.name() + "@" + s.address()).toList() + " "
                 + ((java.util.Map<?, ?>) ((Nbt.ListTag) afterChanges.get("servers")).items().getFirst()).get("icon") + " "
                 + java.util.Arrays.toString((int[]) afterChanges.get("somethingElse")),
-                "[Server[name=Friend's Server, address=play.example.com], Server[name=Third, address=[::1]:25565]] iVBORw0K [1, 2, 3]");
+                "[Friend's Server@play.example.com, Third@[::1]:25565] iVBORw0K [1, 2, 3]");
+        // Minecraft's hidden list (servers joined directly) isn't shown, and adding one brings it out of hiding
+        java.util.Map<String, Object> withHidden = Nbt.read(Files.readAllBytes(serversFile));
+        java.util.Map<String, Object> hiddenOne = new java.util.LinkedHashMap<>();
+        hiddenOne.put("ip", "secret.example.com");
+        hiddenOne.put("name", "Minecraft Server");
+        hiddenOne.put("hidden", (byte) 1);
+        ((Nbt.ListTag) withHidden.get("servers")).items().add(hiddenOne);
+        Files.write(serversFile, Nbt.write(withHidden));
+        int beforeUnhide = Servers.list(serversFile).size();
+        Servers.add(serversFile, "Secret Base", "secret.example.com");
+        check("hidden servers stay hidden, and adding one shows it once", beforeUnhide + " " + Servers.list(serversFile).stream().map(Servers.Server::name).toList()
+                + " " + ((Nbt.ListTag) Nbt.read(Files.readAllBytes(serversFile)).get("servers")).items().size(), "2 [Friend's Server, Third, Secret Base] 3");
         check("only plain server addresses", Servers.validAddress("mc.example.com:25565") + " " + Servers.validAddress("a\" --demo \"b") + " "
-                + Servers.validAddress("-x") + " " + Servers.validAddress(""), "true false false false");
+                + Servers.validAddress("-x") + " " + Servers.validAddress("") + " " + Servers.validAddress("a.b:70000") + " " + Servers.validAddress("[::1]"),
+                "true false false false false true");
         check("joining a server straight away", String.join(" ", Launcher.buildCommand("test-new", game, Account.offline("Samuel_A"),
                 Loader.VANILLA, null, 0, true, null, "play.example.com").subList(cmd.size(), cmd.size() + 2)), "--quickPlayMultiplayer play.example.com");
         check("a version too old to open a world by itself says so", problem(() -> Launcher.buildCommand("test-old", home.resolve("game-old"),

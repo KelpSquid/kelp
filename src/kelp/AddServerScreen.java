@@ -22,6 +22,8 @@ public class AddServerScreen extends Screen {
         buttons.add(addButton);
         buttons.add(cancelButton);
         nameField.setFocused(true);
+        nameField.onChange(text -> problem = null);
+        addressField.onChange(text -> problem = null);
     }
 
     private void back() {
@@ -79,11 +81,6 @@ public class AddServerScreen extends Screen {
     public void keyTyped(char c) {
         if (c == '\n') {
             add(); // Enter adds it
-        } else if (c == '\t') {
-            boolean onName = !addressFocused;
-            addressFocused = onName;
-            nameField.setFocused(!onName);
-            addressField.setFocused(onName);
         } else if (addressFocused) {
             addressField.keyTyped(c);
         } else {
@@ -95,6 +92,12 @@ public class AddServerScreen extends Screen {
 
     @Override
     public void keyPressed(int keyCode, boolean ctrl) {
+        if (keyCode == java.awt.event.KeyEvent.VK_TAB) { // Tab moves to the other box
+            addressFocused = !addressFocused;
+            nameField.setFocused(!addressFocused);
+            addressField.setFocused(addressFocused);
+            return;
+        }
         if (addressFocused) addressField.keyPressed(keyCode, ctrl);
         else nameField.keyPressed(keyCode, ctrl);
     }

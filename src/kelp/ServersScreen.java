@@ -19,6 +19,8 @@ public class ServersScreen extends Screen {
     private final McButton doneButton = new McButton(t("Done"), this::back);
     private String problem;
     private Boolean canJoin; // whether this version can join a server by itself (1.20 and newer), looked up once
+    private boolean wasRunning; // the game was open last frame: when it closes, its changes to the list are read
+    private Servers.Server lastPicked;
 
     public ServersScreen(OceanPanel panel, Screen parent, Instance instance) {
         super(panel);
@@ -34,6 +36,7 @@ public class ServersScreen extends Screen {
     @Override
     public void shown() {
         list.setItems(Servers.list(Servers.file(instance)));
+        problem = null;
     }
 
     /** Starts the game straight onto the picked server. */
@@ -48,7 +51,11 @@ public class ServersScreen extends Screen {
     }
 
     private boolean joinable() {
-        if (canJoin == null) canJoin = Launcher.canOpenWorld(instance.version().id());
+        // A version that isn't downloaded yet gets the benefit of the doubt: Launcher says so if it's too old
+        if (canJoin == null) {
+            String id = instance.version().id();
+            canJoin = !java.nio.file.Files.exists(Folders.versions().resolve(id).resolve(id + ".json")) || Launcher.canOpenWorld(id);
+        }
         return canJoin && ParentControls.multiplayerAllowed() && !RunningGames.isRunning(instance);
     }
 
@@ -60,11 +67,11 @@ public class ServersScreen extends Screen {
     private void remove() {
         Servers.Server server = list.getSelected();
         if (server == null || RunningGames.isRunning(instance)) return;
-        int index = list.getItems().indexOf(server);
-        panel.setScreen(new ConfirmScreen(panel, t("Remove {0}?", server.name()), t("It's taken out of this instance's server list."), () -> {
+        String shownName = server.name().length() > 40 ? server.name().substring(0, 40) + "..." : server.name();
+        panel.setScreen(new ConfirmScreen(panel, t("Remove {0}?", shownName), t("It's taken out of this instance's server list."), () -> {
             try {
-                Servers.remove(Servers.file(instance), index);
-                problem = null;
+                // Only if it's still the same one (Minecraft may have changed the list since)
+                problem = Servers.remove(Servers.file(instance), server) ? null : t("The list changed in Minecraft, so nothing was removed. Here it is again.");
             } catch (IOException e) {
                 problem = t("Couldn't remove it: {0}", e.getMessage());
             }
@@ -79,10 +86,16 @@ public class ServersScreen extends Screen {
         int listBottom = h - 72 * GUI;
         String empty = list.getItems().isEmpty() ? t("No servers yet. Add a friend's server!") : null;
         list.draw(g, font, w, 32 * GUI, listBottom, empty, (gg, server, x, y, width) -> {
-            font.draw(gg, server.name(), x, y, GUI, 0xFFFFFF);
-            font.draw(gg, server.address(), x, y + 10 * GUI, GUI, 0x808080);
+            font.draw(gg, fit(font, server.name(), width), x, y, GUI, 0xFFFFFF);
+            font.draw(gg, fit(font, server.address(), width), x, y + 10 * GUI, GUI, 0x808080);
         });
         boolean running = RunningGames.isRunning(instance);
+        if (wasRunning && !running) shown(); // the game closed: it may have changed the list
+        wasRunning = running;
+        if (list.getSelected() != lastPicked) { // picking another one clears an old message
+            lastPicked = list.getSelected();
+            problem = null;
+        }
         String note = problem != null ? problem
                 : !ParentControls.multiplayerAllowed() ? t("A parent turned multiplayer off in Parent Controls.")
                 : running ? t("Close Minecraft to change the list (it keeps its own copy while it's open).") : null;
@@ -98,6 +111,13 @@ public class ServersScreen extends Screen {
         removeButton.setBounds(w / 2 - 100 * GUI, y + 24 * GUI, 98 * GUI, 20 * GUI);
         doneButton.setBounds(w / 2 + 2 * GUI, y + 24 * GUI, 98 * GUI, 20 * GUI);
         for (McButton b : buttons) b.draw(g, font, GUI);
+    }
+
+    /** Cuts text down with "..." until it fits. */
+    private static String fit(McFont font, String text, int maxWidth) {
+        if (font.width(text, GUI) <= maxWidth) return text;
+        while (text.length() > 1 && font.width(text + "...", GUI) > maxWidth) text = text.substring(0, text.length() - 1);
+        return text + "...";
     }
 
     @Override

@@ -37,6 +37,7 @@ public class OceanPanel extends JPanel {
     private int quietFrames;
 
     public OceanPanel() {
+        setFocusTraversalKeysEnabled(false); // Tab goes to the screen (like moving between boxes), not to Swing
         for (int i = 0; i < kelpHeights.length; i++) {
             kelpHeights[i] = random.nextInt(10) < 7 ? 1 + random.nextInt(3) : 0;
         }
