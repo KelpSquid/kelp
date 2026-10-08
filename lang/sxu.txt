@@ -475,3 +475,5 @@ Squid achievements => Squid-Erfolsche
 Use as Theme => Als Design nehm'n
 Creeper Radar => Creeper-Radar
 Press K: every creeper nearby glows through walls for 10 seconds. => Drigg K: jedor Creeper in dor Nähe leischded 10 Sekundn lang durch de Wände.
+Night Watch => Nachdwache
+Warns you when night falls, and counts the nights you survive. => Warnd dich, wenn's Nachd wird, un zähld de Nächde, die de überlebsd.

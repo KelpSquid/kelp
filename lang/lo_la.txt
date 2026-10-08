@@ -475,3 +475,5 @@ Squid achievements => ຄວາມສຳເລັດໃນ Squid
 Use as Theme => ໃຊ້ເປັນທີມ
 Creeper Radar => ເຣດາ Creeper
 Press K: every creeper nearby glows through walls for 10 seconds. => ກົດ K: creeper ທຸກໂຕທີ່ຢູ່ໃກ້ຈະເຫຼື້ອມແສງຜ່ານກຳແພງ 10 ວິນາທີ
+Night Watch => ຍາມກາງຄືນ
+Warns you when night falls, and counts the nights you survive. => ເຕືອນເຈົ້າເມື່ອຄ່ຳມາ ແລະ ນັບຄືນທີ່ເຈົ້າລອດມາໄດ້

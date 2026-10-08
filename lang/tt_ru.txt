@@ -475,3 +475,5 @@ Squid achievements => Squid казанышлары
 Use as Theme => Тема итеп куй
 Creeper Radar => Крипер радары
 Press K: every creeper nearby glows through walls for 10 seconds. => K бас: якындагы һәр крипер 10 секунд стеналар аша балкый.
+Night Watch => Төнге каравыл
+Warns you when night falls, and counts the nights you survive. => Төн җиткәч, сине кисәтә һәм син исән калган төннәрне саный.

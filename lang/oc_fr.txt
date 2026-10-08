@@ -475,3 +475,5 @@ Squid achievements => Capitadas de Squid
 Use as Theme => Utilizar coma tèma
 Creeper Radar => Radar Creeper
 Press K: every creeper nearby glows through walls for 10 seconds. => Quicha K: cada creeper a prètz lutz a travèrs las parets pendent 10 segondas.
+Night Watch => Gàrdia de nuèch
+Warns you when night falls, and counts the nights you survive. => T'avisa quand tomba la nuèch, e compta las nuèches que sobrevives.

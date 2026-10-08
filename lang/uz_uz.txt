@@ -475,3 +475,5 @@ Squid achievements => Squid yutuqlari
 Use as Theme => Mavzu qilish
 Creeper Radar => Creeper radari
 Press K: every creeper nearby glows through walls for 10 seconds. => K ni bos: yaqindagi har bir creeper 10 soniya devorlar orqali yonadi.
+Night Watch => Tungi qorovul
+Warns you when night falls, and counts the nights you survive. => Tun tushganda seni ogohlantiradi va omon qolgan tunlaringni sanaydi.

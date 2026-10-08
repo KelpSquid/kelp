@@ -475,3 +475,5 @@ Squid achievements => Squid 成就
 Use as Theme => 设为主题
 Creeper Radar => 苦力怕雷达
 Press K: every creeper nearby glows through walls for 10 seconds. => 按 K：附近的每只苦力怕都会透过墙发光 10 秒。
+Night Watch => 守夜人
+Warns you when night falls, and counts the nights you survive. => 夜幕降临时提醒你，并记录你熬过的每一夜。

@@ -475,3 +475,5 @@ Squid achievements => ความสำเร็จใน Squid
 Use as Theme => ใช้เป็นธีม
 Creeper Radar => เรดาร์ครีปเปอร์
 Press K: every creeper nearby glows through walls for 10 seconds. => กด K: ครีปเปอร์ทุกตัวที่อยู่ใกล้จะเรืองแสงทะลุกำแพง 10 วินาที
+Night Watch => ยามกลางคืน
+Warns you when night falls, and counts the nights you survive. => เตือนเมื่อตกกลางคืน และนับคืนที่คุณรอดมาได้

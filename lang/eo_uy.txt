@@ -475,3 +475,5 @@ Squid achievements => Squid-atingoj
 Use as Theme => Uzi kiel etoson
 Creeper Radar => Creeper-radaro
 Press K: every creeper nearby glows through walls for 10 seconds. => Premu K: ĉiu proksima creeper brilas tra muroj dum 10 sekundoj.
+Night Watch => Noktogardisto
+Warns you when night falls, and counts the nights you survive. => Avertas vin kiam noktiĝas, kaj nombras la noktojn, kiujn vi travivas.

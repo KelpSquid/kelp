@@ -475,3 +475,5 @@ Squid achievements => Squid nailiyyətləri
 Use as Theme => Mövzu kimi istifadə et
 Creeper Radar => Creeper radarı
 Press K: every creeper nearby glows through walls for 10 seconds. => K bas: yaxındakı hər creeper 10 saniyə divarların arxasından parlayır.
+Night Watch => Gecə keşikçisi
+Warns you when night falls, and counts the nights you survive. => Gecə düşəndə səni xəbərdar edir və sağ çıxdığın gecələri sayır.

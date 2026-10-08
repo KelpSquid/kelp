@@ -475,3 +475,5 @@ Squid achievements => Επιτεύγματα Squid
 Use as Theme => Χρήση ως θέμα
 Creeper Radar => Ραντάρ creeper
 Press K: every creeper nearby glows through walls for 10 seconds. => Πάτα K: κάθε κοντινός creeper λάμπει μέσα από τοίχους για 10 δευτερόλεπτα.
+Night Watch => Νυχτερινή φρουρά
+Warns you when night falls, and counts the nights you survive. => Σε προειδοποιεί όταν πέφτει η νύχτα και μετράει τις νύχτες που επιβιώνεις.

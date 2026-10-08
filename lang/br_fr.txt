@@ -475,3 +475,5 @@ Squid achievements => Berzhioù Squid
 Use as Theme => Ober un tem anezhañ
 Creeper Radar => Radar creeper
 Press K: every creeper nearby glows through walls for 10 seconds. => Pouez war K : pep creeper tost a lugern a-dreuz ar mogerioù e-pad 10 eilenn.
+Night Watch => Gward an noz
+Warns you when night falls, and counts the nights you survive. => Da gemenn pa zeu an noz, hag a gont an nozvezhioù a dremenez bev.

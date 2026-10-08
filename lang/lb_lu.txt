@@ -475,3 +475,5 @@ Squid achievements => Squid-Erfolleger
 Use as Theme => Als Design huelen
 Creeper Radar => Creeper-Radar
 Press K: every creeper nearby glows through walls for 10 seconds. => Dréck K: All Creeper an der Géigend liicht 10 Sekonne laang duerch d'Maueren.
+Night Watch => Nuetswuecht
+Warns you when night falls, and counts the nights you survive. => Warnt dech, wann d'Nuecht fält, an zielt d'Nuechten, déi s du iwwerlieft hues.

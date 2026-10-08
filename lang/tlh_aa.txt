@@ -475,3 +475,5 @@ Squid achievements => Squid Qapla'mey
 Use as Theme => Dub DaghaH
 Creeper Radar => Creeper 'olwI'
 Press K: every creeper nearby glows through walls for 10 seconds. => K yI'uy: Hoch creeper Sum tlhoy'mey vegh wov 10 lup.
+Night Watch => ram 'avwI'
+Warns you when night falls, and counts the nights you survive. => ram pawDI', DughuHmoH. ram DataHbogh togh je.

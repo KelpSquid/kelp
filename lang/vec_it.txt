@@ -475,3 +475,5 @@ Squid achievements => Obietivi de Squid
 Use as Theme => Dòpara come tema
 Creeper Radar => Radar Creeper
 Press K: every creeper nearby glows through walls for 10 seconds. => Struca K: ogni creeper visin el łuxe traverso i muri par 10 secondi.
+Night Watch => Guardia de Note
+Warns you when night falls, and counts the nights you survive. => El te avisa co vien note, e el conta le note che te sopravivi.

@@ -475,3 +475,5 @@ Squid achievements => Logros de Squid
 Use as Theme => Usar como tema
 Creeper Radar => Radar de creepers
 Press K: every creeper nearby glows through walls for 10 seconds. => Pulsa K: todos los creepers cercanos brillan a través de las paredes durante 10 segundos.
+Night Watch => Guardia nocturna
+Warns you when night falls, and counts the nights you survive. => Te avisa cuando cae la noche y cuenta las noches que sobrevives.

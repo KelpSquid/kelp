@@ -475,3 +475,5 @@ Squid achievements => Llogros de Squid
 Use as Theme => Usar como tema
 Creeper Radar => Radar creeper
 Press K: every creeper nearby glows through walls for 10 seconds. => Primi K: tolos creepers cercanos brillen al traviés de les parés 10 segundos.
+Night Watch => Guardia de nueche
+Warns you when night falls, and counts the nights you survive. => Avísate cuando cai la nueche, y cuenta les nueches que sobrevives.

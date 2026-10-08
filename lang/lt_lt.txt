@@ -475,3 +475,5 @@ Squid achievements => Squid pasiekimai
 Use as Theme => Naudoti kaip temą
 Creeper Radar => Creeper radaras
 Press K: every creeper nearby glows through walls for 10 seconds. => Spausk K: kiekvienas netoliese esantis creeper 10 sekundžių švyti pro sienas.
+Night Watch => Naktinė sargyba
+Warns you when night falls, and counts the nights you survive. => Įspėja, kai užeina naktis, ir skaičiuoja naktis, kurias išgyveni.

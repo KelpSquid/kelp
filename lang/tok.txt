@@ -475,3 +475,5 @@ Squid achievements => pali pona pi ilo Squid
 Use as Theme => o kepeken e ni sama nasin lukin
 Creeper Radar => lukin pi monsuta Creeper
 Press K: every creeper nearby glows through walls for 10 seconds. => o luka e K la monsuta Creeper ale lon poka li suno lon sinpin lon tenpo lili 10.
+Night Watch => ilo lukin pi tenpo pimeja
+Warns you when night falls, and counts the nights you survive. => tenpo pimeja li kama la ona li toki tawa sina. ona li nanpa e tenpo pimeja ale pi sina moli ala.

@@ -475,3 +475,5 @@ Squid achievements => Squid-Erfolge
 Use as Theme => Ois Design nehman
 Creeper Radar => Creeper-Radar
 Press K: every creeper nearby glows through walls for 10 seconds. => Druck K: jeder Creeper in da Nähe leicht 10 Sekundn laung durch d'Wänd.
+Night Watch => Nochtwach
+Warns you when night falls, and counts the nights you survive. => Warnt di, wenn's Nocht wird, und zöht de Nächt, de'st überlebst.

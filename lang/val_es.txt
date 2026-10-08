@@ -475,3 +475,5 @@ Squid achievements => Assoliments de Squid
 Use as Theme => Usa-la com a tema
 Creeper Radar => Radar de Creeper
 Press K: every creeper nearby glows through walls for 10 seconds. => Prem K: tots els creepers de prop brillen a través de les parets durant 10 segons.
+Night Watch => Guàrdia Nocturna
+Warns you when night falls, and counts the nights you survive. => T'avisa quan cau la nit i compta les nits que sobrevius.

@@ -475,3 +475,5 @@ Squid achievements => Realizări Squid
 Use as Theme => Folosește ca temă
 Creeper Radar => Radar de Creeper
 Press K: every creeper nearby glows through walls for 10 seconds. => Apasă K: fiecare creeper din apropiere strălucește prin pereți timp de 10 secunde.
+Night Watch => Paza de noapte
+Warns you when night falls, and counts the nights you survive. => Te avertizează când se lasă noaptea și numără nopțile pe care le supraviețuiești.

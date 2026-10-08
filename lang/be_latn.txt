@@ -475,3 +475,5 @@ Squid achievements => Dasiahnienni Squid
 Use as Theme => Zrabić temaj
 Creeper Radar => Kryper-radar
 Press K: every creeper nearby glows through walls for 10 seconds. => Naciśni K: kožny kryper pobač śviecicca praz ściany 10 sekund.
+Night Watch => Načnaja varta
+Warns you when night falls, and counts the nights you survive. => Papiaredžvaje, kali nadychodzić noč, i ličyć nočy, jakija ty pieražyŭ.

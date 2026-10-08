@@ -475,3 +475,5 @@ Squid achievements => Arritjet në Squid
 Use as Theme => Përdore si temë
 Creeper Radar => Radar Creeper
 Press K: every creeper nearby glows through walls for 10 seconds. => Shtyp K: çdo creeper aty pranë shkëlqen përmes mureve për 10 sekonda.
+Night Watch => Roja e natës
+Warns you when night falls, and counts the nights you survive. => Të paralajmëron kur bie nata dhe numëron netët që mbijeton.

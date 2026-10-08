@@ -475,3 +475,5 @@ Squid achievements => Squid-ի նվաճումներ
 Use as Theme => Դարձնել թեմա
 Creeper Radar => Քրիփերի ռադար
 Press K: every creeper nearby glows through walls for 10 seconds. => Սեղմիր K՝ մոտակա ամեն քրիփեր 10 վայրկյան փայլում է պատերի միջով։
+Night Watch => Գիշերային պահակ
+Warns you when night falls, and counts the nights you survive. => Զգուշացնում է, երբ գիշեր է իջնում, և հաշվում է քո վերապրած գիշերները։

@@ -475,3 +475,5 @@ Squid achievements => Дасягненні Squid
 Use as Theme => Зрабіць тэмай
 Creeper Radar => Крыпер-радар
 Press K: every creeper nearby glows through walls for 10 seconds. => Націсні K: кожны крыпер побач свеціцца праз сцены 10 секунд.
+Night Watch => Начная варта
+Warns you when night falls, and counts the nights you survive. => Папярэджвае, калі надыходзіць ноч, і лічыць ночы, якія ты перажыў.

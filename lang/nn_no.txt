@@ -475,3 +475,5 @@ Squid achievements => Squid-prestasjonar
 Use as Theme => Bruk som tema
 Creeper Radar => Creeper-radar
 Press K: every creeper nearby glows through walls for 10 seconds. => Trykk K: kvar creeper i nærleiken lyser gjennom veggar i 10 sekund.
+Night Watch => Nattevakt
+Warns you when night falls, and counts the nights you survive. => Varslar deg når natta kjem, og tel nettene du overlever.

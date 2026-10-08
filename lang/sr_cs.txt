@@ -475,3 +475,5 @@ Squid achievements => Squid dostignuća
 Use as Theme => Koristi kao temu
 Creeper Radar => Kriper radar
 Press K: every creeper nearby glows through walls for 10 seconds. => Pritisni K: svaki kriper u blizini svetli kroz zidove 10 sekundi.
+Night Watch => Noćna straža
+Warns you when night falls, and counts the nights you survive. => Upozori te kad padne noć i broji noći koje preživiš.

@@ -475,3 +475,5 @@ Squid achievements => Logrô de Squid
 Use as Theme => Uçâh como tema
 Creeper Radar => Radâh de creeperâ
 Press K: every creeper nearby glows through walls for 10 seconds. => Pulsa K: tôh lô creeperâ de çerca brillan a travé de lâ paredê durante 10 çegundô.
+Night Watch => Guardia nohturna
+Warns you when night falls, and counts the nights you survive. => Te avisa cuando cae la noche y cuenta lâ nochê que sobrevivê.

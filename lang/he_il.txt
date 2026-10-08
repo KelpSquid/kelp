@@ -475,3 +475,5 @@ Squid achievements => הישגים ב-Squid
 Use as Theme => השתמשו כערכת נושא
 Creeper Radar => מכ"ם קריפרים
 Press K: every creeper nearby glows through walls for 10 seconds. => לחצו K: כל קריפר קרוב זוהר דרך קירות למשך 10 שניות.
+Night Watch => משמר לילה
+Warns you when night falls, and counts the nights you survive. => מזהיר אתכם כשיורד הלילה, וסופר את הלילות שאתם שורדים.

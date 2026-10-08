@@ -475,3 +475,5 @@ Squid achievements => Risultâts di Squid
 Use as Theme => Dopre come teme
 Creeper Radar => Radar dai creeper
 Press K: every creeper nearby glows through walls for 10 seconds. => Frache K: ogni creeper dongje al lûs atraviers i mûrs par 10 seconts.
+Night Watch => Vuardie di gnot
+Warns you when night falls, and counts the nights you survive. => Ti vise cuant che al ven gnot, e al conte lis gnots che tu sorevivis.

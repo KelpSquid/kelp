@@ -475,3 +475,5 @@ Squid achievements => Pentjapaian Squid
 Use as Theme => Pakai sebagai Tema
 Creeper Radar => Radar Creeper
 Press K: every creeper nearby glows through walls for 10 seconds. => Tekan K: semoea creeper di dekatmoe bersinar menembus dinding selama 10 detik.
+Night Watch => Pendjaga Malam
+Warns you when night falls, and counts the nights you survive. => Memperingatkan kamoe saat malam tiba, dan menghitoeng malam jang berhasil kamoe lewati.

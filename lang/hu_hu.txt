@@ -475,3 +475,5 @@ Squid achievements => Squid-teljesítmények
 Use as Theme => Legyen ez a téma
 Creeper Radar => Creeper-radar
 Press K: every creeper nearby glows through walls for 10 seconds. => Nyomd meg a K-t: minden közeli creeper 10 másodpercig átvilágít a falakon.
+Night Watch => Éjjeliőr
+Warns you when night falls, and counts the nights you survive. => Szól, amikor leszáll az éj, és számolja a túlélt éjszakákat.

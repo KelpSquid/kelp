@@ -475,3 +475,5 @@ Squid achievements => Squid-prestaties
 Use as Theme => Gebroek es thema
 Creeper Radar => Creeper-radar
 Press K: every creeper nearby glows through walls for 10 seconds. => Drök op K: edere creeper in de buurt gleujt 10 seconde lank door de mure.
+Night Watch => Nachwach
+Warns you when night falls, and counts the nights you survive. => Waarsjuwt dich es 't nach weurt, en telt de nachte dies te euverleefs.

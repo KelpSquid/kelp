@@ -475,3 +475,5 @@ Squid achievements => Squid דערגרייכונגען
 Use as Theme => נוץ ווי אַ טעמע
 Creeper Radar => קריפּער־ראַדאַר
 Press K: every creeper nearby glows through walls for 10 seconds. => דריק K: יעדער קריפּער לעבן דיר שײַנט דורך ווענט 10 סעקונדעס.
+Night Watch => נאַכטוואַך
+Warns you when night falls, and counts the nights you survive. => וואָרנט דיך ווען די נאַכט פֿאַלט, און ציילט די נעכט וואָס דו איבערלעבסט.

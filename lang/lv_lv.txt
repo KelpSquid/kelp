@@ -475,3 +475,5 @@ Squid achievements => Squid sasniegumi
 Use as Theme => Lietot kā tēmu
 Creeper Radar => Creeper radars
 Press K: every creeper nearby glows through walls for 10 seconds. => Spied K: katrs tuvumā esošais creeper 10 sekundes spīd cauri sienām.
+Night Watch => Nakts sardze
+Warns you when night falls, and counts the nights you survive. => Brīdina, kad iestājas nakts, un skaita naktis, ko pārdzīvo.

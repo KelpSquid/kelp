@@ -475,3 +475,5 @@ Squid achievements => Squid cheevmentz
 Use as Theme => Uze az Theem
 Creeper Radar => Creeper Raydar
 Press K: every creeper nearby glows through walls for 10 seconds. => Pres K: evry creeper neerby glowz thru wallz 4 10 secondz.
+Night Watch => Nite Watch
+Warns you when night falls, and counts the nights you survive. => Warnz u wen nite fallz, an countz teh nitez u surviv.

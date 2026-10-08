@@ -475,3 +475,5 @@ Squid achievements => Squid lorpenak
 Use as Theme => Erabili gai gisa
 Creeper Radar => Creeper radarra
 Press K: every creeper nearby glows through walls for 10 seconds. => Sakatu K: inguruko creeper guztiek hormen artetik distira egiten dute 10 segundoz.
+Night Watch => Gaueko zaintza
+Warns you when night falls, and counts the nights you survive. => Gaua iristen denean abisatzen dizu, eta bizirik igarotzen dituzun gauak zenbatzen ditu.

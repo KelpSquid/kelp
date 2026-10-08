@@ -475,3 +475,5 @@ Squid achievements => Thành tựu Squid
 Use as Theme => Dùng làm chủ đề
 Creeper Radar => Radar Creeper
 Press K: every creeper nearby glows through walls for 10 seconds. => Bấm K: mọi con creeper gần đó phát sáng xuyên tường trong 10 giây.
+Night Watch => Gác Đêm
+Warns you when night falls, and counts the nights you survive. => Báo cho bạn khi màn đêm buông xuống, và đếm số đêm bạn sống sót.

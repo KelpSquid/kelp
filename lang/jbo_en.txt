@@ -475,3 +475,5 @@ Squid achievements => lo se snada be la Squid
 Use as Theme => pilno ti lo ka jvinu
 Creeper Radar => creeper zgana cabra
 Press K: every creeper nearby glows through walls for 10 seconds. => ko danre K .i ro lo jibni creeper cu gusni ne'i lo bitmu ze'a lo 10 snidu
+Night Watch => nicte zgana
+Warns you when night falls, and counts the nights you survive. => ri cusku do ca lo nu co'a nicte .ije ri kancu lo nicte poi do renvi ke'a

@@ -475,3 +475,5 @@ Squid achievements => Kowlwriansow Squid
 Use as Theme => Usya avel Tema
 Creeper Radar => Radar Creeper
 Press K: every creeper nearby glows through walls for 10 seconds. => Gwask K: pub creeper ogas a dhewl dre fosow dres 10 eylen.
+Night Watch => Gwithyas Nos
+Warns you when night falls, and counts the nights you survive. => Y'th war pan dheu an nos, hag ow nivera an nosow a dreusvewydh.

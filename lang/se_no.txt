@@ -475,3 +475,5 @@ Squid achievements => Squid-olahusat
 Use as Theme => Geavat fáddán
 Creeper Radar => Creeper-radára
 Press K: every creeper nearby glows through walls for 10 seconds. => Deaddil K: juohke creeper lahkosis šuvgá seinniid čađa 10 sekundda.
+Night Watch => Ijavákta
+Warns you when night falls, and counts the nights you survive. => Várrehallá du go idja boahtá, ja lohká ijaid maid birget.

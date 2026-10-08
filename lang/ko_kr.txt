@@ -475,3 +475,5 @@ Squid achievements => Squid 업적
 Use as Theme => 테마로 쓰기
 Creeper Radar => 크리퍼 레이더
 Press K: every creeper nearby glows through walls for 10 seconds. => K를 누르면: 근처의 모든 크리퍼가 10초 동안 벽 너머로 빛나요.
+Night Watch => 밤 파수꾼
+Warns you when night falls, and counts the nights you survive. => 밤이 되면 알려 주고, 살아남은 밤을 세어 줘요.
