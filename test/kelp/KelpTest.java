@@ -1371,8 +1371,10 @@ public class KelpTest {
 
     static void defaultInstance() throws Exception {
         check("no Squid Count yet is 0", SquidCount.points("abc"), 0);
-        Files.writeString(SquidCount.file(), "{\"players\": {\"abc\": {\"name\": \"Sam\", \"points\": 85, \"earned\": []}}}");
+        Files.writeString(SquidCount.file(), "{\"players\": {\"abc\": {\"name\": \"Sam\", \"points\": 85, \"earned\": "
+                + "[\"minecraft:story/mine_stone\", \"squid:paint\", \"squid:mod\", \"squid:unknown\"]}}}");
         check("Kelp reads the Squid Count", SquidCount.points("abc") + " " + SquidCount.points("someone-else"), "85 0");
+        check("and how many of Squid's own achievements", SquidCount.achievements("abc") + " " + SquidCount.achievements("someone-else"), "2 0");
         Files.delete(SquidCount.file());
         VersionManifest.Version v = new VersionManifest.Version("26.3", "release", "", "");
         check("the Play corner doesn't repeat what the name says", Instance.create("Squid 26.3", v, Loader.SQUID).summary() + " | "

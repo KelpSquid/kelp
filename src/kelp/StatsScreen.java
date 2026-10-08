@@ -24,6 +24,7 @@ public class StatsScreen extends Screen {
     private double shownAt = -1;
     private int worlds;
     private int squidCount;
+    private int achievements; // Squid's own achievements earned, out of SquidCount.ACHIEVEMENTS
 
     public StatsScreen(OceanPanel panel, Screen parent, Instance instance) {
         super(panel);
@@ -48,6 +49,7 @@ public class StatsScreen extends Screen {
             shown = fresh != null ? fresh : instance;
             worlds = Worlds.list(Worlds.saves(instance)).size();
             squidCount = SquidCount.points(Accounts.active().id());
+            achievements = SquidCount.achievements(Accounts.active().id());
             shownAt = panel.getTime();
         }
 
@@ -57,6 +59,7 @@ public class StatsScreen extends Screen {
         rows.add(new String[] {t("Last played"), shown.lastPlayed() == 0 ? "-" : WHEN.format(Instant.ofEpochMilli(shown.lastPlayed()))});
         rows.add(new String[] {t("Worlds"), String.valueOf(worlds)});
         rows.add(new String[] {t("Squid Count"), String.valueOf(squidCount)});
+        rows.add(new String[] {t("Squid achievements"), achievements + " / " + SquidCount.ACHIEVEMENTS.size()});
         GameStats s = stats;
         if (s == null) {
             rows.add(new String[] {t("Reading the worlds..."), ""});
