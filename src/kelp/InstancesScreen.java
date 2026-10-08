@@ -23,6 +23,9 @@ public class InstancesScreen extends Screen {
     private final McButton backButton = new McButton(t("Back"), this::back);
     private final McButton shareButton = new McButton(t("Share"), this::share);
     private String notice; // good news, like "Saved X to Downloads!"
+    /** How many mods in each instance Mod Doctor would fix, looked at again every few seconds. */
+    private final java.util.Map<String, Integer> toFix = new java.util.HashMap<>();
+    private double checkedAt = -1;
     private String problem;
 
     public InstancesScreen(OceanPanel panel, Screen parent) {
@@ -133,6 +136,15 @@ public class InstancesScreen extends Screen {
 
         int listBottom = h - 156 * GUI;
         String empty = list.getItems().isEmpty() ? t("No instances yet. Click New Instance!") : null;
+        if (checkedAt < 0 || panel.getTime() - checkedAt >= 3) {
+            toFix.clear();
+            for (Instance instance : list.getItems()) {
+                if (instance.loader() != Loader.SQUID) continue; // Mod Doctor knows Squid mods
+                int count = ModDoctor.check(InstalledMod.list(instance.mods())).size();
+                if (count > 0) toFix.put(instance.id(), count);
+            }
+            checkedAt = panel.getTime();
+        }
         list.draw(g, font, w, 32 * GUI, listBottom, empty, (gg, instance, x, y, width) -> {
             // Like Minecraft's world list: the name, and under it in grey, its version and loader.
             // The default instance is yellow, with a star, like it's been picked out.
@@ -140,7 +152,12 @@ public class InstancesScreen extends Screen {
             String name = fit(font, isDefault ? "* " + instance.name() : instance.name(), width);
             font.draw(gg, name, x, y, GUI, isDefault ? 0xFFFF55 : 0xFFFFFF);
             String details = t("Minecraft {0}", instance.version().id()) + instance.loader().suffix() + (instance.loaderIsBeta() ? " " + t("beta") : "");
-            font.draw(gg, fit(font, details, width), x, y + 10 * GUI, GUI, 0x808080);
+            // Mods that Mod Doctor can help with: a yellow note on the right, so it's noticed before playing
+            Integer count = toFix.get(instance.id());
+            String fix = count == null ? null : count == 1 ? t("1 mod to fix") : t("{0} mods to fix", count);
+            int room = fix == null ? width : width - font.width(fix, GUI) - 6 * GUI;
+            font.draw(gg, fit(font, details, room), x, y + 10 * GUI, GUI, 0x808080);
+            if (fix != null) font.draw(gg, fix, x + width - font.width(fix, GUI), y + 10 * GUI, GUI, 0xFFFF55);
         });
         if (problem != null) centered(g, problem, w, listBottom + 2 * GUI, 0xFF5555);
         else if (notice != null) centered(g, notice, w, listBottom + 2 * GUI, 0x55FF55);
