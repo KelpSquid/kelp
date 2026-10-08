@@ -13,6 +13,7 @@ public class DownloadScreen extends Screen {
 
     private final Screen parent;
     private final Instance instance;
+    private final boolean safe; // started with every mod off (Play Without Mods)
     private final VersionManifest.Version version;
     private final boolean withSquid;
     private final GameInstaller installer = new GameInstaller();
@@ -54,6 +55,7 @@ public class DownloadScreen extends Screen {
         super(panel);
         this.parent = parent;
         this.instance = instance;
+        this.safe = safe;
         this.version = instance.version();
         this.withSquid = instance.squid();
         buttons.add(button);
@@ -141,12 +143,13 @@ public class DownloadScreen extends Screen {
         }
     }
 
-    /** Turns off the mod the crash helper blamed, so the game can be tried again without it. */
     /** Starts the game again with every mod off (Squid's safe mode), so a broken mod can't keep it from opening. */
     private void playWithoutMods() {
         if (RunningGames.isRunning(instance)) return;
         panel.setScreen(new DownloadScreen(panel, parent, instance, null, null, true));
     }
+
+    /** Turns off the mod the crash helper blamed, so the game can be tried again without it. */
 
     private void turnOffCulprit() {
         if (diagnosis == null || diagnosis.culprit() == null) return;
@@ -239,8 +242,12 @@ public class DownloadScreen extends Screen {
                         y += 12 * GUI;
                     }
                     for (McButton b : new McButton[] {copyButton, logButton, turnOffButton}) b.setBounds(-1000, -1000, 0, 0);
-                    safeButton.setBounds(w / 2 - 100 * GUI, centerY + 30 * GUI, 200 * GUI, 20 * GUI);
-                    safeButton.draw(g, font, GUI);
+                    if (!safe) {
+                        safeButton.setBounds(w / 2 - 100 * GUI, centerY + 30 * GUI, 200 * GUI, 20 * GUI);
+                        safeButton.draw(g, font, GUI);
+                    } else {
+                        safeButton.setBounds(-1000, -1000, 0, 0);
+                    }
                     button.setLabel(t("Back"));
                     button.setBounds(w / 2 - 100 * GUI, centerY + 54 * GUI, 200 * GUI, 20 * GUI);
                     button.draw(g, font, GUI);
@@ -264,7 +271,7 @@ public class DownloadScreen extends Screen {
                     logButton.setBounds(w / 2 + 2 * GUI, buttonsY, 98 * GUI, 20 * GUI);
                     copyButton.draw(g, font, GUI);
                     logButton.draw(g, font, GUI);
-                    if (diagnosis.culprit() != null && diagnosis.culprit().enabled()) {
+                    if (!safe && diagnosis.culprit() != null && diagnosis.culprit().enabled()) {
                         turnOffButton.setLabel(t("Turn Off {0}", diagnosis.culprit().name()));
                         turnOffButton.setBounds(w / 2 - 100 * GUI, buttonsY + 24 * GUI, 200 * GUI, 20 * GUI);
                         turnOffButton.draw(g, font, GUI);
@@ -272,7 +279,7 @@ public class DownloadScreen extends Screen {
                         turnOffButton.setBounds(-1000, -1000, 0, 0);
                     }
                     int backY = buttonsY + 48 * GUI;
-                    if (withSquid) {
+                    if (withSquid && !safe) {
                         safeButton.setBounds(w / 2 - 100 * GUI, backY, 200 * GUI, 20 * GUI);
                         safeButton.draw(g, font, GUI);
                         backY += 24 * GUI;

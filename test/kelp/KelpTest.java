@@ -666,6 +666,8 @@ public class KelpTest {
         Files.writeString(continueHome.resolve("squid-last-played.txt"), "server\nplay.example.com:25565\nMy Server\n");
         Continue.Target joined = Continue.find(continueHome);
         check("Continue goes back to a server", joined.server() + " " + joined.id() + " " + joined.shown(), "true play.example.com:25565 My Server");
+        Files.writeString(continueHome.resolve("squid-last-played.txt"), "server\na\" --demo \"b\nOdd\n");
+        check("an address that isn't plain is ignored", Continue.find(continueHome).id(), "Castle");
         Files.createDirectories(Folders.squid());
         if (!Files.exists(Folders.squid().resolve("squid.jar"))) Files.writeString(Folders.squid().resolve("squid.jar"), "pretend Squid");
         check("Play Without Mods starts Squid with every mod off", Launcher.buildCommand("test-new", game, Account.offline("Samuel_A"),

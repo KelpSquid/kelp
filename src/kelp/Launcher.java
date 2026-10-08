@@ -226,6 +226,7 @@ public final class Launcher {
             command.add("--quickPlaySingleplayer");
             command.add(world);
         } else if (server != null) {
+            if (!ParentControls.multiplayerAllowed()) throw new IOException("A parent turned multiplayer off in Parent Controls.");
             if (arguments == null || !String.valueOf(arguments.get("game")).contains("quickPlayMultiplayer")) {
                 throw new IOException("Minecraft " + versionId + " can't join a server by itself. Play it, then pick the server.");
             }
