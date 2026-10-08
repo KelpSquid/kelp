@@ -34,13 +34,24 @@ public final class Launcher {
      */
     public static Process launch(String versionId, Path gameFolder, Account account, Loader loader, String loaderVersion,
                                  int memoryGb) throws IOException {
-        List<String> command = buildCommand(versionId, gameFolder, account, loader, loaderVersion, memoryGb);
+        return launch(versionId, gameFolder, account, loader, loaderVersion, memoryGb, true);
+    }
+
+    /**
+     * Like {@link #launch(String, Path, Account, Loader, String, int)}; fast false starts Squid the normal way even
+     * when its fast boot is ready (Kelp does that when Squid says the fast boot files don't match anymore).
+     */
+    public static Process launch(String versionId, Path gameFolder, Account account, Loader loader, String loaderVersion,
+                                 int memoryGb, boolean fast) throws IOException {
+        List<String> command = buildCommand(versionId, gameFolder, account, loader, loaderVersion, memoryGb, fast);
         Files.deleteIfExists(SquidReport.file(gameFolder)); // so Kelp never shows last time's report
-        return new ProcessBuilder(command)
+        Process game = new ProcessBuilder(command)
                 .directory(gameFolder.toFile())
                 .redirectErrorStream(true)
                 .redirectOutput(gameFolder.resolve("kelp-output.log").toFile())
                 .start();
+        if (command.contains("-Dsquid.trainLater=true")) FastBoot.trainAfter(game, command, gameFolder);
+        return game;
     }
 
     /** The command for Vanilla (withSquid false) or Squid (true). */
@@ -52,6 +63,11 @@ public final class Launcher {
     /** The full command that starts the game: java, its settings, then the game's own settings. */
     public static List<String> buildCommand(String versionId, Path gameFolder, Account account, Loader loader,
                                             String loaderVersion, int memoryGb) throws IOException {
+        return buildCommand(versionId, gameFolder, account, loader, loaderVersion, memoryGb, true);
+    }
+
+    public static List<String> buildCommand(String versionId, Path gameFolder, Account account, Loader loader,
+                                            String loaderVersion, int memoryGb, boolean fast) throws IOException {
         boolean withSquid = loader == Loader.SQUID;
         Path versionFolder = Folders.versions().resolve(versionId);
         Map<String, Object> details = Json.object(Json.parse(Files.readString(versionFolder.resolve(versionId + ".json"))));
@@ -95,7 +111,21 @@ public final class Launcher {
             // Squid starts first. Only Squid goes on the normal classpath, and Squid loads Minecraft itself,
             // so mods can change Minecraft's code as it loads.
             checkSquidCanRun(details, versionId);
-            vars.put("classpath", String.join(File.pathSeparator, squidJars()));
+            List<String> fastClasspath = fast ? FastBoot.classpath(gameFolder) : null;
+            if (fastClasspath == null) {
+                vars.put("classpath", String.join(File.pathSeparator, squidJars()));
+            } else {
+                // Fast boot: Minecraft already patched, straight on Java's classpath (see FastBoot)
+                List<String> classpath = new ArrayList<>(squidJars());
+                classpath.addAll(fastClasspath);
+                vars.put("classpath", String.join(File.pathSeparator, classpath));
+                squidSettings.add("-Dsquid.fastBoot=" + FastBoot.folder(gameFolder));
+                if (javaMajor(details) >= 25) { // Java's AOT cache came in Java 25
+                    Path aot = FastBoot.aotCache(gameFolder);
+                    if (aot != null) squidSettings.add("-XX:AOTCache=" + aot);
+                    else squidSettings.add("-Dsquid.trainLater=true"); // make it after this game closes
+                }
+            }
             squidSettings.add("-Dsquid.gameClasspath=" + gameClasspath);
             squidSettings.add("-Dsquid.mainClass=" + mainClass);
             squidSettings.add("-Dsquid.home=" + Folders.home()); // where Squid keeps things shared by every instance, like the Squid Count
@@ -164,6 +194,11 @@ public final class Launcher {
         try (Stream<Path> files = Files.list(folder)) {
             return files.filter(p -> p.toString().endsWith(".jar")).map(Path::toString).sorted().toList();
         }
+    }
+
+    private static int javaMajor(Map<String, Object> details) {
+        Map<String, Object> javaVersion = Json.object(details.get("javaVersion"));
+        return javaVersion == null ? 8 : ((Number) javaVersion.get("majorVersion")).intValue();
     }
 
     /** Squid is built for Java 21, so it can only start versions that run on Java 21 or newer. */

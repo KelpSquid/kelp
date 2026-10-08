@@ -71,6 +71,14 @@ public class DownloadScreen extends Screen {
                 }
                 phase = Phase.RUNNING;
                 exitCode = game.waitFor();
+                if (exitCode == FastBoot.RESTART && alreadyOpen == null && !cancelled) {
+                    // Squid's fast boot didn't match the mods anymore: start it the normal way (which makes a new one)
+                    FastBoot.forget(instance.folder());
+                    game = Launcher.launch(version.id(), instance.folder(), Accounts.readyToPlay(), instance.loader(),
+                            instance.loaderVersion(), Settings.memoryGb(), false);
+                    RunningGames.add(instance, game);
+                    exitCode = game.waitFor();
+                }
                 phase = exitCode == 0 ? Phase.CLOSED : Phase.CRASHED;
             } catch (Exception e) {
                 if (cancelled) return; // stopping because of Cancel isn't a problem to show
