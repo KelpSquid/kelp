@@ -191,9 +191,9 @@ public final class ModStarters {
                         }
                     }
                     """),
-            new Starter("Diamond Counter", "Counts every diamond you mine, forever.", """
-                    // %1$s: counts the diamonds you mine, and remembers them even after you quit.
-                    // Try counting something else: "ancient_debris", "oak_log", or "" for every block.
+            new Starter("Diamond Counter", "Counts every diamond you collect, forever.", """
+                    // %1$s: counts the diamonds you pick up, and remembers them even after you quit.
+                    // Try counting something else: "emerald", "netherite_scrap", "golden_apple".
 
                     public class %2$s extends EasyMod {
                         int diamonds;
@@ -201,15 +201,15 @@ public final class ModStarters {
                         void start() {
                             diamonds = remembered("diamonds", 0);
                             keepShowing(() -> "Diamonds: " + diamonds); // always in the top-left corner
-                            onBreak(block -> {
-                                if (block.contains("diamond_ore")) {
-                                    diamonds = diamonds + 1;
+                            onPickup((item, amount) -> {
+                                if (item.equals("diamond")) {
+                                    diamonds = diamonds + amount;
                                     remember("diamonds", diamonds);
                                     title("Diamonds!", "That's " + diamonds + " ever");
                                     particles("happy_villager", 10);
                                 }
                             });
-                            onCommand("diamonds", () -> say("You've mined " + diamonds + " diamonds."));
+                            onCommand("diamonds", () -> say("You've collected " + diamonds + " diamonds."));
                         }
                     }
                     """),
