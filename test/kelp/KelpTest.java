@@ -1030,6 +1030,34 @@ public class KelpTest {
         check("a folder named in another alphabet packs under its main class's name (and nothing half-made is left)",
                 noId + " | " + packedAlphabet.getFileName() + " " + alphabetOut,
                 "its folder's name has no letters from a to z, so its squid.json needs an \"id\" and a \"main\" | Nihongo.squid [Nihongo.squid]");
+        // Sound Maker: a loop too short to be a loop, and a tempo that can't be right, are said before anything is made
+        SoundMakerScreen maker = new SoundMakerScreen(new OceanPanel(), null);
+        maker.filesDropped(List.of(home.resolve("song.wav")));
+        java.lang.reflect.Method make = SoundMakerScreen.class.getDeclaredMethod("make");
+        make.setAccessible(true);
+        java.lang.reflect.Field makerMessage = SoundMakerScreen.class.getDeclaredField("message");
+        makerMessage.setAccessible(true);
+        java.lang.reflect.Field makerLooping = SoundMakerScreen.class.getDeclaredField("looping");
+        makerLooping.setAccessible(true);
+        java.util.function.Function<String, McTextField> makerField = name -> {
+            try {
+                java.lang.reflect.Field f = SoundMakerScreen.class.getDeclaredField(name);
+                f.setAccessible(true);
+                return (McTextField) f.get(maker);
+            } catch (ReflectiveOperationException e) {
+                throw new IllegalStateException(e);
+            }
+        };
+        makerLooping.set(maker, true);
+        makerField.apply("loopStartField").setText("1");
+        makerField.apply("loopEndField").setText("1.05");
+        make.invoke(maker);
+        String shortLoop = (String) makerMessage.get(maker);
+        makerLooping.set(maker, false);
+        makerField.apply("bpmField").setText("12000");
+        make.invoke(maker);
+        check("Sound Maker says when a loop is too short or a tempo can't be right", shortLoop + " | " + makerMessage.get(maker),
+                "The loop has to be at least 0.1 seconds long. | The tempo should be beats a minute, like 120.");
         // Share: an instance becomes one .mrpack that Kelp (and other launchers) can import
         Instance sharing = Instance.create("Share Me!", dropVersion, Loader.SQUID);
         ModProject.create(sharing.mods(), "Lava Walker", "26.3");

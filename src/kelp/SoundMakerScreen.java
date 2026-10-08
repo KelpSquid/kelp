@@ -111,6 +111,16 @@ public class SoundMakerScreen extends Screen {
             problem(t("The loop needs a start and an end (in seconds), with the end after the start."));
             return;
         }
+        // Squid loops the whole sound instead of a loop this short, which isn't what anyone typing it meant
+        if (looping && loopEnd - loopStart < 0.1) {
+            problem(t("The loop has to be at least 0.1 seconds long."));
+            return;
+        }
+        // A typo (12000, or letters) would make no beat cues, or far too many
+        if (!bpmField.getText().isBlank() && (bpm == null || !(bpm > 0 && bpm <= 1000))) {
+            problem(t("The tempo should be beats a minute, like 120."));
+            return;
+        }
         working = true;
         message = t("Making it...");
         messageIsProblem = false;
