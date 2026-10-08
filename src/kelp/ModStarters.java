@@ -191,6 +191,21 @@ public final class ModStarters {
                         }
                     }
                     """),
+            new Starter("Creeper Radar", "Press K: every creeper nearby glows through walls for 10 seconds.", """
+                    // %1$s: press K and every creeper glows, even behind walls, for 10 seconds.
+                    // Try other mobs: "zombie", "skeleton", "pig", or glow two kinds at once.
+
+                    public class %2$s extends EasyMod {
+                        void start() {
+                            onKey("K", () -> {
+                                glow("creeper");
+                                showText("Creeper radar on!");
+                                playSound("block.note_block.chime");
+                                after(10, () -> stopGlowing("creeper"));
+                            });
+                        }
+                    }
+                    """),
             new Starter("Diamond Counter", "Counts every diamond you collect, forever.", """
                     // %1$s: counts the diamonds you pick up, and remembers them even after you quit.
                     // Try counting something else: "emerald", "netherite_scrap", "golden_apple".
