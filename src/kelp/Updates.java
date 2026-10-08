@@ -30,7 +30,7 @@ public final class Updates {
 
     /** Where the newest release's details are. Tests point this at a pretend server with -Dkelp.updates. */
     static String manifest = System.getProperty("kelp.updates",
-            "https://github.com/SamuelArther/kelp/releases/latest/download/update.json");
+            "https://github.com/KelpSquid/kelp/releases/latest/download/update.json");
 
     /** One file to download: where it is, its sha256 fingerprint, and its size in bytes. */
     public record Download(String url, String sha256, long size) {
@@ -181,7 +181,7 @@ public final class Updates {
     }
 
     private static HttpRequest request(String url) {
-        return HttpRequest.newBuilder(URI.create(url)).header("User-Agent", "SamuelArther/kelp/" + (current() == null ? "dev" : current()))
+        return HttpRequest.newBuilder(URI.create(url)).header("User-Agent", "KelpSquid/kelp/" + (current() == null ? "dev" : current()))
                 .timeout(Duration.ofMinutes(5)).build();
     }
 }

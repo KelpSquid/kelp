@@ -5,7 +5,7 @@
 
 # Kelp
 
-A launcher for Minecraft: Java Edition, made from scratch, with an animated underwater look and the [Squid](https://github.com/SamuelArther/squid) mod loader built in.
+A launcher for Minecraft: Java Edition, made from scratch, with an animated underwater look and the [Squid](https://github.com/KelpSquid/squid) mod loader built in.
 
 
 ## What it does
@@ -35,7 +35,7 @@ You need to own Minecraft: Java Edition to use Kelp.
 
 From source, with Java 21 or newer installed: run `run.bat`.
 
-To make the downloads for Windows, Linux and Mac (each with its own Java), build [Squid](https://github.com/SamuelArther/squid) first, then run `package.bat`. They land in the `build` folder.
+To make the downloads for Windows, Linux and Mac (each with its own Java), build [Squid](https://github.com/KelpSquid/squid) first, then run `package.bat`. They land in the `build` folder.
 
 ## Contact
 

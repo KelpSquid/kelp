@@ -27,7 +27,7 @@ import java.util.zip.ZipInputStream;
  */
 public class ThemeStoreScreen extends Screen {
     /** The Store's list. Tests point it at a pretend server. */
-    static String storeUrl = "https://raw.githubusercontent.com/SamuelArther/squid-store/main/store.json";
+    static String storeUrl = "https://raw.githubusercontent.com/KelpSquid/squid-store/main/store.json";
 
     /** One theme in the Store. */
     record Item(String id, String name, String author, String url, String sha256) {

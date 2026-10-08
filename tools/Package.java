@@ -138,7 +138,7 @@ public class Package {
     // ---- The update files ----
 
     /** Where update.json says the files are: the GitHub release for this version. */
-    static final String RELEASES = "https://github.com/SamuelArther/kelp/releases/download/v";
+    static final String RELEASES = "https://github.com/KelpSquid/kelp/releases/download/v";
 
     /**
      * build/release: kelp.jar, squid.zip (everything in Kelp's squid folder) and update.json, which lists both with

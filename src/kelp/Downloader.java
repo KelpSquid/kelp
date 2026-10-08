@@ -36,7 +36,7 @@ public class Downloader {
     private static final int THREADS = 8; // how many files download at the same time
     private static final int TRIES = 3;
     // Sites like Modrinth ask every app to say who it is, so they can reach the developer if something goes wrong
-    static final String USER_AGENT = "SamuelArther/kelp/0.1 (kelp@kelplauncher.org)";
+    static final String USER_AGENT = "KelpSquid/kelp/0.1 (kelp@kelplauncher.org)";
 
     // Give up connecting after 15 seconds, so a bad connection fails instead of waiting forever
     private final HttpClient client = HttpClient.newBuilder()
