@@ -289,6 +289,18 @@ public final class ModProject {
                 || lower.startsWith("._") || lower.endsWith("~") || lower.endsWith(".tmp") || lower.endsWith(".swp");
     }
 
+    /**
+     * A small file inside a mod's zip (like its squid.json), read no further than 1 MB: a made-up file could unpack
+     * to gigabytes, and Kelp would run out of memory reading it.
+     */
+    static byte[] small(java.util.zip.ZipFile zip, ZipEntry entry) throws IOException {
+        try (java.io.InputStream in = zip.getInputStream(entry)) {
+            byte[] bytes = in.readNBytes((1 << 20) + 1);
+            if (bytes.length > 1 << 20) throw new IOException("its " + entry.getName() + " is far too big");
+            return bytes;
+        }
+    }
+
     /** Text from a file, with or without the mark (BOM) some editors put at the start. */
     static String text(byte[] bytes) {
         int start = bytes.length >= 3 && (bytes[0] & 0xFF) == 0xEF && (bytes[1] & 0xFF) == 0xBB && (bytes[2] & 0xFF) == 0xBF ? 3 : 0;

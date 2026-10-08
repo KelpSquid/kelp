@@ -171,7 +171,7 @@ public record InstalledMod(Path file, boolean enabled, Loader kind, String name,
     }
 
     private static String text(ZipFile zip, ZipEntry entry) throws IOException {
-        return ModProject.text(zip.getInputStream(entry).readAllBytes());
+        return ModProject.text(ModProject.small(zip, entry));
     }
 
     /**

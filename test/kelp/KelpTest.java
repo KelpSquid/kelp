@@ -1010,6 +1010,16 @@ public class KelpTest {
         check("a different mod with the same file name is kept, and the new one gets a number",
                 InstalledMod.squidId(dropInstance.mods().resolve("Dice.squid")) + " " + InstalledMod.squidId(dropInstance.mods().resolve("Dice (2).squid")),
                 "dice other-dice");
+        // A squid.json that unpacks to more than any real one is refused without reading it all (it could be gigabytes)
+        Path bombFolder = Files.createDirectories(home.resolve("bomb-mods"));
+        try (java.util.zip.ZipOutputStream zip = new java.util.zip.ZipOutputStream(Files.newOutputStream(bombFolder.resolve("Bomb.squid")))) {
+            zip.putNextEntry(new java.util.zip.ZipEntry("squid.json"));
+            zip.write(("{\"name\": \"Bomb\"" + " ".repeat(2 << 20) + "}").getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            zip.closeEntry();
+        }
+        List<InstalledMod> bombs = InstalledMod.list(bombFolder);
+        check("a mod whose squid.json is far too big is listed with a problem, not read whole", bombs.size() + " " + InstalledMod.squidId(bombFolder.resolve("Bomb.squid")),
+                "1 null");
         // Packing a folder named only in another alphabet: named after its main class, and it asks for an id if it has none
         Path alphabet = Files.createDirectories(home.resolve("alphabet").resolve("日本語").resolve("src"));
         Files.writeString(alphabet.resolve("Nihongo.java"), "public class Nihongo extends EasyMod { void start() {} }");

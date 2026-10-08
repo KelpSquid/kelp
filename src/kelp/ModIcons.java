@@ -88,15 +88,15 @@ public final class ModIcons {
                 ZipEntry fabric = zip.getEntry("fabric.mod.json");
                 ZipEntry quilt = zip.getEntry("quilt.mod.json");
                 if (squid != null) {
-                    String icon = iconName(Json.object(Json.parse(ModProject.text(zip.getInputStream(squid).readAllBytes()))));
+                    String icon = iconName(Json.object(Json.parse(ModProject.text(ModProject.small(zip, squid)))));
                     path = name.contains(".squid") ? root + "resources/" + icon : icon;
                 } else if (fabric != null) {
-                    Object icon = Json.object(Json.parse(ModProject.text(zip.getInputStream(fabric).readAllBytes()))).get("icon");
+                    Object icon = Json.object(Json.parse(ModProject.text(ModProject.small(zip, fabric)))).get("icon");
                     // Fabric's icon is a path, or sizes and paths: the biggest is fine, it's shown small
                     if (icon instanceof String one) path = one;
                     else if (icon instanceof Map<?, ?> sizes && !sizes.isEmpty()) path = String.valueOf(sizes.values().iterator().next());
                 } else if (quilt != null) {
-                    Map<String, Object> loader = Json.object(Json.object(Json.parse(ModProject.text(zip.getInputStream(quilt).readAllBytes()))).get("quilt_loader"));
+                    Map<String, Object> loader = Json.object(Json.object(Json.parse(ModProject.text(ModProject.small(zip, quilt)))).get("quilt_loader"));
                     Map<String, Object> metadata = loader == null ? null : Json.object(loader.get("metadata"));
                     if (metadata != null && metadata.get("icon") instanceof String one) path = one;
                 }
