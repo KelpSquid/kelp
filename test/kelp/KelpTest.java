@@ -913,6 +913,25 @@ public class KelpTest {
         dropScreen.filesDropped(List.of(friendJava));
         check("a dropped .java with the same name as yours gets a number, and yours stays",
                 Files.readString(ownJava).contains("mine") + " " + Files.exists(dropInstance.mods().resolve("Helper2.java")), "true true");
+        // Share: an instance becomes one .mrpack that Kelp (and other launchers) can import
+        Instance sharing = Instance.create("Share Me!", dropVersion, Loader.SQUID);
+        ModProject.create(sharing.mods(), "Lava Walker", "26.3");
+        Files.writeString(sharing.mods().resolve("Tiny.java"), "public class Tiny extends EasyMod { void start() {} }");
+        Files.writeString(sharing.folder().resolve("options.txt"), "fov:0.5\n");
+        Files.createDirectories(sharing.folder().resolve("saves/My World"));
+        Files.writeString(sharing.folder().resolve("saves/My World/level.dat"), "world");
+        Path pack = ModpackExport.export(sharing, Files.createDirectories(home.resolve("shared-out")), false);
+        List<String> inPack = new java.util.ArrayList<>();
+        try (java.util.zip.ZipFile zip = new java.util.zip.ZipFile(pack.toFile())) {
+            zip.stream().forEach(e -> inPack.add(e.getName()));
+        }
+        check("Share packs mods (projects as .squid), settings, and not the worlds", pack.getFileName() + " " + inPack,
+                "Share Me!.mrpack [modrinth.index.json, overrides/mods/LavaWalker.squid, overrides/mods/Tiny.java, overrides/options.txt]");
+        ModpackImport.Plan sharedPlan = ModpackImport.read(pack);
+        check("a shared pack comes back in as a Squid instance for the same Minecraft", sharedPlan.name() + " " + sharedPlan.minecraft() + " " + sharedPlan.loader(),
+                "Share Me! 26.3 SQUID");
+        check("loader versions are written the way packs write them", ModpackExport.loaderVersion("fabric-loader-0.19.5-26.3", "26.3") + " "
+                + ModpackExport.loaderVersion(null, "26.3"), "0.19.5 *");
         InstalledMod off = listed.toggle();
         check("a project can be turned off", off.file().getFileName() + " " + InstalledMod.list(instance.mods()).stream()
                 .filter(m -> m.file().equals(off.file())).findFirst().map(InstalledMod::enabled).orElse(null), "MegaMod.disabled false");

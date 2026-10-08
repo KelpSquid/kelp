@@ -57,8 +57,10 @@ public final class ModpackImport {
         Map<String, Object> index = Json.object(Json.parse(json));
         Map<String, Object> needs = Json.object(index.get("dependencies"));
         String minecraft = (String) needs.get("minecraft");
-        Loader loader = needs.containsKey("fabric-loader") ? Loader.FABRIC : needs.containsKey("quilt-loader") ? Loader.QUILT
-                : needs.containsKey("neoforge") ? Loader.NEOFORGE : needs.containsKey("forge") ? Loader.FORGE : Loader.VANILLA;
+        // "squid" is Kelp's own: a pack shared from a Squid instance (see ModpackExport)
+        Loader loader = needs.containsKey("squid") ? Loader.SQUID : needs.containsKey("fabric-loader") ? Loader.FABRIC
+                : needs.containsKey("quilt-loader") ? Loader.QUILT : needs.containsKey("neoforge") ? Loader.NEOFORGE
+                : needs.containsKey("forge") ? Loader.FORGE : Loader.VANILLA;
         List<Downloader.Job> files = new ArrayList<>();
         for (Object entry : Json.array(index.get("files"))) {
             Map<String, Object> file = Json.object(entry);

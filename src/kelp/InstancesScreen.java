@@ -4,6 +4,7 @@ import static kelp.Lang.t;
 
 import java.awt.Graphics2D;
 import java.io.IOException;
+import java.nio.file.Path;
 
 /** Every instance, with buttons to play, make, change and delete them. */
 public class InstancesScreen extends Screen {
@@ -20,6 +21,8 @@ public class InstancesScreen extends Screen {
     private final McButton statsButton = new McButton(t("Stats"), () -> panel.setScreen(new StatsScreen(panel, this, list.getSelected())));
     private final McButton galleryButton = new McButton(t("Gallery"), () -> panel.setScreen(new GalleryScreen(panel, this, list.getSelected())));
     private final McButton backButton = new McButton(t("Back"), this::back);
+    private final McButton shareButton = new McButton(t("Share"), this::share);
+    private String notice; // good news, like "Saved X to Downloads!"
     private String problem;
 
     public InstancesScreen(OceanPanel panel, Screen parent) {
@@ -36,6 +39,7 @@ public class InstancesScreen extends Screen {
         buttons.add(statsButton);
         buttons.add(galleryButton);
         buttons.add(backButton);
+        buttons.add(shareButton);
     }
 
     private void back() {
@@ -90,6 +94,19 @@ public class InstancesScreen extends Screen {
         panel.setScreen(new GameOptionsScreen(panel, this, list.getSelected()));
     }
 
+    /** Packs the instance into a .mrpack in Downloads, for a friend to bring in with Import. Worlds stay home. */
+    private void share() {
+        Instance instance = list.getSelected();
+        try {
+            Path file = ModpackExport.export(instance, Path.of(System.getProperty("user.home"), "Downloads"), false);
+            notice = t("Saved {0} to Downloads! A friend can bring it in with Import.", file.getFileName());
+            problem = null;
+        } catch (IOException e) {
+            problem = t("Couldn't share it: {0}", e.getMessage());
+            notice = null;
+        }
+    }
+
     private void delete() {
         Instance instance = list.getSelected();
         if (RunningGames.isRunning(instance)) {
@@ -126,10 +143,11 @@ public class InstancesScreen extends Screen {
             font.draw(gg, fit(font, details, width), x, y + 10 * GUI, GUI, 0x808080);
         });
         if (problem != null) centered(g, problem, w, listBottom + 2 * GUI, 0xFF5555);
+        else if (notice != null) centered(g, notice, w, listBottom + 2 * GUI, 0x55FF55);
 
         // Buttons: everything but New Instance and Back is for one instance, so they only show once one is picked
         Instance selected = list.getSelected();
-        McButton[] forOne = {playButton, loaderButton, modsButton, optionsButton, deleteButton, defaultButton, worldsButton, statsButton, galleryButton};
+        McButton[] forOne = {playButton, loaderButton, modsButton, optionsButton, deleteButton, defaultButton, worldsButton, statsButton, galleryButton, shareButton};
         for (McButton b : forOne) b.setActive(selected != null);
         if (selected == null) centered(g, t("Click an instance to play it or change it."), w, h - 112 * GUI, 0xA0A0A0);
         loaderButton.setLabel(selected == null ? t("Loader") : selected.loader().label());
@@ -147,7 +165,8 @@ public class InstancesScreen extends Screen {
         worldsButton.setBounds(right, y + 72 * GUI, 98 * GUI, 20 * GUI);
         statsButton.setBounds(left, y + 96 * GUI, 98 * GUI, 20 * GUI);
         galleryButton.setBounds(right, y + 96 * GUI, 98 * GUI, 20 * GUI);
-        backButton.setBounds(left, y + 120 * GUI, 200 * GUI, 20 * GUI);
+        shareButton.setBounds(left, y + 120 * GUI, 98 * GUI, 20 * GUI);
+        backButton.setBounds(selected == null ? left : right, y + 120 * GUI, selected == null ? 200 * GUI : 98 * GUI, 20 * GUI);
         if (selected == null) newButton.setBounds(left, y + 96 * GUI, 200 * GUI, 20 * GUI); // on its own, above Back
         for (McButton b : buttons) {
             if (selected != null || !java.util.Arrays.asList(forOne).contains(b)) b.draw(g, font, GUI);
