@@ -184,6 +184,7 @@ public final class ModStarters {
 
                         void start() {
                             diamonds = remembered("diamonds", 0);
+                            keepShowing(() -> "Diamonds: " + diamonds); // always in the top-left corner
                             onBreak(block -> {
                                 if (block.contains("diamond_ore")) {
                                     diamonds = diamonds + 1;
