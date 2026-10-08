@@ -26,6 +26,7 @@ public class WorldsScreen extends Screen {
     private final McButton openButton = new McButton(t("Open Folder"), this::openFolder);
     private final McButton doneButton = new McButton(t("Done"), this::back);
     private final McButton playButton = new McButton(t("Play World"), this::playWorld);
+    private Boolean canOpenWorld; // whether this version can open a world by itself (1.20 and newer), looked up once
     private final McButton backUpButton = new McButton(t("Back Up Now"), this::backUpNow);
     private final McButton backupsButton = new McButton(t("Backups..."), this::openBackups);
     private volatile String status;
@@ -47,7 +48,7 @@ public class WorldsScreen extends Screen {
     /** Starts the game straight into the picked world, skipping the title screen. */
     private void playWorld() {
         Worlds.World world = list.getSelected();
-        if (world == null || importing || RunningGames.isRunning(instance)) return;
+        if (world == null || importing || RunningGames.isRunning(instance) || !Boolean.TRUE.equals(canOpenWorld)) return;
         panel.setScreen(new DownloadScreen(panel, this, instance, world.folder().getFileName().toString()));
     }
 
@@ -184,7 +185,8 @@ public class WorldsScreen extends Screen {
         importButton.setBounds(w / 2 - 100 * GUI, y, 98 * GUI, 20 * GUI);
         openButton.setBounds(w / 2 + 2 * GUI, y, 98 * GUI, 20 * GUI);
         // Play World opens the picked one straight away (Minecraft 1.20 and newer can)
-        playButton.setActive(picked && !importing && !RunningGames.isRunning(instance));
+        if (canOpenWorld == null) canOpenWorld = Launcher.canOpenWorld(instance.version().id());
+        playButton.setActive(picked && !importing && canOpenWorld && !RunningGames.isRunning(instance));
         playButton.setBounds(w / 2 - 100 * GUI, y + 24 * GUI, 98 * GUI, 20 * GUI);
         doneButton.setBounds(w / 2 + 2 * GUI, y + 24 * GUI, 98 * GUI, 20 * GUI);
         for (McButton b : buttons) b.draw(g, font, GUI);

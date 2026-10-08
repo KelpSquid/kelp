@@ -16,7 +16,8 @@ public class TitleScreen extends Screen {
     private String updateProblem;
 
     private Instance last; // what Play starts: the default instance, or the one played last
-    private Worlds.World lastWorld; // what Continue opens: that instance's most recently played world
+    private Instance played; // the instance played last, for Continue (Play can start a different, default one)
+    private Continue.Target lastWorld; // what Continue goes back to: the world or server played last there
     private int count;
     private double countReadAt = -1;
 
@@ -42,18 +43,16 @@ public class TitleScreen extends Screen {
     @Override
     public void shown() {
         last = Instance.toPlay(); // the default instance, or else the one played last
-        lastWorld = null;
-        if (last != null && Launcher.canOpenWorld(last.version().id())) {
-            List<Worlds.World> worlds = Worlds.list(Worlds.saves(last));
-            if (!worlds.isEmpty()) lastWorld = worlds.getFirst();
-        }
+        Instance lastPlayed = Instance.find(Settings.lastInstance());
+        played = lastPlayed != null ? lastPlayed : last;
+        lastWorld = Continue.find(played);
     }
 
-    /** Straight back into the world played last, skipping Minecraft's title screen and world list. */
+    /** Straight back into the world or server played last, skipping Minecraft's title screen and menus. */
     private void resume() {
-        if (last != null && lastWorld != null && !RunningGames.isRunning(last)) {
-            panel.setScreen(new DownloadScreen(panel, this, last, lastWorld.name()));
-        }
+        Continue.Target target = Continue.find(played); // looked at again, in case the game was played since
+        if (target == null || RunningGames.isRunning(played)) return;
+        panel.setScreen(new DownloadScreen(panel, this, played, target.server() ? null : target.id(), target.server() ? target.id() : null));
     }
 
     /** Plays the last instance again, or opens the instance list if there isn't one yet. */
@@ -73,7 +72,7 @@ public class TitleScreen extends Screen {
             // Play, and next to it Continue, which goes straight back into the last world
             play.setBounds(left, buttonsY, 98 * GUI, 20 * GUI);
             resume.setBounds(left + 102 * GUI, buttonsY, 98 * GUI, 20 * GUI);
-            resume.setActive(!RunningGames.isRunning(last));
+            resume.setActive(!RunningGames.isRunning(played));
         } else {
             play.setBounds(left, buttonsY, 200 * GUI, 20 * GUI);
             resume.setBounds(-1000, -1000, 0, 0);
@@ -116,7 +115,7 @@ public class TitleScreen extends Screen {
         // What Play will start, in the bottom-left corner where Minecraft shows its own version
         String playing = last == null ? t("No instances yet") : t("Play: {0}", last.summary());
         font.draw(g, playing, 2 * GUI, h - 10 * GUI, GUI, 0xFFFFFF);
-        if (lastWorld != null) font.draw(g, t("Continue: {0}", lastWorld.name()), 2 * GUI, h - 30 * GUI, GUI, 0xA0A0A0);
+        if (lastWorld != null) font.draw(g, t("Continue: {0}", lastWorld.shown()), 2 * GUI, h - 30 * GUI, GUI, 0xA0A0A0);
         // The Squid Count of whoever is playing, read again about once a second
         if (panel.getTime() - countReadAt > 1 || countReadAt < 0) {
             count = SquidCount.points(Accounts.active().id());

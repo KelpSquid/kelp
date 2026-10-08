@@ -602,7 +602,9 @@ public class KelpTest {
                    "game": ["--username", "${auth_player_name}", "--version", "${version_name}",
                             {"rules": [{"action": "allow", "features": {"is_demo_user": true}}], "value": "--demo"},
                             {"rules": [{"action": "allow", "features": {"is_quick_play_singleplayer": true}}],
-                             "value": ["--quickPlaySingleplayer", "${quickPlaySingleplayer}"]}]},
+                             "value": ["--quickPlaySingleplayer", "${quickPlaySingleplayer}"]},
+                            {"rules": [{"action": "allow", "features": {"is_quick_play_multiplayer": true}}],
+                             "value": ["--quickPlayMultiplayer", "${quickPlayMultiplayer}"]}]},
                  "libraries": [
                    {"name": "com.example:lib:1.0", "downloads": {"artifact": {"path": "com/example/lib/1.0/lib-1.0.jar"}}},
                    {"name": "com.example:mac-only:1.0", "rules": [{"action": "allow", "os": {"name": "nothing-real"}}],
@@ -648,6 +650,24 @@ public class KelpTest {
                 "Squid needs Java 21, but Minecraft test-old runs on Java 8. Pick the Vanilla loader to play it.");
         check("Continue and Play World only show for versions that can open a world", Launcher.canOpenWorld("test-new") + " "
                 + Launcher.canOpenWorld("test-old") + " " + Launcher.canOpenWorld("not-downloaded"), "true false false");
+        // Continue: the world or server Squid noted, else the newest world
+        Path continueHome = Files.createDirectories(home.resolve("continue-test"));
+        check("Continue has nothing to go back to without worlds", Continue.find(continueHome) == null, true);
+        Files.createDirectories(continueHome.resolve("saves/Old World"));
+        Files.writeString(continueHome.resolve("saves/Old World/level.dat"), "x");
+        Files.createDirectories(continueHome.resolve("saves/Castle"));
+        Files.writeString(continueHome.resolve("saves/Castle/level.dat"), "x");
+        Files.setLastModifiedTime(continueHome.resolve("saves/Old World/level.dat"), java.nio.file.attribute.FileTime.fromMillis(1000));
+        check("Continue picks the newest world", Continue.find(continueHome).id(), "Castle");
+        Files.writeString(continueHome.resolve("squid-last-played.txt"), "world\nOld World\n");
+        check("Continue picks the world Squid noted", Continue.find(continueHome).id(), "Old World");
+        Files.writeString(continueHome.resolve("squid-last-played.txt"), "world\n..\n");
+        check("a strange noted world is ignored", Continue.find(continueHome).id(), "Castle");
+        Files.writeString(continueHome.resolve("squid-last-played.txt"), "server\nplay.example.com:25565\nMy Server\n");
+        Continue.Target joined = Continue.find(continueHome);
+        check("Continue goes back to a server", joined.server() + " " + joined.id() + " " + joined.shown(), "true play.example.com:25565 My Server");
+        check("joining a server straight away", String.join(" ", Launcher.buildCommand("test-new", game, Account.offline("Samuel_A"),
+                Loader.VANILLA, null, 0, true, null, "play.example.com").subList(cmd.size(), cmd.size() + 2)), "--quickPlayMultiplayer play.example.com");
         check("a version too old to open a world by itself says so", problem(() -> Launcher.buildCommand("test-old", home.resolve("game-old"),
                 Account.offline("Player"), Loader.VANILLA, null, 0, true, "My World")), "Minecraft test-old can't open a world by itself. Play it, then pick the world.");
         Account signedIn = new Account("0123456789abcdef0123456789abcdef", "Samuel", true, "refresh", "mc-token", Long.MAX_VALUE);

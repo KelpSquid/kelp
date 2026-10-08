@@ -49,7 +49,13 @@ public final class Launcher {
     /** Like the others; world (a world's folder name in saves, or null) is the world the game opens straight into. */
     public static Process launch(String versionId, Path gameFolder, Account account, Loader loader, String loaderVersion,
                                  int memoryGb, boolean fast, String world) throws IOException {
-        List<String> command = buildCommand(versionId, gameFolder, account, loader, loaderVersion, memoryGb, fast, world);
+        return launch(versionId, gameFolder, account, loader, loaderVersion, memoryGb, fast, world, null);
+    }
+
+    /** Like the others; server (an address, or null) is a server the game joins straight away. */
+    public static Process launch(String versionId, Path gameFolder, Account account, Loader loader, String loaderVersion,
+                                 int memoryGb, boolean fast, String world, String server) throws IOException {
+        List<String> command = buildCommand(versionId, gameFolder, account, loader, loaderVersion, memoryGb, fast, world, server);
         Files.deleteIfExists(SquidReport.file(gameFolder)); // so Kelp never shows last time's report
         Process game = new ProcessBuilder(command)
                 .directory(gameFolder.toFile())
@@ -83,6 +89,12 @@ public final class Launcher {
      */
     public static List<String> buildCommand(String versionId, Path gameFolder, Account account, Loader loader,
                                             String loaderVersion, int memoryGb, boolean fast, String world) throws IOException {
+        return buildCommand(versionId, gameFolder, account, loader, loaderVersion, memoryGb, fast, world, null);
+    }
+
+    /** The full command; server (an address, or null) makes the game join that server straight away. */
+    public static List<String> buildCommand(String versionId, Path gameFolder, Account account, Loader loader,
+                                            String loaderVersion, int memoryGb, boolean fast, String world, String server) throws IOException {
         boolean withSquid = loader == Loader.SQUID;
         Path versionFolder = Folders.versions().resolve(versionId);
         Map<String, Object> details = Json.object(Json.parse(Files.readString(versionFolder.resolve(versionId + ".json"))));
@@ -199,6 +211,12 @@ public final class Launcher {
             }
             command.add("--quickPlaySingleplayer");
             command.add(world);
+        } else if (server != null) {
+            if (arguments == null || !String.valueOf(arguments.get("game")).contains("quickPlayMultiplayer")) {
+                throw new IOException("Minecraft " + versionId + " can't join a server by itself. Play it, then pick the server.");
+            }
+            command.add("--quickPlayMultiplayer");
+            command.add(server);
         }
         command.addAll(ParentControls.gameArguments()); // Minecraft's own switches for no multiplayer or no chat
         return command;
