@@ -36,7 +36,7 @@ public class ServersScreen extends Screen {
     @Override
     public void shown() {
         list.setItems(Servers.list(Servers.file(instance)));
-        problem = null;
+        lastPicked = list.getSelected(); // (a message set just before coming back stays)
     }
 
     /** Starts the game straight onto the picked server. */
@@ -69,13 +69,15 @@ public class ServersScreen extends Screen {
         if (server == null || RunningGames.isRunning(instance)) return;
         String shownName = server.name().length() > 40 ? server.name().substring(0, 40) + "..." : server.name();
         panel.setScreen(new ConfirmScreen(panel, t("Remove {0}?", shownName), t("It's taken out of this instance's server list."), () -> {
+            String result;
             try {
                 // Only if it's still the same one (Minecraft may have changed the list since)
-                problem = Servers.remove(Servers.file(instance), server) ? null : t("The list changed in Minecraft, so nothing was removed. Here it is again.");
+                result = Servers.remove(Servers.file(instance), server) ? null : t("The list changed in Minecraft, so nothing was removed. Here it is again.");
             } catch (IOException e) {
-                problem = t("Couldn't remove it: {0}", e.getMessage());
+                result = t("Couldn't remove it: {0}", e.getMessage());
             }
-            panel.setScreen(this);
+            panel.setScreen(this); // reads the list again
+            problem = result;
         }, () -> panel.setScreen(this)));
     }
 
