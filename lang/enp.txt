@@ -458,3 +458,5 @@ Shows a title when you walk into a new biome. => Shows a heading when you walk i
 Sharing... => Sharing...
 Dance Party => Merry Hop
 Notes and hearts jump to the beat of your music. => Tones and hearts leap to the beat of your songs.
+Chat Commands => Chat Behests
+Type !dance, !where or !shout hello in the chat. => Write !dance, !where or !shout hello in the chat.

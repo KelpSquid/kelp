@@ -458,3 +458,5 @@ Shows a title when you walk into a new biome. => Címet mutat, amikor új biomba
 Sharing... => Megosztás...
 Dance Party => Táncbuli
 Notes and hearts jump to the beat of your music. => Hangjegyek és szívek ugrálnak a zenéd ütemére.
+Chat Commands => Chatparancsok
+Type !dance, !where or !shout hello in the chat. => Írd be a chatbe: !dance, !where vagy !shout hello.

@@ -458,3 +458,5 @@ Shows a title when you walk into a new biome. => Viser ein tittel når du går i
 Sharing... => Deler...
 Dance Party => Dansefest
 Notes and hearts jump to the beat of your music. => Notar og hjarte hoppar i takt med musikken din.
+Chat Commands => Pratkommandoar
+Type !dance, !where or !shout hello in the chat. => Skriv !dance, !where eller !shout hello i nettpraten.

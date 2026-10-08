@@ -458,3 +458,5 @@ Shows a title when you walk into a new biome. => Näyttää otsikon, kun kävele
 Sharing... => Jaetaan...
 Dance Party => Tanssibileet
 Notes and hearts jump to the beat of your music. => Nuotit ja sydämet hyppivät musiikkisi tahtiin.
+Chat Commands => Keskustelukomennot
+Type !dance, !where or !shout hello in the chat. => Kirjoita keskusteluun !dance, !where tai !shout hello.

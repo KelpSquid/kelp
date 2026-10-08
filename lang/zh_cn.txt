@@ -458,3 +458,5 @@ Shows a title when you walk into a new biome. => 走进新的生物群系时显�
 Sharing... => 正在分享...
 Dance Party => 舞会派对
 Notes and hearts jump to the beat of your music. => 音符和爱心随着你的音乐节拍跳动。
+Chat Commands => 聊天命令
+Type !dance, !where or !shout hello in the chat. => 在聊天里输入 !dance、!where 或 !shout hello。

@@ -458,3 +458,5 @@ Shows a title when you walk into a new biome. => Pakazvaje nazvu, kali ty zachod
 Sharing... => Dzialusia...
 Dance Party => Tancavalnaja viečaryna
 Notes and hearts jump to the beat of your music. => Noty i sercy skačuć u rytm tvajoj muzyki.
+Chat Commands => Kamandy čata
+Type !dance, !where or !shout hello in the chat. => Napišy ŭ čacie !dance, !where abo !shout hello.

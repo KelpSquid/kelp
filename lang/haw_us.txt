@@ -458,3 +458,5 @@ Shows a title when you walk into a new biome. => Hōʻike i kahi poʻo inoa ke k
 Sharing... => Ke kaʻana nei...
 Dance Party => Pāʻina Hula
 Notes and hearts jump to the beat of your music. => Lele nā nota a me nā puʻuwai i ka paʻi o kāu mele.
+Chat Commands => Nā Kauoha Kamaʻilio
+Type !dance, !where or !shout hello in the chat. => E kikokiko i ka !dance, !where a i ʻole !shout hello ma ke kamaʻilio.

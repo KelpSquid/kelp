@@ -458,3 +458,5 @@ Shows a title when you walk into a new biome. => Showz a titl wen u walk in2 new
 Sharing... => Shaerin...
 Dance Party => Dancey Partee
 Notes and hearts jump to the beat of your music. => Notez an hartz jump 2 teh beet ov ur muzik.
+Chat Commands => Chat Commandz
+Type !dance, !where or !shout hello in the chat. => Tiep !dance, !where or !shout hello in teh chat.

@@ -458,3 +458,5 @@ Shows a title when you walk into a new biome. => jarco lo stedu ciska ca lo nu d
 Sharing... => ca fatri...
 Dance Party => dansu salci
 Notes and hearts jump to the beat of your music. => lo zgike sinxa .e lo risna cu plipe fi lo dandu be lo do zgike
+Chat Commands => tavla minde
+Type !dance, !where or !shout hello in the chat. => ko ciska la'o gy !dance gy .a la'o gy !where gy .a la'o gy !shout hello gy fi lo tavla

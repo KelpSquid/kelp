@@ -458,3 +458,5 @@ Shows a title when you walk into a new biome. => ಹೊಸ ಬಯೋಮ್ಗೆ
 Sharing... => ಹಂಚಿಕೊಳ್ಳುತ್ತಿದೆ...
 Dance Party => ನೃತ್ಯ ಪಾರ್ಟಿ
 Notes and hearts jump to the beat of your music. => ನಿಮ್ಮ ಸಂಗೀತದ ಬೀಟ್‌ಗೆ ಸ್ವರಗಳು ಮತ್ತು ಹೃದಯಗಳು ಜಿಗಿಯುತ್ತವೆ.
+Chat Commands => ಚಾಟ್ ಆಜ್ಞೆಗಳು
+Type !dance, !where or !shout hello in the chat. => ಚಾಟ್‌ನಲ್ಲಿ !dance, !where ಅಥವಾ !shout hello ಟೈಪ್ ಮಾಡಿ.

@@ -458,3 +458,5 @@ Shows a title when you walk into a new biome. => Yn dangos teitl pan fyddi di'n 
 Sharing... => Yn rhannu...
 Dance Party => Parti Dawns
 Notes and hearts jump to the beat of your music. => Mae nodau a chalonnau'n neidio i guriad dy gerddoriaeth.
+Chat Commands => Gorchmynion Sgwrs
+Type !dance, !where or !shout hello in the chat. => Teipia !dance, !where neu !shout hello yn y sgwrs.

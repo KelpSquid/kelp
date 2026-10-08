@@ -458,3 +458,5 @@ Shows a title when you walk into a new biome. => Pokazuje naslov, kogda vhodiš 
 Sharing... => Delenje...
 Dance Party => Tančevalna zabava
 Notes and hearts jump to the beat of your music. => Noty i srdca skačut v ritmu tvojej muziky.
+Chat Commands => Komandy čata
+Type !dance, !where or !shout hello in the chat. => Napiši v čat !dance, !where ili !shout hello.

@@ -458,3 +458,5 @@ Shows a title when you walk into a new biome. => Mostra un título cando entras 
 Sharing... => Compartindo...
 Dance Party => Festa de baile
 Notes and hearts jump to the beat of your music. => Notas e corazóns saltan ao ritmo da túa música.
+Chat Commands => Comandos de chat
+Type !dance, !where or !shout hello in the chat. => Escribe !dance, !where ou !shout hello no chat.

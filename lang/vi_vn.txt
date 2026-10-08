@@ -458,3 +458,5 @@ Shows a title when you walk into a new biome. => Hiện tiêu đề khi bạn b�
 Sharing... => Đang chia sẻ...
 Dance Party => Tiệc Nhảy
 Notes and hearts jump to the beat of your music. => Nốt nhạc và trái tim nhảy theo nhịp nhạc của bạn.
+Chat Commands => Lệnh Trò Chuyện
+Type !dance, !where or !shout hello in the chat. => Nhập !dance, !where hoặc !shout hello vào khung trò chuyện.

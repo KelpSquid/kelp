@@ -458,3 +458,5 @@ Shows a title when you walk into a new biome. => Seallaidh e tiotal nuair a choi
 Sharing... => A' co-roinneadh...
 Dance Party => Cèilidh
 Notes and hearts jump to the beat of your music. => Leumaidh notaichean is cridheachan ri buille a' chiùil agad.
+Chat Commands => Àitheantan Cabadaich
+Type !dance, !where or !shout hello in the chat. => Sgrìobh !dance, !where no !shout hello sa chabadaich.

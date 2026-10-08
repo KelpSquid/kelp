@@ -458,3 +458,5 @@ Shows a title when you walk into a new biome. => Laot unne titel zien as ge unne
 Sharing... => Delen...
 Dance Party => Dansfeestje
 Notes and hearts jump to the beat of your music. => Noten en hartjes springen op de maat van oew muziek.
+Chat Commands => Chatcommando's
+Type !dance, !where or !shout hello in the chat. => Tik !dance, !where of !shout hello in de chat.

@@ -458,3 +458,5 @@ Shows a title when you walk into a new biome. => Muehtra un título cuando entr�
 Sharing... => Compartiendo...
 Dance Party => Fiehta de baile
 Notes and hearts jump to the beat of your music. => Notâ y coraçonê sartan ar ritmo de tu múçica.
+Chat Commands => Comandô de xâh
+Type !dance, !where or !shout hello in the chat. => Ehcribe !dance, !where o !shout hello en el xâh.

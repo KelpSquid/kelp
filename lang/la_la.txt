@@ -458,3 +458,5 @@ Shows a title when you walk into a new biome. => Titulum ostendit cum in novam r
 Sharing... => Communicatur...
 Dance Party => Convivium Saltatorium
 Notes and hearts jump to the beat of your music. => Notae et corda ad ictum musicae tuae saliunt.
+Chat Commands => Iussa Locutorii
+Type !dance, !where or !shout hello in the chat. => Scribe !dance, !where aut !shout hello in locutorio.

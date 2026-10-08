@@ -458,3 +458,5 @@ Shows a title when you walk into a new biome. => 入新境則示其名。
 Sharing... => 方共之...
 Dance Party => 舞宴
 Notes and hearts jump to the beat of your music. => 音符與心，隨樂之拍而躍。
+Chat Commands => 議令
+Type !dance, !where or !shout hello in the chat. => 於議中書 !dance、!where 或 !shout hello。

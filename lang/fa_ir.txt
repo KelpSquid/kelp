@@ -458,3 +458,5 @@ Shows a title when you walk into a new biome. => وقتی وارد یک زیست
 Sharing... => در حال اشتراک‌گذاری...
 Dance Party => جشن رقص
 Notes and hearts jump to the beat of your music. => نت‌ها و قلب‌ها با ضرب موسیقی شما می‌پرند.
+Chat Commands => فرمان‌های چت
+Type !dance, !where or !shout hello in the chat. => در چت !dance، !where یا !shout hello را وارد کنید.

@@ -458,3 +458,5 @@ Shows a title when you walk into a new biome. => Menunjukkan tajuk apabila anda 
 Sharing... => Berkongsi...
 Dance Party => Parti Tari
 Notes and hearts jump to the beat of your music. => Not dan hati melompat mengikut rentak muzik anda.
+Chat Commands => Arahan Perbualan
+Type !dance, !where or !shout hello in the chat. => Taip !dance, !where atau !shout hello dalam perbualan.

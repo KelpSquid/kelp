@@ -458,3 +458,5 @@ Shows a title when you walk into a new biome. => Zeigt einen Titel, wenn du ein 
 Sharing... => Teile...
 Dance Party => Tanzparty
 Notes and hearts jump to the beat of your music. => Noten und Herzen hüpfen im Takt deiner Musik.
+Chat Commands => Chat-Befehle
+Type !dance, !where or !shout hello in the chat. => Schreib !dance, !where oder !shout hello in den Chat.

@@ -458,3 +458,5 @@ Shows a title when you walk into a new biome. => புதிய பயோமு
 Sharing... => பகிர்கிறது...
 Dance Party => நடன விருந்து
 Notes and hearts jump to the beat of your music. => உங்கள் இசையின் தாளத்துக்கு ஏற்ப ஸ்வரக்குறிகளும் இதயங்களும் குதிக்கும்.
+Chat Commands => அரட்டைக் கட்டளைகள்
+Type !dance, !where or !shout hello in the chat. => அரட்டையில் !dance, !where அல்லது !shout hello என்று உள்ளிடுங்கள்.

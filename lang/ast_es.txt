@@ -458,3 +458,5 @@ Shows a title when you walk into a new biome. => Amuesa un títulu cuando entres
 Sharing... => Compartiendo...
 Dance Party => Folixa de baille
 Notes and hearts jump to the beat of your music. => Notes y corazones brinquen al ritmu de la to música.
+Chat Commands => Órdenes de charra
+Type !dance, !where or !shout hello in the chat. => Escribi !dance, !where o !shout hello na charra.

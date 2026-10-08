@@ -458,3 +458,5 @@ Shows a title when you walk into a new biome. => Na-egosi aha mgbe ị banyere n
 Sharing... => Na-ekesa...
 Dance Party => Oriri Egwu
 Notes and hearts jump to the beat of your music. => Akara egwu na obi na-awụli elu n'iti egwu gị.
+Chat Commands => Iwu Nkata
+Type !dance, !where or !shout hello in the chat. => Pịnye !dance, !where ma ọ bụ !shout hello na nkata.

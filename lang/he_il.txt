@@ -458,3 +458,5 @@ Shows a title when you walk into a new biome. => מציג כותרת כשנכנ�
 Sharing... => משתף...
 Dance Party => מסיבת ריקודים
 Notes and hearts jump to the beat of your music. => תווים ולבבות קופצים לקצב המוזיקה שלך.
+Chat Commands => פקודות צ'אט
+Type !dance, !where or !shout hello in the chat. => הקלידו בצ'אט !dance, !where או !shout hello.

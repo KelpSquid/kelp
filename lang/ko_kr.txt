@@ -458,3 +458,5 @@ Shows a title when you walk into a new biome. => 새 바이옴에 들어가면 �
 Sharing... => 공유하는 중...
 Dance Party => 댄스 파티
 Notes and hearts jump to the beat of your music. => 음표와 하트가 음악 박자에 맞춰 뛰어요.
+Chat Commands => 채팅 명령어
+Type !dance, !where or !shout hello in the chat. => 채팅에 !dance, !where 또는 !shout hello를 입력하세요.
