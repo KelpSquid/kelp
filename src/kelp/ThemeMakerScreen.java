@@ -100,7 +100,7 @@ public class ThemeMakerScreen extends Screen {
             preview();
             return;
         }
-        Path picked = pick(t("Pick music"), t("Music (.wav)"), "wav");
+        Path picked = pick(t("Pick music"), t("Music (.wav, .mp3, .flac, .ogg, .sqda)"), ThemeMusic.KINDS.toArray(String[]::new));
         if (picked != null) {
             music = picked;
             preview();
@@ -197,7 +197,7 @@ public class ThemeMakerScreen extends Screen {
     public void filesDropped(List<Path> files) {
         if (!files.isEmpty()) {
             String name = files.get(0).getFileName().toString().toLowerCase();
-            if (name.endsWith(".wav")) music = files.get(0);
+            if (ThemeMusic.isMusic(files.get(0))) music = files.get(0);
             else picture = files.get(0);
             preview();
         }

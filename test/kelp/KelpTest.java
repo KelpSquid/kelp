@@ -1138,6 +1138,11 @@ public class KelpTest {
         Theme.use(made);
         check("the picked theme is remembered", Settings.theme() + " " + Theme.find("purple-cave").name(), "purple-cave Purple Cave!");
         check("themes list Kelp's own, then yours", Theme.all().stream().map(Theme::id).toList().toString(), "[ocean, lava, sky, nether, end, purple-cave]");
+        Path song = home.resolve("my song.mp3");
+        Files.write(song, new byte[] {'I', 'D', '3', 3, 0, 0, 0, 0, 0, 0});
+        Theme musical = Theme.save("Loud Cave", Theme.Scene.END, -1, 0x220033, 280, null, song);
+        check("a theme's music keeps its kind (MP3, FLAC, Ogg, .sqda all play)", musical.music().getFileName() + " " + ThemeMusic.isMusic(home.resolve("x.sqda"))
+                + " " + ThemeMusic.isMusic(home.resolve("x.txt")), "music.mp3 true false");
         check("an unknown theme is the Ocean", Theme.find("nope").id(), "ocean");
         java.awt.image.BufferedImage red = new java.awt.image.BufferedImage(1, 1, java.awt.image.BufferedImage.TYPE_INT_ARGB);
         red.setRGB(0, 0, 0xFFFF0000);

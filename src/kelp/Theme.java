@@ -21,7 +21,7 @@ import java.util.stream.Stream;
  * @param base     the color under everything
  * @param buttons  the buttons' color, as a hue (0-359), or -1 for the sea-glass teal they come in
  * @param picture  a picture to use as the whole background, or null
- * @param music    a .wav file to play over and over, or null
+ * @param music    music to play over and over (.wav, .mp3, .flac, .ogg or .sqda), or null
  */
 public record Theme(String id, String name, Scene scene, int water, int base, int buttons, Path picture, Path music) {
     /** What moves in the background. */
@@ -160,15 +160,23 @@ public record Theme(String id, String name, Scene scene, int water, int base, in
             values.setProperty("picture", fileName);
         }
         if (music != null) {
-            if (!music.toAbsolutePath().normalize().equals(dir.resolve("music.wav").toAbsolutePath().normalize())) {
-                Files.copy(music, dir.resolve("music.wav"), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            // Kept as the kind it is (music.mp3, music.sqda...): Kelp plays them all
+            String musicName = "music" + musicExtension(music);
+            if (!music.toAbsolutePath().normalize().equals(dir.resolve(musicName).toAbsolutePath().normalize())) {
+                Files.copy(music, dir.resolve(musicName), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
             }
-            values.setProperty("music", "music.wav");
+            values.setProperty("music", musicName);
         }
         try (Writer out = Files.newBufferedWriter(dir.resolve("theme.properties"), StandardCharsets.UTF_8)) {
             values.store(out, "A Kelp theme");
         }
         return read(dir);
+    }
+
+    private static String musicExtension(Path file) {
+        String name = file.getFileName().toString().toLowerCase(Locale.ROOT);
+        for (String kind : ThemeMusic.KINDS) if (name.endsWith("." + kind)) return "." + kind;
+        return ".wav";
     }
 
     private static String extension(Path file) {
