@@ -6,7 +6,7 @@ import java.awt.Graphics2D;
 
 /**
  * Parent Controls in Options. The first time, a parent picks a PIN (4 to 8 digits, typed twice). After that the
- * switches only open with the PIN: Multiplayer and Chat, plus changing the PIN or taking Parent Controls off.
+ * switches only open with the PIN: Multiplayer, Chat and Voice chat, plus changing the PIN or taking Parent Controls off.
  */
 public class ParentControlsScreen extends Screen {
     private final Screen parent;
@@ -15,6 +15,7 @@ public class ParentControlsScreen extends Screen {
     private final McButton okButton = new McButton("", this::ok);
     private final McButton multiplayerButton = new McButton("", () -> ParentControls.setMultiplayerAllowed(!ParentControls.multiplayerAllowed()));
     private final McButton chatButton = new McButton("", () -> ParentControls.setChatAllowed(!ParentControls.chatAllowed()));
+    private final McButton voiceButton = new McButton("", () -> ParentControls.setVoiceAllowed(!ParentControls.voiceAllowed()));
     private final McButton changePinButton = new McButton(t("Change PIN"), this::changePin);
     private final McButton removeButton = new McButton(t("Turn Off Parent Controls"), this::removeControls);
     private final McButton doneButton = new McButton(t("Done"), this::done);
@@ -29,7 +30,7 @@ public class ParentControlsScreen extends Screen {
         againField.setHidden(true);
         pinField.setFocused(true);
         choosingPin = !ParentControls.hasPin();
-        for (McButton b : new McButton[] {okButton, multiplayerButton, chatButton, changePinButton, removeButton, doneButton}) buttons.add(b);
+        for (McButton b : new McButton[] {okButton, multiplayerButton, chatButton, voiceButton, changePinButton, removeButton, doneButton}) buttons.add(b);
     }
 
     private void done() {
@@ -79,7 +80,7 @@ public class ParentControlsScreen extends Screen {
         int left = w / 2 - 100 * GUI;
         int y = 40 * GUI;
         boolean asking = choosingPin || !unlocked;
-        for (McButton b : new McButton[] {okButton, multiplayerButton, chatButton, changePinButton, removeButton}) b.setBounds(-1000, -1000, 0, 0);
+        for (McButton b : new McButton[] {okButton, multiplayerButton, chatButton, voiceButton, changePinButton, removeButton}) b.setBounds(-1000, -1000, 0, 0);
         if (asking) {
             centered(g, choosingPin ? t("Pick a PIN that only a parent knows.") : t("Type the parent PIN to change these."), w, y, 0xA0A0A0);
             pinField.setBounds(left, y + 14 * GUI, 200 * GUI, 20 * GUI);
@@ -95,10 +96,12 @@ public class ParentControlsScreen extends Screen {
             multiplayerButton.setLabel(ParentControls.multiplayerAllowed() ? t("Multiplayer: Allowed") : t("Multiplayer: Off"));
             chatButton.setLabel(ParentControls.chatAllowed() ? t("Chat: Allowed") : t("Chat: Off"));
             multiplayerButton.setBounds(left, y, 200 * GUI, 20 * GUI);
+            voiceButton.setLabel(ParentControls.voiceAllowed() ? t("Voice Chat: Allowed") : t("Voice Chat: Off"));
             chatButton.setBounds(left, y + 24 * GUI, 200 * GUI, 20 * GUI);
-            centered(g, t("These use Minecraft's own switches, so they work with mods too."), w, y + 50 * GUI, 0x808080);
-            changePinButton.setBounds(left, y + 70 * GUI, 200 * GUI, 20 * GUI);
-            removeButton.setBounds(left, y + 94 * GUI, 200 * GUI, 20 * GUI);
+            voiceButton.setBounds(left, y + 48 * GUI, 200 * GUI, 20 * GUI);
+            centered(g, t("These hold even with mods."), w, y + 74 * GUI, 0x808080);
+            changePinButton.setBounds(left, y + 94 * GUI, 200 * GUI, 20 * GUI);
+            removeButton.setBounds(left, y + 118 * GUI, 200 * GUI, 20 * GUI);
         }
         if (message != null) centered(g, message, w, h - 44 * GUI, 0xFFFF55);
         doneButton.setBounds(left, h - 28 * GUI, 200 * GUI, 20 * GUI);

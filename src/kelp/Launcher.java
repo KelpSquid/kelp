@@ -99,6 +99,7 @@ public final class Launcher {
             squidSettings.add("-Dsquid.gameClasspath=" + gameClasspath);
             squidSettings.add("-Dsquid.mainClass=" + mainClass);
             squidSettings.add("-Dsquid.home=" + Folders.home()); // where Squid keeps things shared by every instance, like the Squid Count
+            if (!ParentControls.voiceAllowed()) squidSettings.add("-Dsquid.voice=off"); // a parent turned voice chat off
             mainClass = "squid.Main";
             Files.createDirectories(gameFolder.resolve("mods"));
         } else {

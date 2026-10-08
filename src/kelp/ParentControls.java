@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * Parent Controls: switches a parent locks with a PIN. Multiplayer and Chat use Minecraft's own launch switches
- * (--disableMultiplayer and --disableChat), so they hold even with mods. The PIN is kept salted and hashed, never as
+ * (--disableMultiplayer and --disableChat), so they hold even with mods. Voice chat is Squid's, and Squid is told. The PIN is kept salted and hashed, never as
  * itself. It's a friendly lock, not a vault: for a Microsoft child account, Microsoft's Family settings are the real one.
  */
 public final class ParentControls {
@@ -47,6 +47,7 @@ public final class ParentControls {
         Settings.put("parentPin", null);
         Settings.put("parentMultiplayer", null);
         Settings.put("parentChat", null);
+        Settings.put("parentVoice", null);
     }
 
     public static boolean multiplayerAllowed() {
@@ -55,6 +56,15 @@ public final class ParentControls {
 
     public static boolean chatAllowed() {
         return !hasPin() || !"false".equals(Settings.get("parentChat", "true"));
+    }
+
+    /** Squid's voice chat. Squid is told with -Dsquid.voice=off, and then never opens the microphone. */
+    public static boolean voiceAllowed() {
+        return !hasPin() || !"false".equals(Settings.get("parentVoice", "true"));
+    }
+
+    public static void setVoiceAllowed(boolean allowed) {
+        Settings.put("parentVoice", String.valueOf(allowed));
     }
 
     public static void setMultiplayerAllowed(boolean allowed) {
