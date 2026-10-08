@@ -791,6 +791,41 @@ public class KelpTest {
         InstalledMod shared = InstalledMod.list(instance.mods()).stream()
                 .filter(m -> m.file().getFileName().toString().equals("Shared.squid")).findFirst().orElseThrow();
         check("a .squid file is listed by its squid.json", shared.name() + " " + shared.squidMod() + " " + shared.project(), "Mega Mod! true false");
+        Map<String, Object> created = Json.object(Json.parse(Files.readString(folder.resolve("squid.json"))));
+        check("a new project writes down its id and main class, so renaming its folder can't change them",
+                created.get("id") + " " + created.get("main"), "mega-mod MegaMod");
+
+        // Packing twice makes the same file, without the junk computers add, and with every squid.json value kept
+        Files.writeString(folder.resolve("resources/Thumbs.db"), "windows made this");
+        Files.writeString(folder.resolve("resources/.DS_Store"), "a mac made this");
+        Files.writeString(folder.resolve("squid.json"), "﻿{\"name\": \"Mega Mod!\", \"main\": \"MegaMod\", \"extra\": {\"color\": \"blue\", \"size\": 2}, \"note\": \"line\\nbreak\"}");
+        Path again1 = ModProject.pack(folder, Files.createDirectories(home.resolve("pack-test-1")));
+        Thread.sleep(2100); // zip times are kept to 2 seconds
+        Path again2 = ModProject.pack(folder, Files.createDirectories(home.resolve("pack-test-2")));
+        check("packing the same project twice makes the same file", java.util.Arrays.equals(Files.readAllBytes(again1), Files.readAllBytes(again2)), true);
+        List<String> packedNames = new java.util.ArrayList<>();
+        Map<String, Object> nested;
+        try (java.util.zip.ZipFile zip = new java.util.zip.ZipFile(again1.toFile())) {
+            zip.stream().forEach(e -> packedNames.add(e.getName()));
+            nested = Json.object(Json.parse(new String(zip.getInputStream(zip.getEntry("squid.json")).readAllBytes(), StandardCharsets.UTF_8)));
+        }
+        check("Pack leaves out Thumbs.db and .DS_Store", packedNames.toString(), "[squid.json, src/MegaMod.java, resources/picture.png]");
+        check("Pack keeps objects and line breaks in squid.json as real JSON", Json.object(nested.get("extra")).get("color") + " " + nested.get("note"),
+                "blue line\nbreak");
+        Files.writeString(folder.resolve("squid.json"), "{\"main\": \"Missing\"}");
+        String refused;
+        try {
+            ModProject.pack(folder, home.resolve("pack-test-3"));
+            refused = "packed";
+        } catch (java.io.IOException e) {
+            refused = e.getMessage();
+        }
+        check("Pack won't share a mod whose main class isn't there", refused, "its main class Missing isn't in src. Put \"main\": \"YourClass\" in squid.json");
+        Files.writeString(folder.resolve("squid.json"), "{\"name\": \"Mega Mod!\", \"id\": \"mega-mod\", \"main\": \"MegaMod\", \"authors\": \"Sam\"}");
+        check("one author on its own still lists", InstalledMod.list(instance.mods()).stream().filter(m -> m.file().equals(folder))
+                .findFirst().orElseThrow().authors().toString(), "[Sam]");
+        check("Kelp reads Squid mod ids like Squid does", InstalledMod.squidId(folder) + " " + InstalledMod.squidId(instance.mods().resolve("Shared.squid"))
+                + " " + InstalledMod.squidId(instance.mods().resolve("MegaMod3.java")), "mega-mod mega-mod mega-mod-3");
         InstalledMod off = listed.toggle();
         check("a project can be turned off", off.file().getFileName() + " " + InstalledMod.list(instance.mods()).stream()
                 .filter(m -> m.file().equals(off.file())).findFirst().map(InstalledMod::enabled).orElse(null), "MegaMod.disabled false");

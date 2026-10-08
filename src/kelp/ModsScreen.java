@@ -113,11 +113,14 @@ public class ModsScreen extends Screen {
 
     /**
      * Mods dropped onto the window (or picked with Add Mod) are copied into this instance's mods folder, so the
-     * originals can be deleted from Downloads. A mod with the same file name is replaced, like an update.
+     * originals can be deleted from Downloads. A mod with the same file name is replaced, like an update, and so is
+     * an older download of the same Squid mod under another name ("MegaMod (1).squid"). Your own projects and
+     * .java mods are never replaced: Kelp says there are two copies instead.
      */
     @Override
     public void filesDropped(java.util.List<Path> files) {
         java.util.List<String> added = new java.util.ArrayList<>();
+        String twoCopies = null;
         wrongLoader = false;
         try {
             Files.createDirectories(instance.mods());
@@ -127,8 +130,22 @@ public class ModsScreen extends Screen {
                     problem = t("{0} isn't a mod. Mods are .jar, .squid or .java files.", name);
                     continue;
                 }
+                String id = InstalledMod.squidId(file);
+                String sameAsYours = null;
+                if (id != null) {
+                    try (java.util.stream.Stream<Path> old = Files.list(instance.mods())) {
+                        for (Path other : old.toList()) {
+                            String otherName = other.getFileName().toString();
+                            if (otherName.equals(name) || !id.equals(InstalledMod.squidId(other))) continue;
+                            boolean packed = otherName.matches(".*\\.(jar|squid)(\\.disabled)?");
+                            if (packed) Files.delete(other); // an older download of the same mod
+                            else sameAsYours = otherName;
+                        }
+                    }
+                }
                 Files.copy(file, instance.mods().resolve(name), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
                 added.add(name);
+                if (sameAsYours != null) twoCopies = t("{0} is the same mod as your {1}, so Squid will only load one of them.", name, sameAsYours);
             }
         } catch (IOException e) {
             problem = t("Couldn't add it: {0}", e.getMessage());
@@ -137,6 +154,7 @@ public class ModsScreen extends Screen {
         if (!added.isEmpty()) {
             problem = null;
             notice = added.size() == 1 ? t("Added {0}!", added.get(0)) : t("Added {0} mods!", added.size());
+            if (twoCopies != null) notice = twoCopies;
             // A mod for another loader still goes in, but say so, so nobody wonders why it doesn't load
             for (String name : added) {
                 InstalledMod mod = InstalledMod.list(instance.mods()).stream()

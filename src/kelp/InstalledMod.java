@@ -99,7 +99,7 @@ public record InstalledMod(Path file, boolean enabled, Loader kind, String name,
         Map<String, Object> json = Map.of();
         try {
             Path squidJson = folder.resolve("squid.json");
-            if (Files.exists(squidJson)) json = Json.object(Json.parse(Files.readString(squidJson, StandardCharsets.UTF_8)));
+            if (Files.exists(squidJson)) json = object(ModProject.text(Files.readAllBytes(squidJson)));
         } catch (IOException | RuntimeException e) {
             return new InstalledMod(folder, enabled, Loader.SQUID, name, "", List.of(), "Its squid.json is broken: " + e.getMessage(), List.of());
         }
@@ -160,7 +160,46 @@ public record InstalledMod(Path file, boolean enabled, Loader kind, String name,
     }
 
     private static String text(ZipFile zip, ZipEntry entry) throws IOException {
-        return new String(zip.getInputStream(entry).readAllBytes(), StandardCharsets.UTF_8);
+        return ModProject.text(zip.getInputStream(entry).readAllBytes());
+    }
+
+    /**
+     * A Squid mod's id, the way Squid reads it: from its squid.json, or else from its file or folder name (MegaMod
+     * becomes mega-mod). Null for mods that aren't Squid mods, or that can't be read.
+     */
+    public static String squidId(Path file) {
+        String fileName = file.getFileName().toString();
+        if (fileName.endsWith(OFF)) fileName = fileName.substring(0, fileName.length() - OFF.length());
+        try {
+            Map<String, Object> json = null;
+            String plain;
+            if (Files.isDirectory(file)) {
+                plain = fileName;
+                Path squidJson = file.resolve("squid.json");
+                if (Files.exists(squidJson)) json = object(ModProject.text(Files.readAllBytes(squidJson)));
+            } else if (fileName.endsWith(".java")) {
+                return ModProject.idFor(fileName.substring(0, fileName.length() - ".java".length()).replaceAll("[^A-Za-z0-9_]", ""));
+            } else if (fileName.endsWith(".jar") || fileName.endsWith(".squid")) {
+                plain = fileName.substring(0, fileName.lastIndexOf('.'));
+                try (ZipFile zip = new ZipFile(file.toFile())) {
+                    ZipEntry entry = zip.getEntry("squid.json");
+                    if (entry == null) return null;
+                    json = object(text(zip, entry));
+                }
+                if (fileName.endsWith(".jar")) return json.get("id") instanceof String id ? id : null;
+            } else {
+                return null;
+            }
+            if (json != null && json.get("id") instanceof String id && !id.isBlank()) return id;
+            return ModProject.idFor(plain.replaceAll("[^A-Za-z0-9_]", ""));
+        } catch (IOException | RuntimeException e) {
+            return null;
+        }
+    }
+
+    private static Map<String, Object> object(String text) {
+        Object parsed = Json.parse(text);
+        return parsed instanceof Map<?, ?> ? Json.object(parsed) : Map.of();
     }
 
     /** Fabric lists authors as names, or as {"name": ...} objects. */
@@ -175,10 +214,14 @@ public record InstalledMod(Path file, boolean enabled, Loader kind, String name,
         return List.copyOf(names);
     }
 
+    /** A list from squid.json. One value on its own ("authors": "Sam") counts as a list of one, like Squid reads it. */
     private static List<String> strings(Map<String, Object> json, String key) {
+        Object value = json.get(key);
+        if (value == null) return List.of();
+        List<?> list = value instanceof List<?> many ? many : List.of(value);
         List<String> values = new ArrayList<>();
-        if (json.get(key) != null) {
-            for (Object value : Json.array(json.get(key))) values.add(String.valueOf(value));
+        for (Object item : list) {
+            if (item != null && !String.valueOf(item).isBlank()) values.add(String.valueOf(item));
         }
         return List.copyOf(values);
     }
