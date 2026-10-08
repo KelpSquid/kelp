@@ -34,18 +34,20 @@ public class GalleryScreen extends Screen {
     private final McButton nextButton = new McButton(">", () -> step(1));
     private final McButton openButton = new McButton(t("Open"), this::openPicture);
     private final McButton deleteButton = new McButton(t("Delete"), this::deletePicture);
+    private final McButton themeButton = new McButton(t("Use as Theme"), this::useAsTheme);
     private final Map<Path, BufferedImage> thumbnails = new ConcurrentHashMap<>();
     private final Map<Path, BufferedImage> big = new ConcurrentHashMap<>();
     private List<Path> pictures;
     private int page;
     private int viewing = -1; // which picture is shown big, or -1 for the grid
     private String message;
+    private String notice; // good news, in green
 
     public GalleryScreen(OceanPanel panel, Screen parent, Instance instance) {
         super(panel);
         this.parent = parent;
         this.instance = instance;
-        for (McButton b : new McButton[] {doneButton, folderButton, previousButton, nextButton, openButton, deleteButton}) buttons.add(b);
+        for (McButton b : new McButton[] {doneButton, folderButton, previousButton, nextButton, openButton, deleteButton, themeButton}) buttons.add(b);
         pictures = list(instance);
         Thread loader = new Thread(() -> {
             for (Path picture : new ArrayList<>(pictures)) thumbnails.computeIfAbsent(picture, GalleryScreen::thumbnail);
@@ -125,6 +127,7 @@ public class GalleryScreen extends Screen {
     }
 
     private void step(int by) {
+        notice = null;
         if (pictures.isEmpty()) return;
         viewing = Math.floorMod(viewing + by, pictures.size());
     }
@@ -143,6 +146,22 @@ public class GalleryScreen extends Screen {
             Desktop.getDesktop().open(pictures.get(viewing).toFile());
         } catch (IOException | RuntimeException e) {
             message = t("Couldn't open it: {0}", e.getMessage());
+        }
+    }
+
+    /**
+     * Makes Kelp's background this picture: a theme called "My Screenshot" with the theme in use's scene, colors and
+     * music, and this picture behind it. Using another picture later replaces it.
+     */
+    private void useAsTheme() {
+        try {
+            Theme now = Theme.current();
+            Theme made = Theme.save(t("My Screenshot"), now.scene(), now.water(), now.base(), now.buttons(), still(pictures.get(viewing)), now.music());
+            Theme.use(made);
+            message = null;
+            notice = t("Kelp's background is this picture now. Themes (in Options) can change it back.");
+        } catch (IOException | RuntimeException e) {
+            message = t("Couldn't make the theme: {0}", e.getMessage());
         }
     }
 
@@ -173,7 +192,7 @@ public class GalleryScreen extends Screen {
     public void draw(Graphics2D g, int w, int h) {
         McFont font = panel.getMcFont();
         boolean grid = viewing < 0;
-        for (McButton b : new McButton[] {previousButton, nextButton, openButton, deleteButton}) b.setBounds(-1000, -1000, 0, 0);
+        for (McButton b : new McButton[] {previousButton, nextButton, openButton, deleteButton, themeButton}) b.setBounds(-1000, -1000, 0, 0);
         folderButton.setBounds(-1000, -1000, 0, 0);
         if (grid) {
             centered(g, t("Gallery of {0}", instance.name()), w, 12 * GUI, 0xFFFFFF);
@@ -223,8 +242,10 @@ public class GalleryScreen extends Screen {
             deleteButton.setBounds(w / 2 - 44 * GUI, y, 80 * GUI, 20 * GUI);
             doneButton.setBounds(w / 2 + 40 * GUI, y, 88 * GUI, 20 * GUI);
             nextButton.setBounds(w / 2 + 132 * GUI, y, 20 * GUI, 20 * GUI);
+            themeButton.setBounds(w - 84 * GUI, 4 * GUI, 80 * GUI, 20 * GUI); // top-right, clear of the picture
         }
         if (message != null) centered(g, message, w, h - 40 * GUI, 0xFF5555);
+        else if (notice != null && !grid) centered(g, notice, w, h - 40 * GUI, 0x55FF55);
         for (McButton b : buttons) b.draw(g, font, GUI);
     }
 
