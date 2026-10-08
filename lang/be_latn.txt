@@ -455,3 +455,6 @@ What's That => Što heta
 Tells you what you're looking at. => Kaža, na što ty hladziš.
 Biome Announcer => Viaščalnik bijomaŭ
 Shows a title when you walk into a new biome. => Pakazvaje nazvu, kali ty zachodziš u novy bijom.
+Sharing... => Dzialusia...
+Dance Party => Tancavalnaja viečaryna
+Notes and hearts jump to the beat of your music. => Noty i sercy skačuć u rytm tvajoj muzyki.

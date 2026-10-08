@@ -455,3 +455,6 @@ What's That => Was'n das
 Tells you what you're looking at. => Saachd dir, wo de grade hinguggsd.
 Biome Announcer => Biom-Ausrufor
 Shows a title when you walk into a new biome. => Zeichd e Didl, wenn de in e neues Biom leefsd.
+Sharing... => Deele...
+Dance Party => Danzbardie
+Notes and hearts jump to the beat of your music. => Nodn un Herzn hubbn im Dakd von deener Musigg.

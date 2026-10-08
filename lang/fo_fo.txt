@@ -455,3 +455,6 @@ What's That => Hvat Er Tað
 Tells you what you're looking at. => Sigur tær, hvat tú hyggur at.
 Biome Announcer => Biom-boðberi
 Shows a title when you walk into a new biome. => Vísir eitt heiti, tá ið tú gongur inn í eitt nýtt biom.
+Sharing... => Deilir...
+Dance Party => Dansiveitsla
+Notes and hearts jump to the beat of your music. => Nótar og hjørtu hoppa í takt við tín tónleik.

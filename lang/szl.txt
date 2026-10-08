@@ -455,3 +455,6 @@ What's That => Co to je
 Tells you what you're looking at. => Gŏdŏ ci, na co filujesz.
 Biome Announcer => Ôgłaszŏcz biōmōw
 Shows a title when you walk into a new biome. => Pokazuje tytuł, kej wlazujesz do nowego biōmu.
+Sharing... => Udostympnianie...
+Dance Party => Potańcōwka
+Notes and hearts jump to the beat of your music. => Nuty i serca skŏczōm do rytmu twojij muzyki.

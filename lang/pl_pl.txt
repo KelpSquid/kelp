@@ -455,3 +455,6 @@ What's That => Co to jest
 Tells you what you're looking at. => Mówi ci, na co patrzysz.
 Biome Announcer => Zwiastun biomów
 Shows a title when you walk into a new biome. => Pokazuje tytuł, gdy wchodzisz do nowego biomu.
+Sharing... => Udostępnianie...
+Dance Party => Potańcówka
+Notes and hearts jump to the beat of your music. => Nuty i serduszka skaczą w rytm twojej muzyki.

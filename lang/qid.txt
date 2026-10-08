@@ -455,3 +455,6 @@ What's That => Apa Itoe
 Tells you what you're looking at. => Memberitahoe apa jang sedang kamoe lihat.
 Biome Announcer => Pengoemoem Bioma
 Shows a title when you walk into a new biome. => Menampilkan djoedoel saat kamoe masoek ke bioma baroe.
+Sharing... => Membagikan...
+Dance Party => Pesta Dansa
+Notes and hearts jump to the beat of your music. => Not dan hati melompat mengikoeti ketoekan moesikmoe.

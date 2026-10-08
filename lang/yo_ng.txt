@@ -455,3 +455,6 @@ What's That => Kí Nìyẹn
 Tells you what you're looking at. => Ó ń sọ ohun tí o ń wò fún ọ.
 Biome Announcer => Akéde Bíómù
 Shows a title when you walk into a new biome. => Ó ń fi àkọlé hàn nígbà tí o bá wọ bíómù tuntun.
+Sharing... => Ń pín in...
+Dance Party => Àríyá Ijó
+Notes and hearts jump to the beat of your music. => Àwọn àmì orin àti ọkàn ń fò sí ìlù orin rẹ.

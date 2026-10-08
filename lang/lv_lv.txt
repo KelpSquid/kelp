@@ -455,3 +455,6 @@ What's That => Kas Tas Ir
 Tells you what you're looking at. => Pasaka, uz ko tu skaties.
 Biome Announcer => Biomu vēstnesis
 Shows a title when you walk into a new biome. => Parāda virsrakstu, kad ieej jaunā biomā.
+Sharing... => Kopīgo...
+Dance Party => Deju ballīte
+Notes and hearts jump to the beat of your music. => Notis un sirsniņas lēkā tavas mūzikas ritmā.

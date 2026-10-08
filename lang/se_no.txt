@@ -455,3 +455,6 @@ What's That => Mii Dat Lea
 Tells you what you're looking at. => Muitala maid don geahčat.
 Biome Announcer => Biomadieđiheaddji
 Shows a title when you walk into a new biome. => Čájeha bajilčállaga go vázzát ođđa biomii.
+Sharing... => Juogadeamen...
+Dance Party => Dánsafeasta
+Notes and hearts jump to the beat of your music. => Nuohtat ja váimmut njuikejit du musihka rytmii.

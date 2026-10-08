@@ -455,3 +455,6 @@ What's That => O Ne
 Tells you what you're looking at. => Neye baktığını söyler.
 Biome Announcer => Biyom Habercisi
 Shows a title when you walk into a new biome. => Yeni bir biyoma girdiğinde bir başlık gösterir.
+Sharing... => Paylaşılıyor...
+Dance Party => Dans Partisi
+Notes and hearts jump to the beat of your music. => Notalar ve kalpler müziğinin ritmine göre zıplar.

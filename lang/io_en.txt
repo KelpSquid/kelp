@@ -455,3 +455,6 @@ What's That => Quo Esas To
 Tells you what you're looking at. => Dicas a vu quon vu regardas.
 Biome Announcer => Biomo-Anuncanto
 Shows a title when you walk into a new biome. => Montras titulo kande vu eniras nova biomo.
+Sharing... => Partigante...
+Dance Party => Dansofesto
+Notes and hearts jump to the beat of your music. => Noti e kordii saltas segun la takto di vua muziko.

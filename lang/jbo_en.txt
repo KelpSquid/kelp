@@ -455,3 +455,6 @@ What's That => ma ta
 Tells you what you're looking at. => skicu lo se catlu be do
 Biome Announcer => vanbi jungau
 Shows a title when you walk into a new biome. => jarco lo stedu ciska ca lo nu do nerkla lo cnino vanbi
+Sharing... => ca fatri...
+Dance Party => dansu salci
+Notes and hearts jump to the beat of your music. => lo zgike sinxa .e lo risna cu plipe fi lo dandu be lo do zgike

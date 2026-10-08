@@ -455,3 +455,6 @@ What's That => מה זה
 Tells you what you're looking at. => אומר לכם על מה אתם מסתכלים.
 Biome Announcer => מכריז הביומים
 Shows a title when you walk into a new biome. => מציג כותרת כשנכנסים לביום חדש.
+Sharing... => משתף...
+Dance Party => מסיבת ריקודים
+Notes and hearts jump to the beat of your music. => תווים ולבבות קופצים לקצב המוזיקה שלך.

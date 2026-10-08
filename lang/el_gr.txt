@@ -455,3 +455,6 @@ What's That => Τι Είναι Αυτό
 Tells you what you're looking at. => Σου λέει τι κοιτάς.
 Biome Announcer => Κήρυκας Βιωμάτων
 Shows a title when you walk into a new biome. => Δείχνει τίτλο όταν μπαίνεις σε νέο βίωμα.
+Sharing... => Κοινοποίηση...
+Dance Party => Πάρτι χορού
+Notes and hearts jump to the beat of your music. => Νότες και καρδιές χοροπηδούν στον ρυθμό της μουσικής σου.

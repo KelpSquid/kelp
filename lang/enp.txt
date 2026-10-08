@@ -455,3 +455,6 @@ What's That => What's That
 Tells you what you're looking at. => Tells you what you're looking at.
 Biome Announcer => Landkind Caller
 Shows a title when you walk into a new biome. => Shows a heading when you walk into a new landkind.
+Sharing... => Sharing...
+Dance Party => Merry Hop
+Notes and hearts jump to the beat of your music. => Tones and hearts leap to the beat of your songs.

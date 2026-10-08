@@ -455,3 +455,6 @@ What's That => Qu'es aquò
 Tells you what you're looking at. => Te ditz çò que agaches.
 Biome Announcer => Anonciaire de bioma
 Shows a title when you walk into a new biome. => Aficha un títol quand dintras dins un bioma novèl.
+Sharing... => Partatge...
+Dance Party => Bal
+Notes and hearts jump to the beat of your music. => Las nòtas e los cors sautan al ritme de ta musica.

@@ -455,3 +455,6 @@ What's That => Wut Dat
 Tells you what you're looking at. => Tellz u wut ur lookin at.
 Biome Announcer => Biome Yellr
 Shows a title when you walk into a new biome. => Showz a titl wen u walk in2 new biome.
+Sharing... => Shaerin...
+Dance Party => Dancey Partee
+Notes and hearts jump to the beat of your music. => Notez an hartz jump 2 teh beet ov ur muzik.

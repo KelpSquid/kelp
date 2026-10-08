@@ -455,3 +455,6 @@ What's That => Petra eo se
 Tells you what you're looking at. => Lavarout a ra dit petra emaout o sellet.
 Biome Announcer => Embanner ar Biomoù
 Shows a title when you walk into a new biome. => Diskouez a ra un titl pa'z ez e-barzh ur biom nevez.
+Sharing... => O rannañ...
+Dance Party => Fest-noz
+Notes and hearts jump to the beat of your music. => Notennoù ha kalonoù a lamm war lusk da sonerezh.

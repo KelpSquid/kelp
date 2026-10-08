@@ -455,3 +455,6 @@ What's That => Dè Th' Ann
 Tells you what you're looking at. => Innsidh e dhut dè air a bheil thu a' coimhead.
 Biome Announcer => Fios nam Biom
 Shows a title when you walk into a new biome. => Seallaidh e tiotal nuair a choisicheas tu a-steach do bhiom ùr.
+Sharing... => A' co-roinneadh...
+Dance Party => Cèilidh
+Notes and hearts jump to the beat of your music. => Leumaidh notaichean is cridheachan ri buille a' chiùil agad.

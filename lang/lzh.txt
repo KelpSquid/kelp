@@ -455,3 +455,6 @@ What's That => 彼何物
 Tells you what you're looking at. => 告汝所視何物。
 Biome Announcer => 報境
 Shows a title when you walk into a new biome. => 入新境則示其名。
+Sharing... => 方共之...
+Dance Party => 舞宴
+Notes and hearts jump to the beat of your music. => 音符與心，隨樂之拍而躍。

@@ -455,3 +455,6 @@ What's That => ما هذا
 Tells you what you're looking at. => يخبرك بما تنظر إليه.
 Biome Announcer => مُعلِن المناطق الحيوية
 Shows a title when you walk into a new biome. => يعرض عنوانًا عندما تدخل منطقة حيوية جديدة.
+Sharing... => جارٍ المشاركة...
+Dance Party => حفلة رقص
+Notes and hearts jump to the beat of your music. => النوتات والقلوب تقفز على إيقاع موسيقاك.

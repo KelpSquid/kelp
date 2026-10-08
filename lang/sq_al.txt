@@ -455,3 +455,6 @@ What's That => Çfarë është
 Tells you what you're looking at. => Të tregon se çfarë po shikon.
 Biome Announcer => Lajmëtari i Biomeve
 Shows a title when you walk into a new biome. => Shfaq një titull kur hyn në një biom të ri.
+Sharing... => Po ndahet...
+Dance Party => Festë me Vallëzim
+Notes and hearts jump to the beat of your music. => Notat dhe zemrat kërcejnë në ritmin e muzikës sate.

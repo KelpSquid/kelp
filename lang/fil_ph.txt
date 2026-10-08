@@ -455,3 +455,6 @@ What's That => Ano Iyan
 Tells you what you're looking at. => Sinasabi sa iyo kung ano ang tinitingnan mo.
 Biome Announcer => Tagapagbalita ng Biome
 Shows a title when you walk into a new biome. => Nagpapakita ng pamagat kapag pumasok ka sa bagong biome.
+Sharing... => Ibinabahagi...
+Dance Party => Sayawan
+Notes and hearts jump to the beat of your music. => Tumatalon ang mga nota at puso sa beat ng iyong musika.

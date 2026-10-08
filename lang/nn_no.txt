@@ -455,3 +455,6 @@ What's That => Kva er det
 Tells you what you're looking at. => Fortel deg kva du ser på.
 Biome Announcer => Biomvarslar
 Shows a title when you walk into a new biome. => Viser ein tittel når du går inn i eit nytt biom.
+Sharing... => Deler...
+Dance Party => Dansefest
+Notes and hearts jump to the beat of your music. => Notar og hjarte hoppar i takt med musikken din.

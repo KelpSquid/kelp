@@ -455,3 +455,6 @@ What's That => Што е тоа
 Tells you what you're looking at. => Ти кажува што гледаш.
 Biome Announcer => Гласник на биоми
 Shows a title when you walk into a new biome. => Покажува наслов кога ќе влезеш во нов биом.
+Sharing... => Се споделува...
+Dance Party => Танцова забава
+Notes and hearts jump to the beat of your music. => Ноти и срца скокаат во ритамот на твојата музика.

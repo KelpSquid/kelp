@@ -455,3 +455,6 @@ What's That => Šta je to
 Tells you what you're looking at. => Kaže ti u šta gledaš.
 Biome Announcer => Najavljivač bioma
 Shows a title when you walk into a new biome. => Pokaže naslov kad uđeš u novi biom.
+Sharing... => Dijelim...
+Dance Party => Plesna žurka
+Notes and hearts jump to the beat of your music. => Note i srca skaču u ritmu tvoje muzike.

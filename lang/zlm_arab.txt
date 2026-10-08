@@ -455,3 +455,6 @@ What's That => اڤ ايت
 Tells you what you're looking at. => ممبريتاهو اڤ يڠ اندا ليهت.
 Biome Announcer => ڤڠومومن بيوم
 Shows a title when you walk into a new biome. => منونجوقکن تاجوق اڤابيلا اندا ماسوق ک بيوم بهارو.
+Sharing... => برکوڠسي...
+Dance Party => ڤستا تاري
+Notes and hearts jump to the beat of your music. => نوت دان هاتي ملومڤت مڠيکوت رنتق موزيک اندا.

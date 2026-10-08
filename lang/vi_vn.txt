@@ -455,3 +455,6 @@ What's That => Cái Gì Đó
 Tells you what you're looking at. => Cho bạn biết bạn đang nhìn vào cái gì.
 Biome Announcer => Loa Quần Xã
 Shows a title when you walk into a new biome. => Hiện tiêu đề khi bạn bước vào quần xã sinh vật mới.
+Sharing... => Đang chia sẻ...
+Dance Party => Tiệc Nhảy
+Notes and hearts jump to the beat of your music. => Nốt nhạc và trái tim nhảy theo nhịp nhạc của bạn.

@@ -455,3 +455,6 @@ What's That => Co to je
 Tells you what you're looking at. => Řekne ti, na co se díváš.
 Biome Announcer => Hlasatel biomů
 Shows a title when you walk into a new biome. => Ukáže nadpis, když vejdeš do nového biomu.
+Sharing... => Sdílím...
+Dance Party => Taneční párty
+Notes and hearts jump to the beat of your music. => Noty a srdíčka skáčou do rytmu tvé hudby.

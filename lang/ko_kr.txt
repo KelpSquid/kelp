@@ -455,3 +455,6 @@ What's That => 저게 뭐지
 Tells you what you're looking at. => 지금 보고 있는 게 뭔지 알려 줘요.
 Biome Announcer => 바이옴 알리미
 Shows a title when you walk into a new biome. => 새 바이옴에 들어가면 제목을 보여 줘요.
+Sharing... => 공유하는 중...
+Dance Party => 댄스 파티
+Notes and hearts jump to the beat of your music. => 음표와 하트가 음악 박자에 맞춰 뛰어요.

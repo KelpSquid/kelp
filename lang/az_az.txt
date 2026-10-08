@@ -455,3 +455,6 @@ What's That => Bu Nədir
 Tells you what you're looking at. => Nəyə baxdığını sənə deyir.
 Biome Announcer => Biom Carçısı
 Shows a title when you walk into a new biome. => Yeni bioma girəndə başlıq göstərir.
+Sharing... => Paylaşılır...
+Dance Party => Rəqs Partisi
+Notes and hearts jump to the beat of your music. => Notlar və ürəklər musiqinin ritminə uyğun hoppanır.

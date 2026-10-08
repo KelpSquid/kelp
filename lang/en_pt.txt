@@ -455,3 +455,6 @@ What's That => What Be That
 Tells you what you're looking at. => Tells ye what ye be lookin' at.
 Biome Announcer => Biome Crier
 Shows a title when you walk into a new biome. => Shows a title when ye sail into a new biome.
+Sharing... => Sharin' the booty...
+Dance Party => Jig Party
+Notes and hearts jump to the beat of your music. => Notes an' hearts jump to the beat o' yer shanty.

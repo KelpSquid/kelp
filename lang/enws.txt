@@ -455,3 +455,6 @@ What's That => What Is Yon
 Tells you what you're looking at. => Telleth thee what thou lookest upon.
 Biome Announcer => Biome Herald
 Shows a title when you walk into a new biome. => Showeth a title when thou walkest into a new biome.
+Sharing... => Sharing...
+Dance Party => Grand Revel
+Notes and hearts jump to the beat of your music. => Notes and hearts do leap unto the beat of thy minstrelsy.

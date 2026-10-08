@@ -455,3 +455,6 @@ What's That => Quid Est Illud
 Tells you what you're looking at. => Dicit tibi quid aspicias.
 Biome Announcer => Praeco Regionum
 Shows a title when you walk into a new biome. => Titulum ostendit cum in novam regionem intras.
+Sharing... => Communicatur...
+Dance Party => Convivium Saltatorium
+Notes and hearts jump to the beat of your music. => Notae et corda ad ictum musicae tuae saliunt.

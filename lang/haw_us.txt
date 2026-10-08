@@ -455,3 +455,6 @@ What's That => He Aha Kēlā
 Tells you what you're looking at. => Haʻi iā ʻoe i ka mea āu e nānā nei.
 Biome Announcer => Mea Hoʻolaha Kaiaola
 Shows a title when you walk into a new biome. => Hōʻike i kahi poʻo inoa ke komo ʻoe i kahi kaiaola hou.
+Sharing... => Ke kaʻana nei...
+Dance Party => Pāʻina Hula
+Notes and hearts jump to the beat of your music. => Lele nā nota a me nā puʻuwai i ka paʻi o kāu mele.

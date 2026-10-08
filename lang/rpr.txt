@@ -455,3 +455,6 @@ What's That => Что это
 Tells you what you're looking at. => Говоритъ, на что ты смотришь.
 Biome Announcer => Глашатай біомовъ
 Shows a title when you walk into a new biome. => Показываетъ заголовокъ, когда входишь въ новый біомъ.
+Sharing... => Дѣлюсь...
+Dance Party => Танцевальная вечеринка
+Notes and hearts jump to the beat of your music. => Ноты и сердечки прыгаютъ въ тактъ твоей музыки.

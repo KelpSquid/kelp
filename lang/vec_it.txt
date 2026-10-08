@@ -455,3 +455,6 @@ What's That => Cossa Xe Queło
 Tells you what you're looking at. => El te dixe cossa che te stà vardando.
 Biome Announcer => Anunsiador de Biomi
 Shows a title when you walk into a new biome. => El mostra un tìtoło cuando che te entri inte un bioma novo.
+Sharing... => Drio spartir...
+Dance Party => Festa da bało
+Notes and hearts jump to the beat of your music. => Łe note e i cuori i salta al ritmo de ła to mùxega.

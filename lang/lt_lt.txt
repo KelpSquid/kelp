@@ -455,3 +455,6 @@ What's That => Kas Tai
 Tells you what you're looking at. => Pasako, į ką žiūri.
 Biome Announcer => Biomų šauklys
 Shows a title when you walk into a new biome. => Parodo pavadinimą, kai įeini į naują biomą.
+Sharing... => Dalinamasi...
+Dance Party => Šokių vakarėlis
+Notes and hearts jump to the beat of your music. => Natos ir širdelės šokinėja pagal tavo muzikos ritmą.

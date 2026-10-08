@@ -455,3 +455,6 @@ What's That => Бұл не
 Tells you what you're looking at. => Неге қарап тұрғаныңды айтады.
 Biome Announcer => Биом жаршысы
 Shows a title when you walk into a new biome. => Жаңа биомға кіргенде тақырып көрсетеді.
+Sharing... => Бөлісуде...
+Dance Party => Би кеші
+Notes and hearts jump to the beat of your music. => Ноталар мен жүректер музыкаңның ырғағымен секіреді.

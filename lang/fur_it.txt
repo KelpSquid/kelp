@@ -455,3 +455,6 @@ What's That => Ce isal chel
 Tells you what you're looking at. => Ti dîs ce che tu stâs cjalant.
 Biome Announcer => Bandidôr dai biomis
 Shows a title when you walk into a new biome. => Al mostre un titul cuant che tu jentris intun biome gnûf.
+Sharing... => O condivît...
+Dance Party => Fieste di bal
+Notes and hearts jump to the beat of your music. => Notis e cuârs a saltin al ritmi de tô musiche.

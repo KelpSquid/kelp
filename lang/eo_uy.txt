@@ -455,3 +455,6 @@ What's That => Kio Estas Tio
 Tells you what you're looking at. => Diras al vi, kion vi rigardas.
 Biome Announcer => Biomanoncisto
 Shows a title when you walk into a new biome. => Montras titolon kiam vi eniras novan biomon.
+Sharing... => Kunhavigado...
+Dance Party => Dancfesto
+Notes and hearts jump to the beat of your music. => Notoj kaj koroj saltas laŭ la takto de via muziko.

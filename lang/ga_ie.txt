@@ -455,3 +455,6 @@ What's That => Cad É Sin
 Tells you what you're looking at. => Insíonn sé duit cad atá tú ag féachaint air.
 Biome Announcer => Fógróir Bithóm
 Shows a title when you walk into a new biome. => Taispeánann sé teideal nuair a shiúlann tú isteach i mbithóm nua.
+Sharing... => Á roinnt...
+Dance Party => Céilí
+Notes and hearts jump to the beat of your music. => Léimeann nótaí agus croíthe le buille do cheoil.

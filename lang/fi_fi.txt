@@ -455,3 +455,6 @@ What's That => Mikä Tuo On
 Tells you what you're looking at. => Kertoo, mitä katsot.
 Biome Announcer => Biomikuuluttaja
 Shows a title when you walk into a new biome. => Näyttää otsikon, kun kävelet uuteen biomiin.
+Sharing... => Jaetaan...
+Dance Party => Tanssibileet
+Notes and hearts jump to the beat of your music. => Nuotit ja sydämet hyppivät musiikkisi tahtiin.

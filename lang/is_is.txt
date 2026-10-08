@@ -455,3 +455,6 @@ What's That => Hvað er þetta
 Tells you what you're looking at. => Segir þér hvað þú ert að horfa á.
 Biome Announcer => Lífbeltisboði
 Shows a title when you walk into a new biome. => Sýnir titil þegar þú gengur inn í nýtt lífbelti.
+Sharing... => Deili...
+Dance Party => Dansveisla
+Notes and hearts jump to the beat of your music. => Nótur og hjörtu hoppa í takt við tónlistina þína.

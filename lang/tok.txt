@@ -455,3 +455,6 @@ What's That => ni li seme
 Tells you what you're looking at. => ona li toki e ijo pi lukin sina.
 Biome Announcer => jan toki ma
 Shows a title when you walk into a new biome. => sina tawa ma sin la ona li sitelen e nimi ma.
+Sharing... => mi pana e ona tawa jan...
+Dance Party => kulupu pi tawa musi
+Notes and hearts jump to the beat of your music. => sitelen kalama en sitelen olin li tawa sewi lon tenpo pi kalama musi sina.

@@ -455,3 +455,6 @@ What's That => Zer Da Hori
 Tells you what you're looking at. => Zer begiratzen ari zaren esaten dizu.
 Biome Announcer => Bioma-iragarlea
 Shows a title when you walk into a new biome. => Izenburu bat erakusten du bioma berri batean sartzen zarenean.
+Sharing... => Partekatzen...
+Dance Party => Dantza-festa
+Notes and hearts jump to the beat of your music. => Notak eta bihotzak zure musikaren erritmora jauzika dabiltza.

@@ -455,3 +455,6 @@ What's That => Apa Itu
 Tells you what you're looking at. => Memberi tahu apa yang sedang kamu lihat.
 Biome Announcer => Pengumum Bioma
 Shows a title when you walk into a new biome. => Menampilkan judul saat kamu masuk ke bioma baru.
+Sharing... => Membagikan...
+Dance Party => Pesta Dansa
+Notes and hearts jump to the beat of your music. => Not dan hati melompat mengikuti ketukan musikmu.

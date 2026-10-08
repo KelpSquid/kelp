@@ -455,3 +455,6 @@ What's That => რა არის ეს
 Tells you what you're looking at. => გეუბნება, რას უყურებ.
 Biome Announcer => ბიომის მაცნე
 Shows a title when you walk into a new biome. => აჩვენებს სათაურს, როცა ახალ ბიომში შედიხარ.
+Sharing... => ზიარდება...
+Dance Party => საცეკვაო წვეულება
+Notes and hearts jump to the beat of your music. => ნოტები და გულები შენი მუსიკის რიტმზე ხტუნავენ.

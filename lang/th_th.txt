@@ -455,3 +455,6 @@ What's That => นั่นคืออะไร
 Tells you what you're looking at. => บอกว่าคุณกำลังมองอะไรอยู่
 Biome Announcer => ผู้ประกาศไบโอม
 Shows a title when you walk into a new biome. => แสดงหัวข้อเมื่อคุณเดินเข้าไบโอมใหม่
+Sharing... => กำลังแชร์...
+Dance Party => ปาร์ตี้เต้นรำ
+Notes and hearts jump to the beat of your music. => โน้ตและหัวใจกระโดดตามจังหวะเพลงของคุณ

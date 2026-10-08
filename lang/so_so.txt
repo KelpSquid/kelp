@@ -455,3 +455,6 @@ What's That => Waa Maxay Kaasi
 Tells you what you're looking at. => Wuxuu kuu sheegaa waxa aad eegayso.
 Biome Announcer => Ogeysiiyaha Biome-ka
 Shows a title when you walk into a new biome. => Wuxuu muujiyaa cinwaan markaad gasho biome cusub.
+Sharing... => Waa la wadaagayaa...
+Dance Party => Xaflad Qoob-ka-ciyaar
+Notes and hearts jump to the beat of your music. => Noodhadhka iyo qalbiyadu waxay u boodaan garaaca muusiggaaga.

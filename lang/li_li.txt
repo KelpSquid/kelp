@@ -455,3 +455,6 @@ What's That => Wat is dat
 Tells you what you're looking at. => Zeet dich wats te bekieks.
 Biome Announcer => Biomaankondiger
 Shows a title when you walk into a new biome. => Tuunt 'ne titel es te in e nuuj biome kums.
+Sharing... => Deile...
+Dance Party => Danspertie
+Notes and hearts jump to the beat of your music. => Note en hertjes springe op de maat vaan dien meziek.

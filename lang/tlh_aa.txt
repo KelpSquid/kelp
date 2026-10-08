@@ -455,3 +455,6 @@ What's That => nuq 'oH
 Tells you what you're looking at. => nuq Dabej DaSovmoH.
 Biome Announcer => yoS chu' ja'wI'
 Shows a title when you walk into a new biome. => yoS chu'Daq bIyItDI', per 'agh.
+Sharing... => vInobtaH...
+Dance Party => QoQ 'uQ'a'
+Notes and hearts jump to the beat of your music. => QoQlIj ruQ tlha' Sup QoQ ghItlhmey tIqmey je.

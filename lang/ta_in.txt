@@ -455,3 +455,6 @@ What's That => அது என்ன
 Tells you what you're looking at. => நீங்கள் எதைப் பார்க்கிறீர்கள் என்று சொல்லும்.
 Biome Announcer => பயோம் அறிவிப்பாளர்
 Shows a title when you walk into a new biome. => புதிய பயோமுக்குள் நுழையும்போது ஒரு தலைப்பைக் காட்டும்.
+Sharing... => பகிர்கிறது...
+Dance Party => நடன விருந்து
+Notes and hearts jump to the beat of your music. => உங்கள் இசையின் தாளத்துக்கு ஏற்ப ஸ்வரக்குறிகளும் இதயங்களும் குதிக்கும்.

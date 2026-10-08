@@ -455,3 +455,6 @@ What's That => Pyth yw Henna
 Tells you what you're looking at. => A lever dhis pyth esos ow mires orto.
 Biome Announcer => Galwer Biom
 Shows a title when you walk into a new biome. => A dhiskwedh titel pan entrydh biom nowydh.
+Sharing... => Ow kevrenna...
+Dance Party => Troyll
+Notes and hearts jump to the beat of your music. => Notennow ha kolonnow a lamm dhe dolgh dha ilow.

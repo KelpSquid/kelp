@@ -455,3 +455,6 @@ What's That => あれなに？
 Tells you what you're looking at. => 見ているものを教えてくれます。
 Biome Announcer => バイオームおしらせ
 Shows a title when you walk into a new biome. => 新しいバイオームに入るとタイトルを表示します。
+Sharing... => 共有中...
+Dance Party => ダンスパーティー
+Notes and hearts jump to the beat of your music. => 音符とハートが音楽のビートに合わせてはねます。

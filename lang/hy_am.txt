@@ -455,3 +455,6 @@ What's That => Ի՞նչ է դա
 Tells you what you're looking at. => Ասում է, թե ինչին ես նայում։
 Biome Announcer => Բիոմի ազդարար
 Shows a title when you walk into a new biome. => Վերնագիր է ցույց տալիս, երբ մտնում ես նոր բիոմ։
+Sharing... => Կիսվում է...
+Dance Party => Պարային երեկույթ
+Notes and hearts jump to the beat of your music. => Նոտաներն ու սրտիկները ցատկում են քո երաժշտության զարկի տակ։

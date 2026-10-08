@@ -455,3 +455,6 @@ What's That => Vad är det
 Tells you what you're looking at. => Berättar vad du tittar på.
 Biome Announcer => Biomutroparen
 Shows a title when you walk into a new biome. => Visar en titel när du går in i en ny biom.
+Sharing... => Delar...
+Dance Party => Dansfest
+Notes and hearts jump to the beat of your music. => Noter och hjärtan hoppar i takt med din musik.

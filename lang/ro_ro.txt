@@ -455,3 +455,6 @@ What's That => Ce-i Asta
 Tells you what you're looking at. => Îți spune la ce te uiți.
 Biome Announcer => Vestitorul de Biomi
 Shows a title when you walk into a new biome. => Arată un titlu când intri într-un biom nou.
+Sharing... => Se partajează...
+Dance Party => Petrecere cu dans
+Notes and hearts jump to the beat of your music. => Notele și inimile sar în ritmul muzicii tale.

@@ -455,3 +455,6 @@ What's That => Wa's da
 Tells you what you're looking at. => Zeej oe wa ge bekèkt.
 Biome Announcer => Biome-omroeper
 Shows a title when you walk into a new biome. => Laot unne titel zien as ge unne nieuwe biome inloopt.
+Sharing... => Delen...
+Dance Party => Dansfeestje
+Notes and hearts jump to the beat of your music. => Noten en hartjes springen op de maat van oew muziek.

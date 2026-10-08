@@ -455,3 +455,6 @@ What's That => Wat is dat
 Tells you what you're looking at. => Seggt di, wat du ankiekst.
 Biome Announcer => Biom-Ansegger
 Shows a title when you walk into a new biome. => Wiest en Titel, wenn du in en nieg Biom geihst.
+Sharing... => Deel...
+Dance Party => Danzfest
+Notes and hearts jump to the beat of your music. => Noten un Harten hüppt in'n Takt vun dien Musik.

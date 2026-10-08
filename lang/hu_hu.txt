@@ -455,3 +455,6 @@ What's That => Mi az ott
 Tells you what you're looking at. => Megmondja, mit nézel.
 Biome Announcer => Biomhírnök
 Shows a title when you walk into a new biome. => Címet mutat, amikor új biomba lépsz.
+Sharing... => Megosztás...
+Dance Party => Táncbuli
+Notes and hearts jump to the beat of your music. => Hangjegyek és szívek ugrálnak a zenéd ütemére.

@@ -455,3 +455,6 @@ What's That => Тэр юу вэ
 Tells you what you're looking at. => Юу харж байгааг чинь хэлнэ.
 Biome Announcer => Биом зарлагч
 Shows a title when you walk into a new biome. => Шинэ биомд ороход гарчиг харуулна.
+Sharing... => Хуваалцаж байна...
+Dance Party => Бүжгийн үдэшлэг
+Notes and hearts jump to the beat of your music. => Нот болон зүрхнүүд хөгжмийн чинь хэмнэлээр үсэрнэ.

@@ -455,3 +455,6 @@ What's That => Cossa l'è
 Tells you what you're looking at. => El te dis cossa te stee vardand.
 Biome Announcer => Anunciador di biomi
 Shows a title when you walk into a new biome. => El mostra on titol quand te entret in d'on bioma noeuv.
+Sharing... => Drè a spartì...
+Dance Party => Festa de ball
+Notes and hearts jump to the beat of your music. => I not e i coeur salten al ritmo de la toa musega.

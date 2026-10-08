@@ -455,3 +455,6 @@ What's That => Mis See On
 Tells you what you're looking at. => Ütleb, mida sa vaatad.
 Biome Announcer => Bioomikuulutaja
 Shows a title when you walk into a new biome. => Näitab pealkirja, kui astud uude bioomi.
+Sharing... => Jagan...
+Dance Party => Tantsupidu
+Notes and hearts jump to the beat of your music. => Noodid ja südamed hüppavad su muusika rütmis.

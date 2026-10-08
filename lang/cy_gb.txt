@@ -455,3 +455,6 @@ What's That => Beth Yw Hwnna
 Tells you what you're looking at. => Yn dweud wrthot ti beth rwyt ti'n edrych arno.
 Biome Announcer => Cyhoeddwr Biomau
 Shows a title when you walk into a new biome. => Yn dangos teitl pan fyddi di'n cerdded i fiom newydd.
+Sharing... => Yn rhannu...
+Dance Party => Parti Dawns
+Notes and hearts jump to the beat of your music. => Mae nodau a chalonnau'n neidio i guriad dy gerddoriaeth.

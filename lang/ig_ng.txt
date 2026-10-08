@@ -455,3 +455,6 @@ What's That => Gịnị Bụ Nke Ahụ
 Tells you what you're looking at. => Na-agwa gị ihe ị na-ele anya.
 Biome Announcer => Onye Ọkwa Biome
 Shows a title when you walk into a new biome. => Na-egosi aha mgbe ị banyere na biome ọhụrụ.
+Sharing... => Na-ekesa...
+Dance Party => Oriri Egwu
+Notes and hearts jump to the beat of your music. => Akara egwu na obi na-awụli elu n'iti egwu gị.

@@ -455,3 +455,6 @@ What's That => Wos is'n des
 Tells you what you're looking at. => Sogt da, wos'd grod auschaust.
 Biome Announcer => Biom-Ausrufer
 Shows a title when you walk into a new biome. => Zeigt an Titl, wenn'st in a neichs Biom einegehst.
+Sharing... => Teil...
+Dance Party => Tanzparty
+Notes and hearts jump to the beat of your music. => Notn und Herzerl hupfn im Takt vo deina Musi.

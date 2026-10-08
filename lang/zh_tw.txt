@@ -455,3 +455,6 @@ What's That => 那是什麼
 Tells you what you're looking at. => 告訴你正在看的是什麼。
 Biome Announcer => 生態域播報員
 Shows a title when you walk into a new biome. => 走進新的生態域時顯示標題。
+Sharing... => 正在分享...
+Dance Party => 跳舞派對
+Notes and hearts jump to the beat of your music. => 音符和愛心隨著你的音樂節拍跳動。

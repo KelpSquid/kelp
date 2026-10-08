@@ -455,3 +455,6 @@ What's That => ນັ້ນແມ່ນຫຍັງ
 Tells you what you're looking at. => ບອກວ່າເຈົ້າກຳລັງເບິ່ງຫຍັງຢູ່
 Biome Announcer => ຜູ້ປະກາດໄບໂອມ
 Shows a title when you walk into a new biome. => ສະແດງຫົວຂໍ້ເມື່ອເຈົ້າຍ່າງເຂົ້າໄບໂອມໃໝ່
+Sharing... => ກຳລັງແບ່ງປັນ...
+Dance Party => ງານລ້ຽງເຕັ້ນລຳ
+Notes and hearts jump to the beat of your music. => ໂນດ ແລະ ຫົວໃຈກະໂດດຕາມຈັງຫວະເພງຂອງເຈົ້າ

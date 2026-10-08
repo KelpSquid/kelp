@@ -455,3 +455,6 @@ What's That => ಅದೇನು
 Tells you what you're looking at. => ನೀವು ಏನು ನೋಡುತ್ತಿದ್ದೀರಿ ಎಂದು ಹೇಳುತ್ತದೆ.
 Biome Announcer => ಬಯೋಮ್ ಘೋಷಕ
 Shows a title when you walk into a new biome. => ಹೊಸ ಬಯೋಮ್ಗೆ ಹೋದಾಗ ಶೀರ್ಷಿಕೆ ತೋರಿಸುತ್ತದೆ.
+Sharing... => ಹಂಚಿಕೊಳ್ಳುತ್ತಿದೆ...
+Dance Party => ನೃತ್ಯ ಪಾರ್ಟಿ
+Notes and hearts jump to the beat of your music. => ನಿಮ್ಮ ಸಂಗೀತದ ಬೀಟ್‌ಗೆ ಸ್ವರಗಳು ಮತ್ತು ಹೃದಯಗಳು ಜಿಗಿಯುತ್ತವೆ.

@@ -455,3 +455,6 @@ What's That => این چیست
 Tells you what you're looking at. => به شما می‌گوید به چه چیزی نگاه می‌کنید.
 Biome Announcer => اعلام‌گر زیست‌بوم
 Shows a title when you walk into a new biome. => وقتی وارد یک زیست‌بوم جدید می‌شوید، عنوانی نشان می‌دهد.
+Sharing... => در حال اشتراک‌گذاری...
+Dance Party => جشن رقص
+Notes and hearts jump to the beat of your music. => نت‌ها و قلب‌ها با ضرب موسیقی شما می‌پرند.

@@ -455,3 +455,6 @@ What's That => וואָס איז דאָס
 Tells you what you're looking at. => זאָגט דיר אויף וואָס דו קוקסט.
 Biome Announcer => ביאָם־מעלדער
 Shows a title when you walk into a new biome. => ווײַזט אַ טיטל ווען דו גייסט אַרײַן אין אַ נײַעם ביאָם.
+Sharing... => מע טיילט...
+Dance Party => טאַנץ־פּאַרטי
+Notes and hearts jump to the beat of your music. => נאָטן און הערצער שפּרינגען צום טאַקט פֿון דײַן מוזיק.

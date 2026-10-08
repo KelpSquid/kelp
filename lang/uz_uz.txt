@@ -455,3 +455,6 @@ What's That => Bu nima
 Tells you what you're looking at. => Nimaga qarayotganingni aytadi.
 Biome Announcer => Biom jarchisi
 Shows a title when you walk into a new biome. => Yangi biomga kirganingda sarlavha ko'rsatadi.
+Sharing... => Ulashilmoqda...
+Dance Party => Raqs bazmi
+Notes and hearts jump to the beat of your music. => Notalar va yuraklar musiqangning ritmiga sakraydi.

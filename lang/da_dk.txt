@@ -455,3 +455,6 @@ What's That => Hvad Er Det
 Tells you what you're looking at. => Fortæller dig, hvad du kigger på.
 Biome Announcer => Biom-melder
 Shows a title when you walk into a new biome. => Viser en titel, når du går ind i en ny biom.
+Sharing... => Deler...
+Dance Party => Dansefest
+Notes and hearts jump to the beat of your music. => Noder og hjerter hopper i takt med din musik.
