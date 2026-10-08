@@ -74,7 +74,7 @@ public class SoundMakerScreen extends Screen {
     private void pickSound() {
         JFileChooser chooser = new JFileChooser(new java.io.File(System.getProperty("user.home")));
         chooser.setDialogTitle(t("Pick a sound"));
-        chooser.setFileFilter(new FileNameExtensionFilter(t("Sounds (.wav, .flac, .mp3, .ogg)"), "wav", "flac", "mp3", "ogg"));
+        chooser.setFileFilter(new FileNameExtensionFilter(t("Sounds (.wav, .flac, .mp3, .ogg, .m4a)"), "wav", "flac", "mp3", "ogg", "m4a", "aac"));
         if (chooser.showDialog(SwingUtilities.getWindowAncestor(panel), t("Use")) != JFileChooser.APPROVE_OPTION) return;
         use(chooser.getSelectedFile().toPath());
     }

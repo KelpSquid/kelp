@@ -27,7 +27,7 @@ public final class ThemeMusic {
     }
 
     /** The kinds of music a theme can have. */
-    public static final List<String> KINDS = List.of("wav", "mp3", "flac", "ogg", "sqda");
+    public static final List<String> KINDS = List.of("wav", "mp3", "m4a", "aac", "flac", "ogg", "sqda");
 
     private static Clip playing;
     private static Path playingFile;

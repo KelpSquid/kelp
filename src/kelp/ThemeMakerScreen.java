@@ -100,7 +100,7 @@ public class ThemeMakerScreen extends Screen {
             preview();
             return;
         }
-        Path picked = pick(t("Pick music"), t("Music (.wav, .mp3, .flac, .ogg, .sqda)"), ThemeMusic.KINDS.toArray(String[]::new));
+        Path picked = pick(t("Pick music"), t("Music (.wav, .mp3, .m4a, .flac, .ogg, .sqda)"), ThemeMusic.KINDS.toArray(String[]::new));
         if (picked != null) {
             music = picked;
             preview();
