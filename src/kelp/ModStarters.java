@@ -156,6 +156,25 @@ public final class ModStarters {
                         }
                     }
                     """),
+            new Starter("Chat Commands", "Type !dance, !where or !shout hello in the chat.", """
+                    // %1$s: your own chat commands! They start with ! and never get sent to anyone.
+                    // Try adding one: onCommand("jump", () -> boost(1));
+
+                    public class %2$s extends EasyMod {
+                        void start() {
+                            onCommand("dance", () -> {
+                                particles("note", 15);
+                                playSound("block.note_block.pling");
+                            });
+                            onCommand("where", () -> say("You're at " + x() + ", " + y() + ", " + z() + " in a " + biome().replace('_', ' ')));
+                            onCommand("shout", words -> title(words.isEmpty() ? "HEY!" : words));
+                            // It can hear the chat too: say hello and it answers
+                            onChat(text -> {
+                                if (text.toLowerCase().contains("hello squid")) say("Hello to you too!");
+                            });
+                        }
+                    }
+                    """),
             new Starter("Dance Party", "Notes and hearts jump to the beat of your music.", """
                     // %1$s: play a song in Squid > Jukebox, and notes and hearts jump to its beat!
                     // Try other particles: "flame", "happy_villager", "end_rod". Or make the effect bigger when it's loud.
