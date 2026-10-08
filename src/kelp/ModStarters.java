@@ -26,17 +26,13 @@ public final class ModStarters {
                     // %1$s: press R to blast into the sky!
                     // Try changing POWER: 0.5 is a hop, 3 is the clouds. (Careful: falling still hurts.)
 
-                    import net.minecraft.client.Minecraft;
-
                     public class %2$s extends EasyMod {
                         double POWER = 1.2;
 
                         void start() {
                             onKey("R", () -> {
-                                var player = Minecraft.getInstance().player;
-                                if (player == null) return;
-                                // Keep going the same way sideways, and shoot up
-                                player.setDeltaMovement(player.getDeltaMovement().x, POWER, player.getDeltaMovement().z);
+                                boost(POWER);
+                                particles("firework", 20);
                                 playSound("entity.firework_rocket.launch");
                                 showText("Whoosh!");
                             });
@@ -45,10 +41,7 @@ public final class ModStarters {
                     """),
             new Starter("Creeper Alarm", "Warns you when a creeper sneaks up.", """
                     // %1$s: warns you when a creeper sneaks up on you.
-                    // Try changing DISTANCE (in blocks), or the sound. Sound names are in the /playsound command.
-
-                    import net.minecraft.client.Minecraft;
-                    import net.minecraft.world.entity.monster.Creeper;
+                    // Try changing DISTANCE (in blocks), or the mob: nearby("zombie", DISTANCE) works for any mob.
 
                     public class %2$s extends EasyMod {
                         int DISTANCE = 12;
@@ -56,16 +49,12 @@ public final class ModStarters {
 
                         void start() {
                             every(0.5, () -> {
-                                var game = Minecraft.getInstance();
-                                if (game.player == null || game.level == null) return;
-                                // Every creeper in a box around you
-                                var creepers = game.level.getEntitiesOfClass(Creeper.class, game.player.getBoundingBox().inflate(DISTANCE));
-                                if (creepers.isEmpty()) {
+                                int creepers = nearby("creeper", DISTANCE);
+                                if (creepers == 0) {
                                     warned = false;
                                     return;
                                 }
-                                int closest = (int) creepers.stream().mapToDouble(c -> c.distanceTo(game.player)).min().orElse(0);
-                                showText("Creeper " + closest + " blocks away!");
+                                showText(creepers == 1 ? "A creeper is near you!" : creepers + " creepers are near you!");
                                 if (!warned) {
                                     playSound("block.note_block.bell");
                                     warned = true; // the bell rings once, not every half second
@@ -103,19 +92,20 @@ public final class ModStarters {
                     }
                     """),
             new Starter("Health Alarm", "Beeps when your health gets low.", """
-                    // %1$s: beeps when your health gets low.
+                    // %1$s: beeps when your health gets low, and cheers you up when you die.
                     // Health goes from 0 to 20 (each heart is 2). Try changing LOW.
 
                     public class %2$s extends EasyMod {
                         int LOW = 6;
 
                         void start() {
-                            every(1, () -> {
-                                if (inWorld() && health() > 0 && health() <= LOW) {
-                                    showText("Low health! Eat something!");
+                            onHurt(() -> {
+                                if (health() > 0 && health() <= LOW) {
+                                    title("", "Low health! Eat something!");
                                     playSound("block.note_block.bass");
                                 }
                             });
+                            onDeath(() -> title("Oops!", "You'll get it next time"));
                         }
                     }
                     """),
@@ -132,6 +122,36 @@ public final class ModStarters {
                                 giveItem(gift);
                                 say("Lucky! You got " + gift.replace('_', ' ') + "!");
                                 playSound("entity.player.levelup");
+                            });
+                        }
+                    }
+                    """),
+            new Starter("What's That", "Tells you what you're looking at.", """
+                    // %1$s: tells you the name of whatever you're looking at, block or mob.
+                    // Try adding what's in your hand: + "  (holding " + holding() + ")"
+
+                    public class %2$s extends EasyMod {
+                        void start() {
+                            every(0.25, () -> {
+                                String thing = lookingAt();
+                                if (!thing.isEmpty()) showText(thing.replace('_', ' '));
+                            });
+                        }
+                    }
+                    """),
+            new Starter("Biome Announcer", "Shows a title when you walk into a new biome.", """
+                    // %1$s: shows the biome's name in big letters when you walk into a new one.
+                    // Try playing a sound too, or making it say whether it's night: isNight()
+
+                    public class %2$s extends EasyMod {
+                        String last = "";
+
+                        void start() {
+                            every(1, () -> {
+                                String now = biome();
+                                if (now.isEmpty() || now.equals(last)) return;
+                                if (!last.isEmpty()) title(now.replace('_', ' '), "You found a new biome!");
+                                last = now;
                             });
                         }
                     }

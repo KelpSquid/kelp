@@ -62,19 +62,25 @@ public final class ModTemplate {
                 //   giveItem("diamond", 3);                gives you items (cheats need to be on)
                 //   command("time set day");               runs a command, like typing /time set day
                 //   splash("Hello!");                      changes the yellow text on the title screen
+                //   title("Hello!", "smaller text");       big text in the middle of the screen
+                //   boost(1.2);  dash(2);                  shoots you up, or forward the way you look
+                //   particles("heart", 10);                particles around you ("flame", "note"...)
                 //
                 // When things happen:
                 //   onJoin(() -> { ... });                 when you join a world
                 //   onKey("H", () -> { ... });             when you press H (you can change it in Controls)
                 //   every(10, () -> { ... });              every 10 seconds
                 //   onTick(() -> { ... });                 20 times a second
+                //   onHurt(() -> { ... });  onDeath(() -> { ... });   when you get hurt, or die
                 //
                 // Settings players can change in the game's Mods screen (ask for them whenever you need them):
                 //   setting("Play a sound", true)          ON or OFF
                 //   setting("Zoom", 4, 1, 10)              a number from 1 to 10, starting at 4
                 //   setting("Corner", "Top left", "Top left", "Top right")   one of a few choices
                 //
-                // Things to know: x(), y(), z(), health(), playerName(), random(1, 6)
+                // Things to know: x(), y(), z(), health(), playerName(), random(1, 6), biome(), isNight(),
+                //   holding() (what's in your hand), lookingAt() (the block or mob you look at),
+                //   nearby("creeper", 16) (how many are near you)
 
                 public class %2$s extends EasyMod {
                     void start() {
