@@ -82,13 +82,15 @@ public final class ModTemplate {
                 //   onPickup(item -> { ... });             when you pick something up ("diamond"...)
                 //   onAttack(mob -> { ... });              when you hit a mob ("zombie"...)
                 //   after(3, () -> { ... });               once, 3 seconds from now
+                //   onLevelUp(level -> { ... });           when your XP level goes up
+                //   onNight(() -> { ... });  onDay(() -> { ... });   when night falls, or morning comes
                 //
                 // Settings players can change in the game's Mods screen (ask for them whenever you need them):
                 //   setting("Play a sound", true)          ON or OFF
                 //   setting("Zoom", 4, 1, 10)              a number from 1 to 10, starting at 4
                 //   setting("Corner", "Top left", "Top left", "Top right")   one of a few choices
                 //
-                // Things to know: x(), y(), z(), health(), playerName(), random(1, 6), biome(), dimension(), isNight(), isRaining(),
+                // Things to know: x(), y(), z(), health(), level(), playerName(), random(1, 6), biome(), dimension(), isNight(), isRaining(),
                 //   holding() (what's in your hand), lookingAt() (the block or mob you look at),
                 //   nearby("creeper", 16) (how many are near you)
 

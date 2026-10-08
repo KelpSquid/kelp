@@ -1254,6 +1254,17 @@ public class KelpTest {
                 + made.picture().getFileName(), "purple-cave END 220033 280 background.png");
         Theme.use(made);
         check("the picked theme is remembered", Settings.theme() + " " + Theme.find("purple-cave").name(), "purple-cave Purple Cave!");
+        // A name with no a-z in it gets a folder of its own, and Kelp's own screenshot theme has a fixed one
+        Theme japanese = Theme.save("\u30c6\u30fc\u30de", Theme.Scene.END, -1, 0x220033, 280, null, null);
+        Theme otherJapanese = Theme.save("\u5927\u597d\u304d", Theme.Scene.END, -1, 0x220033, 280, null, null);
+        Theme shot = Theme.save("screenshot", "\u30b9\u30af\u30b7\u30e7", Theme.Scene.END, -1, 0x220033, 280, null, null);
+        check("themes named in other alphabets don't overwrite each other", japanese.id().startsWith("theme-") + " "
+                + !japanese.id().equals(otherJapanese.id()) + " " + shot.id(), "true true screenshot");
+        for (Theme t : List.of(japanese, otherJapanese, shot)) {
+            try (var files = Files.walk(Theme.folder().resolve(t.id()))) {
+                for (Path f : files.sorted(java.util.Comparator.reverseOrder()).toList()) Files.delete(f);
+            }
+        }
         check("themes list Kelp's own, then yours", Theme.all().stream().map(Theme::id).toList().toString(), "[ocean, lava, sky, nether, end, purple-cave]");
         Path song = home.resolve("my song.mp3");
         Files.write(song, new byte[] {'I', 'D', '3', 3, 0, 0, 0, 0, 0, 0});

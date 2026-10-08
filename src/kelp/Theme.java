@@ -143,7 +143,13 @@ public record Theme(String id, String name, Scene scene, int water, int base, in
     /** Saves a theme into the themes folder as its own folder, copying its picture and music in. Gives back the saved theme. */
     public static Theme save(String name, Scene scene, int water, int base, int buttons, Path picture, Path music) throws IOException {
         String id = name.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9]+", "-").replaceAll("(^-|-$)", "");
-        if (id.isEmpty()) id = "my-theme";
+        // A name with no a-z or 0-9 in it (like one in Japanese) still gets its own folder, the same every time
+        if (id.isEmpty()) id = "theme-" + Integer.toHexString(name.hashCode());
+        return save(id, name, scene, water, base, buttons, picture, music);
+    }
+
+    /** Saves a theme in the folder with this id (so a theme made by Kelp itself, like a screenshot one, has its own). */
+    public static Theme save(String id, String name, Scene scene, int water, int base, int buttons, Path picture, Path music) throws IOException {
         Path dir = folder().resolve(id);
         Files.createDirectories(dir);
         Properties values = new Properties();

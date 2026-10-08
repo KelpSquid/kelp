@@ -156,7 +156,7 @@ public class GalleryScreen extends Screen {
     private void useAsTheme() {
         try {
             Theme now = Theme.current();
-            Theme made = Theme.save(t("My Screenshot"), now.scene(), now.water(), now.base(), now.buttons(), still(pictures.get(viewing)), now.music());
+            Theme made = Theme.save("screenshot", t("My Screenshot"), now.scene(), now.water(), now.base(), now.buttons(), still(pictures.get(viewing)), now.music());
             Theme.use(made);
             message = null;
             notice = t("Kelp's background is this picture now. Themes (in Options) can change it back.");
@@ -228,13 +228,13 @@ public class GalleryScreen extends Screen {
             });
             if (big.size() > 3) big.keySet().removeIf(p -> !p.equals(picture)); // big pictures take a lot of memory
             int maxW = w - 20 * GUI;
-            int maxH = h - 60 * GUI;
+            int maxH = h - 68 * GUI;
             double scale = Math.min(maxW / (double) image.getWidth(), maxH / (double) image.getHeight());
             int iw = (int) (image.getWidth() * scale);
             int ih = (int) (image.getHeight() * scale);
             Graphics2D smooth = (Graphics2D) g.create();
             smooth.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-            smooth.drawImage(image, (w - iw) / 2, 20 * GUI, iw, ih, null);
+            smooth.drawImage(image, (w - iw) / 2, 28 * GUI, iw, ih, null); // under the title and Use as Theme
             smooth.dispose();
             int y = h - 28 * GUI;
             previousButton.setBounds(w / 2 - 152 * GUI, y, 20 * GUI, 20 * GUI);
