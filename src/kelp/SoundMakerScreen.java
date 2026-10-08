@@ -24,6 +24,9 @@ import java.util.stream.Stream;
  * drop) a sound, give it a title, pick a quality, and if it should loop, where. A tempo adds beat cues that mods and
  * lights can follow. The .sqda is saved next to the original.
  *
+ * Find Loop listens to the sound (Squid's Analysis does it) and fills in the tempo and a loop that sounds
+ * seamless, on whole bars, so nobody has to hunt for loop points by ear.
+ *
  * The squeezing is Squid's (Kelp brings Squid along), so it's loaded from squid.jar here. Variants, light cues and
  * entity triggers are made with a recipe file: see SqdaTool in Squid.
  */
@@ -36,6 +39,7 @@ public class SoundMakerScreen extends Screen {
     private final McTextField bpmField = new McTextField(6);
     private final McButton loopButton = new McButton("", this::toggleLoop);
     private final McButton makeButton = new McButton(t("Make .sqda"), this::make);
+    private final McButton findButton = new McButton(t("Find Loop"), this::find);
     private final McButton folderButton = new McButton(t("Show File"), this::showFile);
     private final McButton doneButton = new McButton(t("Done"), this::done);
     private final List<McTextField> fields = List.of(titleField, loopStartField, loopEndField, bpmField);
@@ -47,13 +51,16 @@ public class SoundMakerScreen extends Screen {
     private volatile boolean working;
     private volatile String message;
     private volatile boolean messageIsProblem;
+    private volatile boolean finding;
+    /** When the first beat is, in seconds, from Find Loop (beat cues start there). */
+    private volatile double beatOffset;
 
     public SoundMakerScreen(OceanPanel panel, Screen parent) {
         super(panel);
         this.parent = parent;
         qualitySlider = new McSlider(0, 10, 1, quality, v -> t("Quality: {0}", (int) v), v -> quality = (int) v);
         loopStartField.setText("0");
-        for (McButton b : new McButton[] {pickButton, loopButton, makeButton, folderButton, doneButton}) buttons.add(b);
+        for (McButton b : new McButton[] {pickButton, loopButton, findButton, makeButton, folderButton, doneButton}) buttons.add(b);
     }
 
     private void done() {
@@ -76,6 +83,7 @@ public class SoundMakerScreen extends Screen {
         sound = file;
         made = null;
         message = null;
+        beatOffset = 0;
         String name = file.getFileName().toString();
         int dot = name.lastIndexOf('.');
         if (titleField.getText().isBlank()) titleField.setText(dot > 0 ? name.substring(0, dot) : name);
@@ -110,10 +118,11 @@ public class SoundMakerScreen extends Screen {
         String title = titleField.getText().strip();
         int q = quality;
         boolean loop = looping;
+        double offset = beatOffset;
         Thread.ofVirtual().start(() -> {
             try {
                 Path out = outFor(from, made);
-                String summary = convert(from, out, q, loop ? loopStart : null, loop ? loopEnd : null, title, bpm);
+                String summary = convert(from, out, q, loop ? loopStart : null, loop ? loopEnd : null, title, bpm, offset);
                 made = out;
                 message = t("Made {0} ({1} KB).", out.getFileName(), Files.size(out) / 1024) + " " + summary;
                 messageIsProblem = false;
@@ -125,6 +134,79 @@ public class SoundMakerScreen extends Screen {
                 working = false;
             }
         });
+    }
+
+    /** Listens to the sound for its tempo and a seamless loop, and fills them in. */
+    private void find() {
+        if (sound == null || working || finding) return;
+        finding = true;
+        message = t("Listening...");
+        messageIsProblem = false;
+        Path from = sound;
+        Thread.ofVirtual().start(() -> {
+            try {
+                double[] found = analyze(from);
+                double bpm = found[0];
+                if (bpm > 0) {
+                    bpmField.setText(Math.rint(bpm) == bpm ? String.valueOf((long) bpm) : String.format(java.util.Locale.ROOT, "%.2f", bpm));
+                    beatOffset = found[1];
+                }
+                if (found[2] >= 0) {
+                    looping = true;
+                    loopStartField.setText(String.format(java.util.Locale.ROOT, "%.2f", found[2]));
+                    loopEndField.setText(String.format(java.util.Locale.ROOT, "%.2f", found[3]));
+                }
+                if (bpm > 0 && found[2] >= 0) {
+                    message = t("{0} BPM, and a loop from {1} s to {2} s.", bpmField.getText(), loopStartField.getText(), loopEndField.getText());
+                } else if (bpm > 0) {
+                    message = t("{0} BPM. It's too short for a loop.", bpmField.getText());
+                } else if (found[2] >= 0) {
+                    message = t("No steady beat, but a loop from {0} s to {1} s.", loopStartField.getText(), loopEndField.getText());
+                } else {
+                    problem(t("Couldn't find a beat or a loop in it."));
+                    return;
+                }
+                messageIsProblem = false;
+            } catch (Throwable e) {
+                Throwable cause = e instanceof InvocationTargetException ite && ite.getCause() != null ? ite.getCause() : e;
+                problem(t("Couldn't listen to it: {0}", cause.getMessage() == null ? cause.toString() : cause.getMessage()));
+            } finally {
+                finding = false;
+            }
+        });
+    }
+
+    /** Squid's Analysis on a sound: {bpm, first beat (s), loop start (s), loop end (s)}, with -1 for what it didn't find. */
+    static double[] analyze(Path from) throws Exception {
+        try (URLClassLoader squid = squidLoader()) {
+            Class<?> audio = squid.loadClass("squid.audio.Audio");
+            Class<?> pcmClass = squid.loadClass("squid.audio.Pcm");
+            Class<?> analysis = squid.loadClass("squid.audio.Analysis");
+            Class<?> tempoClass = squid.loadClass("squid.audio.Analysis$Tempo");
+            Object pcm = audio.getMethod("decode", byte[].class).invoke(null, (Object) Files.readAllBytes(from));
+            Object tempo = analysis.getMethod("tempo", pcmClass).invoke(null, pcm);
+            Object loop = analysis.getMethod("loop", pcmClass, tempoClass, double.class).invoke(null, pcm, tempo, 10.0);
+            double[] found = {-1, 0, -1, -1};
+            if (tempo != null) {
+                found[0] = (double) tempoClass.getMethod("bpm").invoke(tempo);
+                found[1] = (double) tempoClass.getMethod("offset").invoke(tempo);
+            }
+            if (loop != null) {
+                found[2] = (double) loop.getClass().getMethod("start").invoke(loop);
+                found[3] = (double) loop.getClass().getMethod("end").invoke(loop);
+            }
+            return found;
+        }
+    }
+
+    /** A class loader with the Squid that Kelp brought along. */
+    private static URLClassLoader squidLoader() throws java.io.IOException {
+        List<URL> jars = new ArrayList<>();
+        try (Stream<Path> files = Files.list(Folders.squidInUse())) {
+            for (Path p : files.filter(f -> f.toString().endsWith(".jar")).toList()) jars.add(p.toUri().toURL());
+        }
+        if (jars.isEmpty()) throw new java.io.IOException(t("Squid isn't installed, and the Sound Maker needs it."));
+        return new URLClassLoader(jars.toArray(URL[]::new), SoundMakerScreen.class.getClassLoader());
     }
 
     private void problem(String text) {
@@ -149,13 +231,9 @@ public class SoundMakerScreen extends Screen {
     }
 
     /** Squid does the work: its decoders read the sound, Squid Music squeezes it, and SqdaTool puts the .sqda together. */
-    static String convert(Path from, Path out, int quality, Double loopStart, Double loopEnd, String title, Double bpm) throws Exception {
-        List<URL> jars = new ArrayList<>();
-        try (Stream<Path> files = Files.list(Folders.squidInUse())) {
-            for (Path p : files.filter(f -> f.toString().endsWith(".jar")).toList()) jars.add(p.toUri().toURL());
-        }
-        if (jars.isEmpty()) throw new java.io.IOException(t("Squid isn't installed, and the Sound Maker needs it."));
-        try (URLClassLoader squid = new URLClassLoader(jars.toArray(URL[]::new), SoundMakerScreen.class.getClassLoader())) {
+    static String convert(Path from, Path out, int quality, Double loopStart, Double loopEnd, String title, Double bpm,
+                          double beatOffset) throws Exception {
+        try (URLClassLoader squid = squidLoader()) {
             Class<?> audio = squid.loadClass("squid.audio.Audio");
             Class<?> pcmClass = squid.loadClass("squid.audio.Pcm");
             Class<?> tool = squid.loadClass("squid.audio.SqdaTool");
@@ -170,7 +248,7 @@ public class SoundMakerScreen extends Screen {
             }
             if (loopEnd != null && loopEnd > seconds) loopEnd = seconds;
             Method simple = tool.getMethod("simple", pcmClass, int.class, Double.class, Double.class, Map.class, Double.class, double.class, int.class);
-            Object sqda = simple.invoke(null, pcm, quality, loopStart, loopEnd, info, bpm, 0.0, 4);
+            Object sqda = simple.invoke(null, pcm, quality, loopStart, loopEnd, info, bpm, beatOffset, 4);
             Files.write(out, (byte[]) sqdaClass.getMethod("write").invoke(sqda));
             String described = (String) tool.getMethod("describe", sqdaClass).invoke(null, sqda);
             return described.lines().findFirst().orElse("").strip();
@@ -214,7 +292,9 @@ public class SoundMakerScreen extends Screen {
             loopEndField.setBounds(-1000, -1000, 0, 0);
         }
         font.draw(g, t("Tempo (BPM, for beat cues)"), left, y + 118 * GUI, GUI, 0xA0A0A0);
-        bpmField.setBounds(left, y + 128 * GUI, 200 * GUI, 20 * GUI);
+        bpmField.setBounds(left, y + 128 * GUI, 98 * GUI, 20 * GUI);
+        findButton.setLabel(finding ? t("Listening...") : t("Find Loop"));
+        findButton.setBounds(sound == null ? -1000 : left + 102 * GUI, y + 128 * GUI, 98 * GUI, 20 * GUI);
         bpmField.draw(g, font, GUI, panel.getTime());
         makeButton.setLabel(working ? t("Making...") : t("Make .sqda"));
         makeButton.setBounds(left, y + 154 * GUI, made == null ? 200 * GUI : 98 * GUI, 20 * GUI);
