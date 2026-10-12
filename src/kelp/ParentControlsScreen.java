@@ -99,9 +99,10 @@ public class ParentControlsScreen extends Screen {
             voiceButton.setLabel(ParentControls.voiceAllowed() ? t("Voice Chat: Allowed") : t("Voice Chat: Off"));
             chatButton.setBounds(left, y + 24 * GUI, 200 * GUI, 20 * GUI);
             voiceButton.setBounds(left, y + 48 * GUI, 200 * GUI, 20 * GUI);
-            centered(g, t("These hold even with mods."), w, y + 74 * GUI, 0x808080);
-            changePinButton.setBounds(left, y + 94 * GUI, 200 * GUI, 20 * GUI);
-            removeButton.setBounds(left, y + 118 * GUI, 200 * GUI, 20 * GUI);
+            centered(g, t("Mods can get around these."), w, y + 72 * GUI, 0x808080);
+            centered(g, t("For a stronger lock, use Microsoft Family Safety."), w, y + 83 * GUI, 0x808080);
+            changePinButton.setBounds(left, y + 100 * GUI, 200 * GUI, 20 * GUI);
+            removeButton.setBounds(left, y + 124 * GUI, 200 * GUI, 20 * GUI);
         }
         if (message != null) centered(g, message, w, h - 44 * GUI, 0xFFFF55);
         doneButton.setBounds(left, h - 28 * GUI, 200 * GUI, 20 * GUI);

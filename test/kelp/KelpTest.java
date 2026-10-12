@@ -172,6 +172,23 @@ public class KelpTest {
         check("multiplayer and chat off become Minecraft's own switches", ParentControls.gameArguments().toString(), "[--disableMultiplayer, --disableChat]");
         ParentControls.remove();
         check("turning Parent Controls off allows everything again", ParentControls.hasPin() + " " + ParentControls.gameArguments(), "false []");
+        // ...and they fail closed: editing or deleting the settings file doesn't turn them off
+        ParentControls.setPin("2468");
+        check("a new PIN starts with everything allowed", ParentControls.gameArguments() + " " + ParentControls.voiceAllowed(), "[] true");
+        ParentControls.setMultiplayerAllowed(false);
+        Settings.put("parentPin", null);
+        Settings.put("parentMultiplayer", null);
+        check("deleting the PIN and switch from the settings file keeps them locked", ParentControls.hasPin() + " " + ParentControls.multiplayerAllowed()
+                + " " + ParentControls.checkPin("2468"), "true false true");
+        check("and the settings file gets them back", Settings.get("parentPin", null) != null && "false".equals(Settings.get("parentMultiplayer", null)), true);
+        Settings.put("parentMultiplayer", "true");
+        check("switching one on in the settings file doesn't count", ParentControls.multiplayerAllowed(), false);
+        ParentControls.forgetBackup();
+        Settings.put("parentChat", null);
+        check("an older Kelp's PIN, with only the settings file, still works", ParentControls.hasPin() + " " + ParentControls.chatAllowed(), "true true");
+        ParentControls.remove();
+        ParentControls.forgetBackup();
+        check("removed, everything's allowed", ParentControls.hasPin() + " " + ParentControls.gameArguments(), "false []");
     }
 
     static void languages() throws Exception {
