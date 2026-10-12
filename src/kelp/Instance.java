@@ -130,15 +130,38 @@ public final class Instance {
         instance.name = values.getProperty("name", folderName);
         instance.versionId = values.getProperty("version", folderName);
         instance.versionType = values.getProperty("versionType", "release");
-        instance.versionUrl = values.getProperty("versionUrl", "");
+        // Only Mojang's own address is trusted for the version's details; anything else is looked up again on Play
+        String url = values.getProperty("versionUrl", "");
+        instance.versionUrl = fromMojang(url) ? url : "";
         // Before Kelp had loaders, instances only said whether Squid was on
         instance.loader = values.getProperty("loader") != null ? Loader.parse(values.getProperty("loader"))
                 : Boolean.parseBoolean(values.getProperty("squid", "false")) ? Loader.SQUID : Loader.VANILLA;
         instance.loaderVersion = values.getProperty("loaderVersion");
+        // The ids become folder names under versions/, so they can't be allowed to point anywhere else
+        if (!Folders.safeName(instance.versionId)) instance.versionId = "unknown";
+        if (instance.loaderVersion != null && !Folders.safeName(instance.loaderVersion)) instance.loaderVersion = null;
         instance.lastPlayed = Long.parseLong(values.getProperty("lastPlayed", "0"));
         instance.playMillis = Long.parseLong(values.getProperty("playMillis", "0"));
         instance.timesPlayed = Integer.parseInt(values.getProperty("timesPlayed", "0"));
         return instance;
+    }
+
+    /** Whether a version's details link is Mojang's own (or the pretend server's, in tests), over https. */
+    static boolean fromMojang(String url) {
+        try {
+            java.net.URI uri = java.net.URI.create(url);
+            String host = uri.getHost();
+            if (host == null) return false;
+            java.net.URI manifest = java.net.URI.create(VersionManifest.url);
+            if (host.equalsIgnoreCase(manifest.getHost()) && java.util.Objects.equals(uri.getScheme(), manifest.getScheme())
+                    && uri.getPort() == manifest.getPort()) {
+                return true;
+            }
+            return "https".equals(uri.getScheme()) && uri.getPort() == -1
+                    && (host.equalsIgnoreCase("piston-meta.mojang.com") || host.equalsIgnoreCase("launchermeta.mojang.com"));
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 
     private void save() throws IOException {

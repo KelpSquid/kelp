@@ -109,6 +109,10 @@ public final class Launcher {
                                             String loaderVersion, int memoryGb, boolean fast, String world, String server,
                                             boolean safe) throws IOException {
         boolean withSquid = loader == Loader.SQUID;
+        // Both become folder names under versions/, so neither may point anywhere else
+        if (!Folders.safeName(versionId) || loaderVersion != null && !Folders.safeName(loaderVersion)) {
+            throw new IOException("This instance's version name isn't one Kelp can use. Pick its version again.");
+        }
         Path versionFolder = Folders.versions().resolve(versionId);
         Map<String, Object> details = Json.object(Json.parse(Files.readString(versionFolder.resolve(versionId + ".json"))));
         if (loaderVersion != null) {
@@ -303,14 +307,14 @@ public final class Launcher {
     }
 
     /** Every library the game needs, plus the game itself, in the order Mojang lists them. */
-    private static List<String> classpath(Map<String, Object> details, Path gameJar) {
+    private static List<String> classpath(Map<String, Object> details, Path gameJar) throws IOException {
         Set<String> paths = new LinkedHashSet<>();
         for (Object entry : Json.array(details.get("libraries"))) {
             Map<String, Object> library = Json.object(entry);
             if (!Rules.allowed(library.get("rules"))) continue;
             Map<String, Object> downloads = Json.object(library.get("downloads"));
             Map<String, Object> artifact = downloads == null ? null : Json.object(downloads.get("artifact"));
-            if (artifact != null) paths.add(Folders.libraries().resolve((String) artifact.get("path")).toString());
+            if (artifact != null) paths.add(Folders.inside(Folders.libraries(), (String) artifact.get("path")).toString());
         }
         paths.add(gameJar.toString());
         return new ArrayList<>(paths);
@@ -371,7 +375,7 @@ public final class Launcher {
             Map<String, Object> file = Json.object(classifiers.get(classifier.replace("${arch}", "64")));
             if (file == null) continue;
 
-            Path jar = Folders.libraries().resolve((String) file.get("path"));
+            Path jar = Folders.inside(Folders.libraries(), (String) file.get("path"));
             try (ZipInputStream zip = new ZipInputStream(Files.newInputStream(jar))) {
                 ZipEntry item;
                 while ((item = zip.getNextEntry()) != null) {

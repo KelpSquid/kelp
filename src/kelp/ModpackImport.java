@@ -31,6 +31,12 @@ public final class ModpackImport {
     static final List<String> ALLOWED_HOSTS = new ArrayList<>(List.of("cdn.modrinth.com", "github.com", "raw.githubusercontent.com", "gitlab.com"));
     /** CurseForge's public download link for a mod's file. */
     static String curseForgeDownload = "https://www.curseforge.com/api/v1/mods/%d/files/%d/download";
+    /**
+     * Files and folders at the top of an instance that Kelp writes and trusts (its details, Squid's fast boot, the
+     * notes Squid leaves for Kelp), so a pack's overrides skip them.
+     */
+    static final java.util.Set<String> KELP_OWNED = java.util.Set.of("instance.properties", ".squid-boot", "squid-report.json",
+            "squid-last-played.txt", "kelp-output.log");
 
     /** What a pack says: its name, Minecraft version and loader, what to download, and which folder in it to copy. */
     record Plan(String name, String minecraft, Loader loader, List<Downloader.Job> files, List<String> overrides) {
@@ -151,8 +157,16 @@ public final class ModpackImport {
             stage.accept(t("Downloading {0} mods...", plan.files().size()));
             List<String> missing = new ArrayList<>();
             List<Downloader.Job> jobs = new ArrayList<>();
+            Path root = instance.folder().toAbsolutePath().normalize();
             for (Downloader.Job job : plan.files()) {
-                jobs.add(new Downloader.Job(job.url(), instance.folder().resolve(job.file()), job.sha1(), job.size()));
+                Path target;
+                try {
+                    target = Folders.inside(root, job.file().toString());
+                } catch (IOException e) {
+                    throw new IOException(t("That modpack has a file that would go outside its instance, so it wasn't imported."));
+                }
+                if (kelpOwned(root, target)) continue;
+                jobs.add(new Downloader.Job(job.url(), target, job.sha1(), job.size()));
             }
             if (plan.files().stream().allMatch(j -> j.sha1() != null)) {
                 downloader.downloadAll(jobs); // a Modrinth pack: every file has a fingerprint, so all of them must arrive
@@ -183,8 +197,13 @@ public final class ModpackImport {
                 for (String folder : folders) {
                     String prefix = folder.endsWith("/") ? folder : folder + "/";
                     if (!entry.getName().startsWith(prefix) || entry.isDirectory()) continue;
-                    Path target = root.resolve(entry.getName().substring(prefix.length())).normalize();
-                    if (!target.startsWith(root)) throw new IOException(t("That modpack has a file that would go outside its instance, so it wasn't imported."));
+                    Path target;
+                    try {
+                        target = Folders.inside(root, entry.getName().substring(prefix.length()));
+                    } catch (IOException e) {
+                        throw new IOException(t("That modpack has a file that would go outside its instance, so it wasn't imported."));
+                    }
+                    if (kelpOwned(root, target)) continue; // the instance's details and fast boot are Kelp's, not the pack's
                     Files.createDirectories(target.getParent());
                     try (InputStream in = zip.getInputStream(entry)) {
                         Files.copy(in, target, StandardCopyOption.REPLACE_EXISTING);
@@ -194,10 +213,20 @@ public final class ModpackImport {
         }
     }
 
-    private static boolean safe(String path) {
-        if (path == null || path.isBlank()) return false;
-        Path p = Path.of(path).normalize();
-        return !p.isAbsolute() && !p.startsWith("..");
+    /** Whether a pack's file path stays inside its instance, on every operating system (checked again when it's used). */
+    static boolean safe(String path) {
+        try {
+            Folders.inside(Path.of("instance"), path);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    /** Whether a file in a pack's overrides is one of Kelp's own, which Kelp trusts and a pack must never replace. */
+    static boolean kelpOwned(Path root, Path target) {
+        String first = root.relativize(target).getName(0).toString().toLowerCase();
+        return KELP_OWNED.contains(first);
     }
 
     private static boolean allowed(String url) {

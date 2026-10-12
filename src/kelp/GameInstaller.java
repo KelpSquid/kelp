@@ -44,6 +44,7 @@ public class GameInstaller {
      */
     public void install(VersionManifest.Version version, Loader loader, Path modsFolder) throws IOException, InterruptedException {
         stage = "Getting version details";
+        if (!Folders.safeName(version.id())) throw new IOException("That version's name isn't one Kelp can use: " + version.id());
         Path versionFolder = Folders.versions().resolve(version.id());
         Map<String, Object> details = Json.object(Json.parse(
                 downloader.fetchText(version.url(), versionFolder.resolve(version.id() + ".json"))));
@@ -62,7 +63,7 @@ public class GameInstaller {
             Map<String, Object> downloads = Json.object(library.get("downloads"));
             if (downloads == null) continue;
             Map<String, Object> artifact = Json.object(downloads.get("artifact"));
-            if (artifact != null) add(jobs, artifact, Folders.libraries().resolve((String) artifact.get("path")));
+            if (artifact != null) add(jobs, artifact, Folders.inside(Folders.libraries(), (String) artifact.get("path")));
 
             // Versions before 1.19 list their native files (DLLs) separately, under "classifiers"
             Map<String, Object> natives = Json.object(library.get("natives"));
@@ -70,7 +71,7 @@ public class GameInstaller {
             if (natives != null && classifiers != null && natives.get(Rules.osName()) != null) {
                 String classifier = ((String) natives.get(Rules.osName())).replace("${arch}", "64");
                 Map<String, Object> file = Json.object(classifiers.get(classifier));
-                if (file != null) add(jobs, file, Folders.libraries().resolve((String) file.get("path")));
+                if (file != null) add(jobs, file, Folders.inside(Folders.libraries(), (String) file.get("path")));
             }
         }
 
@@ -78,13 +79,13 @@ public class GameInstaller {
         Map<String, Object> logging = Json.object(details.get("logging"));
         if (logging != null && logging.get("client") != null) {
             Map<String, Object> logFile = Json.object(Json.object(logging.get("client")).get("file"));
-            add(jobs, logFile, Folders.assets().resolve("log_configs").resolve((String) logFile.get("id")));
+            add(jobs, logFile, Folders.inside(Folders.assets().resolve("log_configs"), (String) logFile.get("id")));
         }
 
         // 4. Assets: sounds, music and languages. Each one is stored under its fingerprint (hash).
         stage = "Getting the asset list";
         Map<String, Object> indexInfo = Json.object(details.get("assetIndex"));
-        Path indexFile = Folders.assets().resolve("indexes").resolve(indexInfo.get("id") + ".json");
+        Path indexFile = Folders.inside(Folders.assets().resolve("indexes"), indexInfo.get("id") + ".json");
         Map<String, Object> index = Json.object(Json.parse(downloader.fetchText((String) indexInfo.get("url"), indexFile)));
         for (Object entry : Json.object(index.get("objects")).values()) {
             Map<String, Object> asset = Json.object(entry);

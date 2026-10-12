@@ -68,7 +68,7 @@ public final class JavaRuntime {
             Map<String, Object> file = Json.object(entry.getValue());
             if (!"file".equals(file.get("type"))) continue; // folders get made as files land in them
             Map<String, Object> raw = Json.object(Json.object(file.get("downloads")).get("raw"));
-            jobs.add(new Downloader.Job((String) raw.get("url"), folder.resolve(entry.getKey()),
+            jobs.add(new Downloader.Job((String) raw.get("url"), Folders.inside(folder, entry.getKey()),
                     (String) raw.get("sha1"), ((Number) raw.get("size")).longValue()));
         }
         return jobs;

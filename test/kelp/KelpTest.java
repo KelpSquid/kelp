@@ -1352,6 +1352,35 @@ public class KelpTest {
                     + Files.exists(fromPrism.instance().mods().resolve("thing.jar")) + " " + Files.exists(fromPrism.instance().folder().resolve("saves/World/level.dat")),
                     "My Prism QUILT true true");
 
+            // A pack can't put files outside its instance, or replace Kelp's own files in it
+            for (String bad : new String[] {"\\Users\\me\\Startup\\x.bat", "/etc/x", "D:x.bat", "C:\\x.bat", "../x.jar", "mods/../../x.jar", ""}) {
+                check("a pack path like '" + bad + "' is refused", ModpackImport.safe(bad), false);
+            }
+            check("a normal pack path is fine", ModpackImport.safe("mods/sodium.jar") + " " + ModpackImport.safe("config/a/../b.json"), "true true");
+            Path escape = packs.resolve("escape.mrpack");
+            zip(escape, "modrinth.index.json", "{\"name\": \"Escape\", \"files\": [{\"path\": \"\\\\Users\\\\Public\\\\x.bat\", \"hashes\": {\"sha1\": \"aa\"},"
+                    + " \"downloads\": [\"" + base + "/sodium.jar\"]}], \"dependencies\": {\"minecraft\": \"26.3\"}}");
+            check("a pack with a Windows path out of its instance isn't imported", problem(() -> ModpackImport.importPack(escape, new Downloader(), stage -> { })),
+                    "That modpack has a file that would go outside its instance, so it wasn't imported.");
+            Path sneaky = packs.resolve("sneaky.mrpack");
+            zip(sneaky, "modrinth.index.json", "{\"name\": \"Sneaky\", \"files\": [], \"dependencies\": {\"minecraft\": \"26.3\"}}",
+                    "overrides/instance.properties", "name=Evil\nversion=../../x\nversionUrl=http://evil.example.com/v.json\nloaderVersion=../y\n",
+                    "overrides/.squid-boot/boot.properties", "classpath=evil.jar", "overrides/options.txt", "fov:1");
+            Instance kept = ModpackImport.importPack(sneaky, new Downloader(), stage -> { }).instance();
+            Instance reloaded = Instance.find(kept.id());
+            check("a pack's instance.properties and fast boot files are skipped, its other files aren't", reloaded.name() + " " + reloaded.version().id() + " "
+                    + reloaded.loaderVersion() + " " + Files.exists(kept.folder().resolve(".squid-boot")) + " " + Files.exists(kept.folder().resolve("options.txt")),
+                    "Sneaky 26.3 null false true");
+            Files.writeString(kept.folder().resolve("instance.properties"), "name=Edited\nversion=../../x\nversionUrl=http://evil.example.com/v.json\nloaderVersion=..\n");
+            Instance edited = Instance.find(kept.id());
+            check("an edited instance.properties can't point outside versions/ or at another server", edited.version().id() + " " + edited.loaderVersion()
+                    + " '" + edited.version().url() + "'", "unknown null ''");
+            check("only Mojang's own address is trusted for version details", Instance.fromMojang("https://piston-meta.mojang.com/v1/packages/a/26.3.json") + " "
+                    + Instance.fromMojang("http://piston-meta.mojang.com/x.json") + " " + Instance.fromMojang("https://piston-meta.mojang.com.evil.com/x.json") + " "
+                    + Instance.fromMojang("https://evil.example.com/x.json"), "true false false false");
+            check("library paths can't leave the libraries folder", problem(() -> Folders.inside(Folders.libraries(), "../../.bashrc")).startsWith("Refused") + " "
+                    + Folders.inside(Folders.libraries(), "org/a/1/a-1.jar").startsWith(Folders.libraries().toAbsolutePath().normalize()), "true true");
+
             Path notPack = packs.resolve("photo.zip");
             zip(notPack, "photo.png", "x");
             check("something that isn't a modpack is explained", problem(() -> ModpackImport.importPack(notPack, new Downloader(), stage -> { })),

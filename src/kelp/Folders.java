@@ -1,5 +1,6 @@
 package kelp;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 
@@ -78,5 +79,33 @@ public final class Folders {
     /** Sounds, languages and textures, shared between versions. */
     public static Path assets() {
         return home().resolve("assets");
+    }
+
+    /**
+     * Where a relative path from a file someone else made (a modpack, a version's details) lands inside root, or an
+     * IOException if it would land anywhere else. Windows also counts \Users\... and D:foo as "not absolute", so
+     * those are turned away by name before Java ever resolves them.
+     */
+    public static Path inside(Path root, String relative) throws IOException {
+        if (relative == null || relative.isBlank() || relative.indexOf(':') >= 0 || relative.indexOf('\0') >= 0
+                || relative.startsWith("/") || relative.startsWith("\\")) {
+            throw new IOException("Refused a path that could go outside " + root.getFileName() + ": " + relative);
+        }
+        Path base = root.toAbsolutePath().normalize();
+        Path target;
+        try {
+            target = base.resolve(relative).normalize();
+        } catch (java.nio.file.InvalidPathException e) {
+            throw new IOException("Refused a path that isn't a real file name: " + relative);
+        }
+        if (target.equals(base) || !target.startsWith(base)) {
+            throw new IOException("Refused a path that would go outside " + root.getFileName() + ": " + relative);
+        }
+        return target;
+    }
+
+    /** Whether a name from a file is fine as one folder name (a version id like "26.3" or "fabric-loader-0.19.5-26.3"). */
+    public static boolean safeName(String name) {
+        return name != null && name.matches("[A-Za-z0-9._+-]{1,100}") && !name.matches("\\.+");
     }
 }

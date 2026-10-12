@@ -46,6 +46,7 @@ public final class LoaderProfiles {
         String text = downloader.fetchText(meta + "/versions/loader/" + minecraft + "/" + version + "/profile/json", temp);
         Map<String, Object> profile = Json.object(Json.parse(text));
         String id = (String) profile.get("id");
+        if (!Folders.safeName(id)) throw new IOException(loader.label() + " sent a version name Kelp can't use: " + id);
         Path saved = Folders.versions().resolve(id).resolve(id + ".json");
         Files.createDirectories(saved.getParent());
         Files.writeString(saved, text);
@@ -53,7 +54,7 @@ public final class LoaderProfiles {
         for (Object entry : Json.array(profile.get("libraries"))) {
             Map<String, Object> library = Json.object(entry);
             String path = mavenPath((String) library.get("name"));
-            Path file = Folders.libraries().resolve(path);
+            Path file = Folders.inside(Folders.libraries(), path);
             String url = library.get("url") instanceof String base ? base : "https://maven.fabricmc.net/";
             if (!url.endsWith("/")) url += "/";
             long size = library.get("size") instanceof Double d ? d.longValue() : -1; // -1: not listed
