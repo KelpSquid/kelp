@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => List
 Potato Mode on! Render distance is now 6. => Modaliteti Patate u ndez! Largësia tani është 6.
 The loop has to be at least 0.1 seconds long. => Përsëritja duhet të zgjasë të paktën 0,1 sekonda.
 The tempo should be beats a minute, like 120. => Tempo duhet të jetë rrahje në minutë, si 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Ai modpack del më shumë se 8 GB kur shpaketohet, ndaj nuk u importua.
+That zip unpacks to more than 32 GB, so it wasn't imported. => Ai zip del më shumë se 32 GB kur shpaketohet, ndaj nuk u importua.

@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => Ли
 Potato Mode on! Render distance is now 6. => Режим Компир вклучен! Далечината сега е 6.
 The loop has to be at least 0.1 seconds long. => Повторувањето мора да трае најмалку 0.1 секунди.
 The tempo should be beats a minute, like 120. => Темпото се пишува во удари во минута, на пр. 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Тој модпак отпакуван има повеќе од 8 GB, па не е увезен.
+That zip unpacks to more than 32 GB, so it wasn't imported. => Тој zip отпакуван има повеќе од 32 GB, па не е увезен.

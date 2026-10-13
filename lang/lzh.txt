@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => 其�
 Potato Mode on! Render distance is now 6. => 薯式已啟！視距今為 6。
 The loop has to be at least 0.1 seconds long. => 循至少當長 0.1 秒。
 The tempo should be beats a minute, like 120. => 速當以每分之拍計，如 120。
+That modpack unpacks to more than 8 GB, so it wasn't imported. => 此模組集解之逾 8 GB，故不納。
+That zip unpacks to more than 32 GB, so it wasn't imported. => 此 zip 解之逾 32 GB，故不納。

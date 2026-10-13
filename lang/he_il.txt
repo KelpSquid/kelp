@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => הר
 Potato Mode on! Render distance is now 6. => מצב תפוח אדמה פועל! טווח הרינדור עכשיו 6.
 The loop has to be at least 0.1 seconds long. => הלולאה צריכה להיות באורך 0.1 שניות לפחות.
 The tempo should be beats a minute, like 120. => הקצב צריך להיות בפעימות לדקה, כמו 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => חבילת המודים הזאת תופסת יותר מ-8 GB אחרי פריסה, אז היא לא יובאה.
+That zip unpacks to more than 32 GB, so it wasn't imported. => קובץ ה-zip הזה תופס יותר מ-32 GB אחרי פריסה, אז הוא לא יובא.

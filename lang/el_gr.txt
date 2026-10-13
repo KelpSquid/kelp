@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => Η �
 Potato Mode on! Render distance is now 6. => Λειτουργία Πατάτα! Η απόσταση τώρα είναι 6.
 The loop has to be at least 0.1 seconds long. => Η επανάληψη πρέπει να διαρκεί τουλάχιστον 0,1 δευτερόλεπτα.
 The tempo should be beats a minute, like 120. => Ο ρυθμός μετριέται σε χτύπους το λεπτό, όπως 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Αυτό το modpack ξεπερνά τα 8 GB όταν αποσυμπιεστεί, οπότε δεν εισήχθη.
+That zip unpacks to more than 32 GB, so it wasn't imported. => Αυτό το zip ξεπερνά τα 32 GB όταν αποσυμπιεστεί, οπότε δεν εισήχθη.

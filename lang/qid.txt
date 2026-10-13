@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => Daft
 Potato Mode on! Render distance is now 6. => Mode Kentang aktif! Djarak render sekarang 6.
 The loop has to be at least 0.1 seconds long. => Oelangan haroes paling sedikit 0,1 detik.
 The tempo should be beats a minute, like 120. => Tempo haroes dalam ketoekan per menit, seperti 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Modpack itoe djadi lebih dari 8 GB setelah dibongkar, djadi tidak diimpor.
+That zip unpacks to more than 32 GB, so it wasn't imported. => Zip itoe djadi lebih dari 32 GB setelah dibongkar, djadi tidak diimpor.

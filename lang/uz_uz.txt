@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => Ro'y
 Potato Mode on! Render distance is now 6. => Kartoshka rejimi yoqildi! Ko'rish masofasi endi 6.
 The loop has to be at least 0.1 seconds long. => Takror kamida 0,1 soniya uzunlikda bo'lishi kerak.
 The tempo should be beats a minute, like 120. => Temp daqiqadagi zarblar soni bo'lishi kerak, masalan 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Bu modpak ochilganda 8 GB dan oshadi, shuning uchun u import qilinmadi.
+That zip unpacks to more than 32 GB, so it wasn't imported. => Bu zip ochilganda 32 GB dan oshadi, shuning uchun u import qilinmadi.

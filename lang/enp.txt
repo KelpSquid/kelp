@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => The 
 Potato Mode on! Render distance is now 6. => Earthapple Setting on! Sight farness is now 6.
 The loop has to be at least 0.1 seconds long. => The loop has to be at least 0.1 seconds long.
 The tempo should be beats a minute, like 120. => The beat speed should be beats a minute, like 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => That modpack unfolds to more than 8 GB, so it wasn't brought in.
+That zip unpacks to more than 32 GB, so it wasn't imported. => That zip unfolds to more than 32 GB, so it wasn't brought in.

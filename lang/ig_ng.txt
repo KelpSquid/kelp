@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => Ndep
 Potato Mode on! Render distance is now 6. => Ọnọdụ Nduku agbanyela! Anya ọhụụ bụ 6 ugbu a.
 The loop has to be at least 0.1 seconds long. => Mgbagharị ga-adị ogologo opekata mpe sekọnd 0.1.
 The tempo should be beats a minute, like 120. => Tempo kwesịrị ịbụ iti n'otu nkeji, dị ka 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Ngwugwu mod ahụ karịrị 8 GB mgbe e meghere ya, ya mere e bubataghị ya.
+That zip unpacks to more than 32 GB, so it wasn't imported. => Zip ahụ karịrị 32 GB mgbe e meghere ya, ya mere e bubataghị ya.

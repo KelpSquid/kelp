@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => List
 Potato Mode on! Render distance is now 6. => Modul Cartof pornit! Distanța e acum 6.
 The loop has to be at least 0.1 seconds long. => Bucla trebuie să aibă cel puțin 0,1 secunde.
 The tempo should be beats a minute, like 120. => Tempoul e în bătăi pe minut, de exemplu 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Modpackul ăsta are peste 8 GB dezarhivat, așa că nu a fost importat.
+That zip unpacks to more than 32 GB, so it wasn't imported. => Zip-ul ăsta are peste 32 GB dezarhivat, așa că nu a fost importat.

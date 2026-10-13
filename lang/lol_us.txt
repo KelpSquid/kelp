@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => Teh 
 Potato Mode on! Render distance is now 6. => Potatoe Moed on! Render distanz iz 6 nao.
 The loop has to be at least 0.1 seconds long. => Teh loop haz 2 b at leest 0.1 secondz long.
 The tempo should be beats a minute, like 120. => Teh tempo shud b beetz a minit, liek 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Dat modpak unpaks 2 moar dan 8 GB, so it wuznt importd.
+That zip unpacks to more than 32 GB, so it wasn't imported. => Dat zip unpaks 2 moar dan 32 GB, so it wuznt importd.

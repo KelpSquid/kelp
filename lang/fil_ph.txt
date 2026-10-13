@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => Nagb
 Potato Mode on! Render distance is now 6. => Naka-on ang Potato Mode! 6 na ang layo ng render.
 The loop has to be at least 0.1 seconds long. => Dapat hindi bababa sa 0.1 segundo ang haba ng loop.
 The tempo should be beats a minute, like 120. => Dapat beats bawat minuto ang tempo, gaya ng 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Lalampas sa 8 GB ang modpack na iyan kapag na-unpack, kaya hindi ito na-import.
+That zip unpacks to more than 32 GB, so it wasn't imported. => Lalampas sa 32 GB ang zip na iyan kapag na-unpack, kaya hindi ito na-import.

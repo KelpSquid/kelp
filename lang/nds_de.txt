@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => De L
 Potato Mode on! Render distance is now 6. => Kantüffel-Modus an! De Sichtwiet is nu 6.
 The loop has to be at least 0.1 seconds long. => De Slööp mutt tominnst 0.1 Sekunnen lang wesen.
 The tempo should be beats a minute, like 120. => Dat Tempo warrt in Slääg per Minuut angeven, as 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Dat Modpack is utpackt mehr as 8 GB, dorüm is dat nich importeert worrn.
+That zip unpacks to more than 32 GB, so it wasn't imported. => De Zip-Datei is utpackt mehr as 32 GB, dorüm is de nich importeert worrn.

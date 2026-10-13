@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => List
 Potato Mode on! Render distance is now 6. => Kartoflowy tryb załōnczōny! Zasiyng to je teraz 6.
 The loop has to be at least 0.1 seconds long. => Pętla musi trwać przinojmnij 0,1 sekundy.
 The tempo should be beats a minute, like 120. => Tempo mŏ być w uderzyniach na minuta, np. 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Ta paczka modōw po rozpakowaniu mo wiyncyj aniżeli 8 GB, tōż niy bōła zaimportowano.
+That zip unpacks to more than 32 GB, so it wasn't imported. => Tyn zip po rozpakowaniu mo wiyncyj aniżeli 32 GB, tōż niy bōł zaimportowany.

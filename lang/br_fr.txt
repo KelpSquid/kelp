@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => Che�
 Potato Mode on! Render distance is now 6. => Mod Avaloù-douar enaouet ! Ar pellder a zo 6 bremañ.
 The loop has to be at least 0.1 seconds long. => Ar c'helc'h a rank padout 0,1 eilenn da nebeutañ.
 The tempo should be beats a minute, like 120. => An tempo a rank bezañ taolioù bep munutenn, evel 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Ar pakad modoù-se a ra muioc'h eget 8 GB pa vez dibaket, neuze n'eo ket bet enporzhiet.
+That zip unpacks to more than 32 GB, so it wasn't imported. => An zip-se a ra muioc'h eget 32 GB pa vez dibaket, neuze n'eo ket bet enporzhiet.

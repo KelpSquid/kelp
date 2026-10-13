@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => Сп
 Potato Mode on! Render distance is now 6. => Бульбяны рэжым! Прамалёўка цяпер 6.
 The loop has to be at least 0.1 seconds long. => Цыкл павінен доўжыцца не менш за 0,1 секунды.
 The tempo should be beats a minute, like 120. => Тэмп — гэта ўдары за хвіліну, напрыклад 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Гэты модпак пасля распакоўкі займае больш за 8 ГБ, таму ён не імпартаваны.
+That zip unpacks to more than 32 GB, so it wasn't imported. => Гэты zip пасля распакоўкі займае больш за 32 ГБ, таму ён не імпартаваны.

@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => Сп
 Potato Mode on! Render distance is now 6. => Картопляний режим увімкнено! Промальовка тепер 6.
 The loop has to be at least 0.1 seconds long. => Повтор має тривати щонайменше 0,1 секунди.
 The tempo should be beats a minute, like 120. => Темп — це удари за хвилину, наприклад 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Розпакований, цей модпак більший за 8 ГБ, тому його не імпортовано.
+That zip unpacks to more than 32 GB, so it wasn't imported. => Розпакований, цей zip більший за 32 ГБ, тому його не імпортовано.

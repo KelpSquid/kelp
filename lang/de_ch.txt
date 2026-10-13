@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => D'Li
 Potato Mode on! Render distance is now 6. => Härdöpfel-Modus aa! D Sichtwiiti isch jetzt 6.
 The loop has to be at least 0.1 seconds long. => D Schlaufe muess mindestens 0,1 Sekunde lang sii.
 The tempo should be beats a minute, like 120. => S Tempo isch i Schläg pro Minute, zum Biispiel 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Das Modpack isch uuspackt meh als 8 GB, drum isch es nöd importiert worde.
+That zip unpacks to more than 32 GB, so it wasn't imported. => Das Zip isch uuspackt meh als 32 GB, drum isch es nöd importiert worde.

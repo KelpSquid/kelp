@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => List
 Potato Mode on! Render distance is now 6. => Krompir režim uključen! Udaljenost je sada 6.
 The loop has to be at least 0.1 seconds long. => Petlja mora trajati najmanje 0,1 sekundu.
 The tempo should be beats a minute, like 120. => Tempo treba biti u otkucajima po minuti, npr. 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Taj paket modova raspakovan ima više od 8 GB, pa nije uvezen.
+That zip unpacks to more than 32 GB, so it wasn't imported. => Taj zip raspakovan ima više od 32 GB, pa nije uvezen.

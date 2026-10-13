@@ -84,7 +84,7 @@ public final class Worlds {
         // Unpack into a temporary folder in saves first, then move the world out, so a broken zip leaves nothing behind
         Path unpack = Files.createTempDirectory(saves, ".importing-");
         try {
-            Unzip unzip = new Unzip(32 * Unzip.GB, "That zip unpacks to more than 32 GB, so it wasn't imported.");
+            Unzip unzip = new Unzip(32 * Unzip.GB, Lang.t("That zip unpacks to more than 32 GB, so it wasn't imported."));
             try (ZipInputStream in = new ZipInputStream(Files.newInputStream(zip))) {
                 ZipEntry entry;
                 while ((entry = in.getNextEntry()) != null) {

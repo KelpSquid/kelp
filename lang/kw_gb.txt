@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => An r
 Potato Mode on! Render distance is now 6. => Modh Aval-dor war! An pellder yw 6 lemmyn.
 The loop has to be at least 0.1 seconds long. => Res yw dhe'n kylgh bos 0.1 eylen hirder dhe'n lyha.
 The tempo should be beats a minute, like 120. => An tempo a dal bos tolghow yn mynysen, kepar ha 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => An fardel modow na a via moy ages 8 GB digelmys, ytho ny veu drys a-ji.
+That zip unpacks to more than 32 GB, so it wasn't imported. => An zip na a via moy ages 32 GB digelmys, ytho ny veu drys a-ji.

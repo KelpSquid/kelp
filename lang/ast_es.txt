@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => La l
 Potato Mode on! Render distance is now 6. => ¡Mou Patata! La distancia agora ye 6.
 The loop has to be at least 0.1 seconds long. => El bucle tien que durar polo menos 0,1 segundos.
 The tempo should be beats a minute, like 120. => El tempu tien que ser pulsos per minutu, como 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Esi modpack ocupa más de 8 GB al descomprimilu, asina que nun s'importó.
+That zip unpacks to more than 32 GB, so it wasn't imported. => Esi zip ocupa más de 32 GB al descomprimilu, asina que nun s'importó.

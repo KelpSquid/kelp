@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => Sena
 Potato Mode on! Render distance is now 6. => Mod Kentang dihidupkan! Jarak paparan kini 6.
 The loop has to be at least 0.1 seconds long. => Ulangan mesti sekurang-kurangnya 0.1 saat panjangnya.
 The tempo should be beats a minute, like 120. => Tempo ialah rentak seminit, contohnya 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Pek mod itu menjadi lebih 8 GB apabila dibuka, jadi ia tidak diimport.
+That zip unpacks to more than 32 GB, so it wasn't imported. => Zip itu menjadi lebih 32 GB apabila dibuka, jadi ia tidak diimport.

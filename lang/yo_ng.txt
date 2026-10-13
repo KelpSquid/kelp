@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => Àt�
 Potato Mode on! Render distance is now 6. => Ipò Ọ̀dùnkún ti tàn! Ìjìnnà ìríran jẹ́ 6 báyìí.
 The loop has to be at least 0.1 seconds long. => Àtúnṣe gbọ́dọ̀ gùn tó ìṣẹ́jú-àáyá 0.1 ó kéré tán.
 The tempo should be beats a minute, like 120. => Ìyára gbọ́dọ̀ jẹ́ iye lílù ní ìṣẹ́jú kan, bíi 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Àkójọ mod yẹn ju 8 GB lọ tí a bá ṣí i, nítorí náà a kò mú un wọlé.
+That zip unpacks to more than 32 GB, so it wasn't imported. => Zip yẹn ju 32 GB lọ tí a bá ṣí i, nítorí náà a kò mú un wọlé.

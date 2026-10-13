@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => De l
 Potato Mode on! Render distance is now 6. => Petattenmodus aon! Zichtafstand is nou 6.
 The loop has to be at least 0.1 seconds long. => De lus mot minstens 0,1 seconde lang zijn.
 The tempo should be beats a minute, like 120. => 't Tempo mot in tikken per minuut, zoas 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Die modpack wordt uitgepakt meer as 8 GB, dus ie is nie geïmporteerd.
+That zip unpacks to more than 32 GB, so it wasn't imported. => Die zip wordt uitgepakt meer as 32 GB, dus ie is nie geïmporteerd.

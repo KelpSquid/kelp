@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => Ис
 Potato Mode on! Render distance is now 6. => Картуф режимы ҡабынды! Күреү алыҫлығы хәҙер 6.
 The loop has to be at least 0.1 seconds long. => Ҡабатлау кәмендә 0,1 секунд оҙонлоғонда булырға тейеш.
 The tempo should be beats a minute, like 120. => Темп минутына һуғыуҙар һаны булырға тейеш, мәҫәлән, 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Был модпак асылғанда 8 GB-тан ашыу була, шуға күрә ул импортланманы.
+That zip unpacks to more than 32 GB, so it wasn't imported. => Был zip асылғанда 32 GB-тан ашыу була, шуға күрә ул импортланманы.

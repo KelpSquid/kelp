@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => Ти
 Potato Mode on! Render distance is now 6. => Картошка режими күйдү! Аралык эми 6.
 The loop has to be at least 0.1 seconds long. => Кайталоо жок дегенде 0,1 секунд болушу керек.
 The tempo should be beats a minute, like 120. => Темп мүнөтүнө ыргак менен жазылат, мисалы 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Бул модпак ачылганда 8 ГБдан ашат, ошондуктан ал импорттолгон жок.
+That zip unpacks to more than 32 GB, so it wasn't imported. => Бул zip ачылганда 32 ГБдан ашат, ошондуктан ал импорттолгон жок.

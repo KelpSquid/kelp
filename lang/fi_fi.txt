@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => List
 Potato Mode on! Render distance is now 6. => Perunatila päällä! Näköetäisyys on nyt 6.
 The loop has to be at least 0.1 seconds long. => Silmukan pitää olla vähintään 0,1 sekuntia pitkä.
 The tempo should be beats a minute, like 120. => Tempo annetaan iskuina minuutissa, esimerkiksi 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Tämä modipaketti on purettuna yli 8 GB, joten sitä ei tuotu.
+That zip unpacks to more than 32 GB, so it wasn't imported. => Tämä zip on purettuna yli 32 GB, joten sitä ei tuotu.

@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => ს�
 Potato Mode on! Render distance is now 6. => კარტოფილის რეჟიმი ჩართულია! ხილვადობა ახლა 6-ია.
 The loop has to be at least 0.1 seconds long. => გამეორება მინიმუმ 0,1 წამი უნდა იყოს.
 The tempo should be beats a minute, like 120. => ტემპი უნდა იყოს დარტყმები წუთში, მაგალითად 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => ეს მოდპაკი გაშლისას 8 GB-ზე მეტია, ამიტომ ის არ შემოვიტანეთ.
+That zip unpacks to more than 32 GB, so it wasn't imported. => ეს zip გაშლისას 32 GB-ზე მეტია, ამიტომ ის არ შემოვიტანეთ.

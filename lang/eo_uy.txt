@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => La l
 Potato Mode on! Render distance is now 6. => Terpoma reĝimo! Vidodistanco nun estas 6.
 The loop has to be at least 0.1 seconds long. => La buklo devas daŭri almenaŭ 0,1 sekundojn.
 The tempo should be beats a minute, like 120. => La takto estu en batoj po minuto, ekzemple 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Tiu modifaĵpako malpakiĝas al pli ol 8 GB, do ĝi ne estis importita.
+That zip unpacks to more than 32 GB, so it wasn't imported. => Tiu zip malpakiĝas al pli ol 32 GB, do ĝi ne estis importita.

@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => The 
 Potato Mode on! Render distance is now 6. => Hark, Potato Mode! Eye's reach is now 6.
 The loop has to be at least 0.1 seconds long. => The loop must be at least 0.1 seconds long.
 The tempo should be beats a minute, like 120. => The tempo should be beats a minute, such as 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => That modpack, unpack'd, would swell past 8 GB, so 'twas not imported.
+That zip unpacks to more than 32 GB, so it wasn't imported. => That zip, unpack'd, would swell past 32 GB, so 'twas not imported.

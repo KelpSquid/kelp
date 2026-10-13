@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => La l
 Potato Mode on! Render distance is now 6. => Mòde Patana activat! La distància es ara 6.
 The loop has to be at least 0.1 seconds long. => La bocla deu durar almens 0.1 segonda.
 The tempo should be beats a minute, like 120. => Lo tempo es en tusts per minuta, coma 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Aqueste modpack fa mai de 8 GB descompressat, alara es pas estat importat.
+That zip unpacks to more than 32 GB, so it wasn't imported. => Aqueste zip fa mai de 32 GB descompressat, alara es pas estat importat.

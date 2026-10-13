@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => Danh
 Potato Mode on! Render distance is now 6. => Đã bật Chế độ Khoai tây! Tầm nhìn giờ là 6.
 The loop has to be at least 0.1 seconds long. => Vòng lặp phải dài ít nhất 0,1 giây.
 The tempo should be beats a minute, like 120. => Nhịp độ nên là số nhịp mỗi phút, ví dụ 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Modpack đó khi giải nén sẽ lớn hơn 8 GB, nên không được nhập.
+That zip unpacks to more than 32 GB, so it wasn't imported. => Tệp zip đó khi giải nén sẽ lớn hơn 32 GB, nên không được nhập.

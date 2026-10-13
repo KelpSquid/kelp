@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => Zozn
 Potato Mode on! Render distance is now 6. => Zemiakový režim zapnutý! Dohľad je teraz 6.
 The loop has to be at least 0.1 seconds long. => Slučka musí trvať aspoň 0,1 sekundy.
 The tempo should be beats a minute, like 120. => Tempo má byť v úderoch za minútu, napríklad 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Ten balík módov má po rozbalení viac ako 8 GB, takže nebol importovaný.
+That zip unpacks to more than 32 GB, so it wasn't imported. => Ten zip má po rozbalení viac ako 32 GB, takže nebol importovaný.

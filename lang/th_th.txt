@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => ร�
 Potato Mode on! Render distance is now 6. => เปิดโหมดมันฝรั่งแล้ว! ระยะมองเห็นตอนนี้คือ 6
 The loop has to be at least 0.1 seconds long. => การวนซ้ำต้องยาวอย่างน้อย 0.1 วินาที
 The tempo should be beats a minute, like 120. => จังหวะควรเป็นจำนวนบีตต่อนาที เช่น 120
+That modpack unpacks to more than 8 GB, so it wasn't imported. => ม็อดแพ็กนั้นเมื่อแตกไฟล์แล้วใหญ่เกิน 8 GB จึงไม่ได้นำเข้า
+That zip unpacks to more than 32 GB, so it wasn't imported. => zip นั้นเมื่อแตกไฟล์แล้วใหญ่เกิน 32 GB จึงไม่ได้นำเข้า

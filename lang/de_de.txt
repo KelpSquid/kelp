@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => Die 
 Potato Mode on! Render distance is now 6. => Kartoffelmodus an! Die Sichtweite ist jetzt 6.
 The loop has to be at least 0.1 seconds long. => Die Schleife muss mindestens 0,1 Sekunden lang sein.
 The tempo should be beats a minute, like 120. => Das Tempo wird in Schlägen pro Minute angegeben, zum Beispiel 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Dieses Modpack ist entpackt größer als 8 GB, also wurde es nicht importiert.
+That zip unpacks to more than 32 GB, so it wasn't imported. => Diese Zip-Datei ist entpackt größer als 32 GB, also wurde sie nicht importiert.

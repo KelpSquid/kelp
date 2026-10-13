@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => D'Li
 Potato Mode on! Render distance is now 6. => Erdäpfe-Modus o! De Sichtweitn is jetz 6.
 The loop has to be at least 0.1 seconds long. => D'Schleifn muass mindestens 0,1 Sekundn lang sei.
 The tempo should be beats a minute, like 120. => As Tempo soit Schläg pro Minutn sei, wia 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Des Modpack is ausgpackt mehra ois 8 GB, drum is's ned importiert worn.
+That zip unpacks to more than 32 GB, so it wasn't imported. => Des Zip is ausgpackt mehra ois 32 GB, drum is's ned importiert worn.

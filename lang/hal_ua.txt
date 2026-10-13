@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => Сп
 Potato Mode on! Render distance is now 6. => Режим Бараболі ввімкнено! Промальовка типер 6.
 The loop has to be at least 0.1 seconds long. => Петля мусит тривати найменше 0,1 секунди.
 The tempo should be beats a minute, like 120. => Темп мусит бути в ударах на хвилину, як 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Тот модпак по розпакуваню має більше як 8 ГБ, то го ни імпортовано.
+That zip unpacks to more than 32 GB, so it wasn't imported. => Тот zip по розпакуваню має більше як 32 ГБ, то го ни імпортовано.

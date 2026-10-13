@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => Mine
 Potato Mode on! Render distance is now 6. => ポテトモード オン！描画距離は 6 です。
 The loop has to be at least 0.1 seconds long. => ループは 0.1 秒以上にしてね。
 The tempo should be beats a minute, like 120. => テンポは 1 分あたりの拍数で入れてね（例：120）。
+That modpack unpacks to more than 8 GB, so it wasn't imported. => その MOD パックは展開すると 8 GB を超えるので、取り込みませんでした。
+That zip unpacks to more than 32 GB, so it wasn't imported. => その zip は展開すると 32 GB を超えるので、取り込みませんでした。

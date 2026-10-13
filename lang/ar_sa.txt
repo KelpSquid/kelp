@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => تغ
 Potato Mode on! Render distance is now 6. => وضع البطاطس مفعّل! مسافة العرض الآن 6.
 The loop has to be at least 0.1 seconds long. => يجب أن يكون التكرار 0.1 ثانية على الأقل.
 The tempo should be beats a minute, like 120. => يجب أن يكون الإيقاع بعدد النبضات في الدقيقة، مثل 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => حزمة المودات هذه تصبح أكثر من 8 GB بعد فكّها، لذا لم تُستورد.
+That zip unpacks to more than 32 GB, so it wasn't imported. => ملف zip هذا يصبح أكثر من 32 GB بعد فكّه، لذا لم يُستورد.

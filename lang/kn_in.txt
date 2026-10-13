@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => Mine
 Potato Mode on! Render distance is now 6. => ಆಲೂಗಡ್ಡೆ ಮೋಡ್ ಆನ್! ರೆಂಡರ್ ದೂರ ಈಗ 6.
 The loop has to be at least 0.1 seconds long. => ಲೂಪ್ ಕನಿಷ್ಠ 0.1 ಸೆಕೆಂಡ್ ಉದ್ದವಿರಬೇಕು.
 The tempo should be beats a minute, like 120. => ಟೆಂಪೋ ನಿಮಿಷಕ್ಕೆ ಬೀಟ್‌ಗಳಲ್ಲಿರಬೇಕು, ಉದಾ. 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => ಆ ಮಾಡ್ಪ್ಯಾಕ್ ತೆರೆದಾಗ 8 GB ಗಿಂತ ಹೆಚ್ಚಾಗುತ್ತದೆ, ಹಾಗಾಗಿ ಆಮದು ಮಾಡಲಿಲ್ಲ.
+That zip unpacks to more than 32 GB, so it wasn't imported. => ಆ zip ತೆರೆದಾಗ 32 GB ಗಿಂತ ಹೆಚ್ಚಾಗುತ್ತದೆ, ಹಾಗಾಗಿ ಆಮದು ಮಾಡಲಿಲ್ಲ.

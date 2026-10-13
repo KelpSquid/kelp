@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => List
 Potato Mode on! Render distance is now 6. => Eplamodus á! Sjónfjarstøðan er nú 6.
 The loop has to be at least 0.1 seconds long. => Endurtøkan má vera í minsta lagi 0,1 sekund long.
 The tempo should be beats a minute, like 120. => Tempoið skal vera í slagum um minuttin, t.d. 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Hesin modpakkin verður meira enn 8 GB, tá ið hann verður pakkaður út, so hann varð ikki fluttur inn.
+That zip unpacks to more than 32 GB, so it wasn't imported. => Henda zip-fílan verður meira enn 32 GB, tá ið hon verður pakkað út, so hon varð ikki flutt inn.

@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => Ua l
 Potato Mode on! Render distance is now 6. => Ua ā ke ʻAno ʻUala! He 6 ka mamao ʻike i kēia manawa.
 The loop has to be at least 0.1 seconds long. => Pono ke kaʻapuni he 0.1 kekona ka lōʻihi ma ka liʻiliʻi loa.
 The tempo should be beats a minute, like 120. => Pono ke tempo he mau paʻi i ka minuke, e like me 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Ke wehe ʻia kēlā modpack, ʻoi aku ia ma mua o 8 GB, no laila ʻaʻole i lawe mai ʻia.
+That zip unpacks to more than 32 GB, so it wasn't imported. => Ke wehe ʻia kēlā zip, ʻoi aku ia ma mua o 32 GB, no laila ʻaʻole i lawe mai ʻia.

@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => Dh'a
 Potato Mode on! Render distance is now 6. => Modh Buntàta air! Tha an t-astar a-nis 6.
 The loop has to be at least 0.1 seconds long. => Feumaidh an lùb a bhith co-dhiù 0.1 diog a dh'fhaid.
 The tempo should be beats a minute, like 120. => Bu chòir an luaths a bhith ann am buillean sa mhionaid, mar 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Bidh a' phacaid mhodaichean sin nas motha na 8 GB nuair a thèid a dì-phacadh, mar sin cha deach ion-phortadh.
+That zip unpacks to more than 32 GB, so it wasn't imported. => Bidh an zip sin nas motha na 32 GB nuair a thèid a dì-phacadh, mar sin cha deach ion-phortadh.

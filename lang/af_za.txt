@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => Die 
 Potato Mode on! Render distance is now 6. => Aartappelmodus aan! Sigafstand is nou 6.
 The loop has to be at least 0.1 seconds long. => Die lus moet minstens 0,1 sekondes lank wees.
 The tempo should be beats a minute, like 120. => Die tempo moet slae per minuut wees, soos 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Daardie modpak pak uit tot meer as 8 GB, so dit is nie ingevoer nie.
+That zip unpacks to more than 32 GB, so it wasn't imported. => Daardie zip pak uit tot meer as 32 GB, so dit is nie ingevoer nie.

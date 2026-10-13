@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => Сп
 Potato Mode on! Render distance is now 6. => Бандурковый режім! Дальность теперь 6.
 The loop has to be at least 0.1 seconds long. => Повтор мусить быти довгый бодай 0,1 секунды.
 The tempo should be beats a minute, like 120. => Темпо мать быти в ударах за минуту, як 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Тот модпак по розбалїню мать веце як 8 ГБ, та го не імпортовано.
+That zip unpacks to more than 32 GB, so it wasn't imported. => Тот zip по розбалїню мать веце як 32 ГБ, та го не імпортовано.

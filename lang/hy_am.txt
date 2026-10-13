@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => Ցա
 Potato Mode on! Render distance is now 6. => Կարտոֆիլի ռեժիմը միացված է! Հեռավորությունն այժմ 6 է։
 The loop has to be at least 0.1 seconds long. => Կրկնումը պետք է տևի առնվազն 0,1 վայրկյան։
 The tempo should be beats a minute, like 120. => Տեմպը պետք է լինի զարկեր րոպեում, օրինակ՝ 120։
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Այդ մոդփաթեթը բացելիս 8 GB-ից ավելի է դառնում, ուստի այն չներմուծվեց։
+That zip unpacks to more than 32 GB, so it wasn't imported. => Այդ zip-ը բացելիս 32 GB-ից ավելի է դառնում, ուստի այն չներմուծվեց։

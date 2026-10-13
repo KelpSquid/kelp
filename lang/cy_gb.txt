@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => Newi
 Potato Mode on! Render distance is now 6. => Modd Tatws ymlaen! Y pellter nawr yw 6.
 The loop has to be at least 0.1 seconds long. => Rhaid i'r ddolen fod o leiaf 0.1 eiliad o hyd.
 The tempo should be beats a minute, like 120. => Dylai'r tempo fod yn guriadau y funud, fel 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Mae'r pecyn modiau yna'n fwy na 8 GB wedi'i ddadbacio, felly chafodd e ddim ei fewnforio.
+That zip unpacks to more than 32 GB, so it wasn't imported. => Mae'r zip yna'n fwy na 32 GB wedi'i ddadbacio, felly chafodd e ddim ei fewnforio.

@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => D'L�
 Potato Mode on! Render distance is now 6. => Gromperen-Modus un! D'Siichtwäit ass elo 6.
 The loop has to be at least 0.1 seconds long. => D'Schleif muss mindestens 0,1 Sekonne laang sinn.
 The tempo should be beats a minute, like 120. => Den Tempo soll a Schléi pro Minutt sinn, wéi 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => De Modpack ass entpaakt méi wéi 8 GB, dofir gouf en net importéiert.
+That zip unpacks to more than 32 GB, so it wasn't imported. => Den Zip ass entpaakt méi wéi 32 GB, dofir gouf en net importéiert.

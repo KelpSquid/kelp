@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => Ли
 Potato Mode on! Render distance is now 6. => Кромпир режим укључен! Удаљеност је сада 6.
 The loop has to be at least 0.1 seconds long. => Петља мора да траје бар 0,1 секунду.
 The tempo should be beats a minute, like 120. => Темпо треба да буде у ударцима у минути, нпр. 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Тај модпак распакован има више од 8 GB, па није увезен.
+That zip unpacks to more than 32 GB, so it wasn't imported. => Тај zip распакован има више од 32 GB, па није увезен.

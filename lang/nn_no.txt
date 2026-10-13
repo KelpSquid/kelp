@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => List
 Potato Mode on! Render distance is now 6. => Potetmodus på! Synsvidda er no 6.
 The loop has to be at least 0.1 seconds long. => Løkka må vere minst 0.1 sekund lang.
 The tempo should be beats a minute, like 120. => Tempoet skal vere slag i minuttet, som 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Den modpakken blir større enn 8 GB når han blir pakka ut, så han vart ikkje importert.
+That zip unpacks to more than 32 GB, so it wasn't imported. => Den zip-fila blir større enn 32 GB når ho blir pakka ut, så ho vart ikkje importert.

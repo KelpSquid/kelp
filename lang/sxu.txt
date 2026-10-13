@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => De L
 Potato Mode on! Render distance is now 6. => Ärdäbbl-Modus an! De Sichdweide is jädzd 6.
 The loop has to be at least 0.1 seconds long. => De Schleife muss mindesdns 0,1 Segundn lang sin.
 The tempo should be beats a minute, like 120. => 's Dembo solld Schläsche bro Minude sin, wie 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Das Modpack is ausgebaggd mehr wie 8 GB, drum wurd's nich imbordierd.
+That zip unpacks to more than 32 GB, so it wasn't imported. => Das Zip is ausgebaggd mehr wie 32 GB, drum wurd's nich imbordierd.

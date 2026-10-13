@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => Ті
 Potato Mode on! Render distance is now 6. => Картоп режимі қосулы! Қашықтық енді 6.
 The loop has to be at least 0.1 seconds long. => Қайталау кемінде 0,1 секунд болуы керек.
 The tempo should be beats a minute, like 120. => Қарқын минутына соққы санымен жазылады, мысалы 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Бұл модпак ашылғанда 8 ГБ-тан асады, сондықтан импортталмады.
+That zip unpacks to more than 32 GB, so it wasn't imported. => Бұл zip ашылғанда 32 ГБ-тан асады, сондықтан импортталмады.

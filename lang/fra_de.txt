@@ -496,3 +496,5 @@ The list changed in Minecraft, so nothing was removed. Here it is again. => Die 
 Potato Mode on! Render distance is now 6. => Grumbern-Modus aa! Die Sichdweidn is edz 6.
 The loop has to be at least 0.1 seconds long. => Die Schleifn muss mindesdens 0,1 Sekundn lang sei.
 The tempo should be beats a minute, like 120. => Es Tempo soll Schläch pro Minudn sei, wie 120.
+That modpack unpacks to more than 8 GB, so it wasn't imported. => Des Modpack is ausbaggd mehr wie 8 GB, drum is's ned imbordierd worn.
+That zip unpacks to more than 32 GB, so it wasn't imported. => Des Zip is ausbaggd mehr wie 32 GB, drum is's ned imbordierd worn.
