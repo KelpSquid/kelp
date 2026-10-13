@@ -53,6 +53,8 @@ From source, with Java 21 or newer installed: run `run.bat`.
 
 To make the downloads for Windows, Linux and Mac (each with its own Java), build [Squid](https://github.com/KelpSquid/squid) first, then run `package.bat`. They land in the `build` folder.
 
+Updates only come from a signed `update.json`. `package.bat` signs it with Kelp & Squid's signing key, which is only on Samuel's laptop (`tools/SigningKey.java` makes it), and writes `update.json.sig` next to it in `build/release`. Upload all four files there (`kelp.jar`, `squid.zip`, `update.json`, `update.json.sig`) to the release. A Kelp turns down an `update.json` whose signature is missing or doesn't match, and so does the Store's list of themes.
+
 ## Contact
 
 Kelp is made by Samuel Arther, who is responsible for it. Mojang and Microsoft are not involved.

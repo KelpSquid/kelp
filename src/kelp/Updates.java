@@ -17,10 +17,10 @@ import java.util.Map;
 
 /**
  * Kelp keeps itself (and the Squid that comes with it) up to date. When Kelp opens, it looks at update.json on Kelp's
- * newest GitHub release. If that's a newer version, it downloads the new kelp.jar and squid.zip into the update folder
- * next to kelp.jar, checking each against the fingerprint (sha256) update.json gives, and throwing away anything that
- * doesn't match. The title screen then offers to update: Kelp closes, {@link Updater} swaps the files in, and Kelp
- * opens again.
+ * newest GitHub release, after checking it's signed by Kelp & Squid (see {@link Signatures}). If that's a newer version,
+ * it downloads the new kelp.jar and squid.zip into the update folder next to kelp.jar, checking each against the
+ * fingerprint (sha256) update.json gives, and throwing away anything that doesn't match. The title screen then offers
+ * to update: Kelp closes, {@link Updater} swaps the files in, and Kelp opens again.
  *
  * Kelp run from its source code (not a packaged kelp.jar) never updates itself.
  */
@@ -87,11 +87,13 @@ public final class Updates {
         thread.start();
     }
 
-    /** The newest release's details. */
+    /**
+     * The newest release's details. update.json has to be signed by Kelp & Squid (update.json.sig, next to it): if it
+     * isn't, nothing in it is read and no update is offered.
+     */
     static Release newest() throws IOException, InterruptedException {
-        HttpResponse<String> response = client().send(request(manifest), HttpResponse.BodyHandlers.ofString());
-        if (response.statusCode() != 200) throw new IOException("update.json answered with error " + response.statusCode());
-        return parse(response.body());
+        byte[] json = Signatures.download(client(), Updates::request, manifest, "update.json isn't signed by Kelp & Squid, so no update was offered");
+        return parse(new String(json, java.nio.charset.StandardCharsets.UTF_8));
     }
 
     static Release parse(String json) {

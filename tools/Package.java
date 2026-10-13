@@ -13,7 +13,13 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.KeyFactory;
 import java.security.MessageDigest;
+import java.security.PrivateKey;
+import java.security.Signature;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
 import java.util.ArrayList;
 import java.util.HexFormat;
 import java.util.LinkedHashMap;
@@ -39,8 +45,10 @@ import java.util.zip.ZipOutputStream;
  *   build/Kelp-linux.tar.gz   unpack, then run start-kelp.sh
  *   build/Kelp-mac.tar.gz     unpack, then open Kelp.app (works on Apple Silicon and Intel Macs)
  *
- * and build/release: the files a Kelp already out there updates itself from (kelp.jar, squid.zip and update.json).
- * Upload all three to a GitHub release tagged v<VERSION>, and every Kelp offers the update the next time it opens.
+ * and build/release: the files a Kelp already out there updates itself from (kelp.jar, squid.zip, update.json and
+ * update.json.sig). Upload all four to a GitHub release tagged v<VERSION>, and every Kelp offers the update the next
+ * time it opens. update.json is signed with Kelp & Squid's signing key, which has to be on this computer (see
+ * tools/SigningKey.java): a Kelp only updates from an update.json with a signature that matches.
  *
  * Squid comes along too, from the squid folder next to this one (run Squid's build.bat first).
  * Run it with package.bat.
@@ -52,6 +60,7 @@ public class Package {
     static final HttpClient HTTP = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NORMAL).build();
 
     public static void main(String[] args) throws Exception {
+        PrivateKey signingKey = signingKey(); // first, so a missing key stops everything before the long downloads
         Path kelpJar = buildKelpJar();
         Map<String, Path> squidJars = squidJars();
         String readme = Files.readString(Path.of("tools", "DOWNLOAD-README.txt")).replace("\r\n", "\n");
@@ -60,7 +69,7 @@ public class Package {
         windows(kelpJar, squidJars, readme, asmLicense);
         linux(kelpJar, squidJars, readme, asmLicense);
         mac(kelpJar, squidJars, readme, asmLicense);
-        release(kelpJar, squidJars, asmLicense);
+        release(kelpJar, squidJars, asmLicense, signingKey);
         System.out.println("Done. The packages are in the build folder.");
     }
 
@@ -144,7 +153,7 @@ public class Package {
      * build/release: kelp.jar, squid.zip (everything in Kelp's squid folder) and update.json, which lists both with
      * their fingerprints so a Kelp only ever uses files that arrive exactly as they were made.
      */
-    static void release(Path kelpJar, Map<String, Path> squidJars, byte[] asmLicense) throws Exception {
+    static void release(Path kelpJar, Map<String, Path> squidJars, byte[] asmLicense, PrivateKey signingKey) throws Exception {
         Path folder = BUILD.resolve("release");
         Files.createDirectories(folder);
         Path kelp = folder.resolve("kelp.jar");
@@ -164,7 +173,42 @@ public class Package {
                 """.formatted(VERSION, VERSION, RELEASES + VERSION + "/kelp.jar", sha256(kelp), Files.size(kelp),
                 RELEASES + VERSION + "/squid.zip", sha256(squid), Files.size(squid));
         Files.writeString(folder.resolve("update.json"), json);
-        System.out.println("Made the update files in " + folder);
+        sign(signingKey, folder.resolve("update.json"));
+        System.out.println("Made the update files in " + folder + ". Upload all four: kelp.jar, squid.zip, update.json and update.json.sig.");
+    }
+
+    // ---- Signing ----
+
+    /** Where Kelp & Squid's private signing key is kept: only on Samuel's laptop (tools/SigningKey.java makes it). */
+    static final Path SIGNING_KEY = Path.of(System.getProperty("user.home"), ".kelp-signing", "signing-key.pk8");
+
+    static PrivateKey signingKey() throws Exception {
+        if (!Files.exists(SIGNING_KEY)) {
+            throw new IOException("There's no signing key on this computer (" + SIGNING_KEY + "), so update.json can't be signed"
+                    + " and no Kelp would take the update. Copy the .kelp-signing folder back from your backup.");
+        }
+        return KeyFactory.getInstance("Ed25519").generatePrivate(new PKCS8EncodedKeySpec(Files.readAllBytes(SIGNING_KEY)));
+    }
+
+    /**
+     * Writes file.sig next to the file: the signature of its exact bytes, in base64. It's checked first with the public
+     * key in src/kelp/Signatures.java (the one every Kelp has), so a wrong key is caught here, not by players.
+     */
+    static void sign(PrivateKey key, Path file) throws Exception {
+        byte[] bytes = Files.readAllBytes(file);
+        Signature signer = Signature.getInstance("Ed25519");
+        signer.initSign(key);
+        signer.update(bytes);
+        byte[] signature = signer.sign();
+        Matcher trusted = Pattern.compile("PUBLIC_KEY = \"([A-Za-z0-9+/=]+)\"").matcher(Files.readString(Path.of("src", "kelp", "Signatures.java")));
+        if (!trusted.find()) throw new IOException("Couldn't find PUBLIC_KEY in src/kelp/Signatures.java");
+        Signature verifier = Signature.getInstance("Ed25519");
+        verifier.initVerify(KeyFactory.getInstance("Ed25519").generatePublic(new X509EncodedKeySpec(Base64.getDecoder().decode(trusted.group(1)))));
+        verifier.update(bytes);
+        if (!verifier.verify(signature)) {
+            throw new IOException("The signing key on this computer isn't the one Kelp trusts (PUBLIC_KEY in src/kelp/Signatures.java)");
+        }
+        Files.writeString(file.resolveSibling(file.getFileName() + ".sig"), Base64.getEncoder().encodeToString(signature) + "\n");
     }
 
     // ---- Windows: a zip with a Start Kelp file ----

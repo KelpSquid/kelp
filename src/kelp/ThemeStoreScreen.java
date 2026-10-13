@@ -22,7 +22,8 @@ import java.util.zip.ZipInputStream;
 
 /**
  * Themes from the Store (the same approved list Squid's Store uses, items of type "theme"). Get puts one with your
- * themes and switches to it. Every download is checked against its fingerprint before it's used.
+ * themes and switches to it. The list has to be signed by Kelp & Squid, and every download is checked against its
+ * fingerprint before it's used.
  */
 public class ThemeStoreScreen extends Screen {
     /** The Store's list. Tests point it at a pretend server. */
@@ -50,6 +51,9 @@ public class ThemeStoreScreen extends Screen {
                 List<Item> items = load();
                 list.setItems(items);
                 status = items.isEmpty() ? t("No themes in the Store yet. Make your own!") : null;
+            } catch (Signatures.Unsigned e) {
+                status = e.getMessage();
+                statusColor = 0xFF5555;
             } catch (Exception e) {
                 status = t("Couldn't reach the Store. Check your internet and try again.");
                 statusColor = 0xFF5555;
@@ -59,12 +63,14 @@ public class ThemeStoreScreen extends Screen {
         loader.start();
     }
 
-    /** The Store's themes. */
+    /**
+     * The Store's themes. store.json has to be signed by Kelp & Squid (store.json.sig, next to it): if it isn't, nothing
+     * in it is read, so nothing from it can be installed.
+     */
     static List<Item> load() throws IOException, InterruptedException {
-        HttpResponse<String> response = client().send(HttpRequest.newBuilder(URI.create(storeUrl)).timeout(Duration.ofSeconds(20)).build(),
-                HttpResponse.BodyHandlers.ofString());
-        if (response.statusCode() != 200) throw new IOException("the Store answered with error " + response.statusCode());
-        return parse(response.body());
+        byte[] json = Signatures.download(client(), url -> HttpRequest.newBuilder(URI.create(url)).timeout(Duration.ofSeconds(20)).build(),
+                storeUrl, t("The Store list isn't signed by Kelp & Squid, so nothing was installed."));
+        return parse(new String(json, java.nio.charset.StandardCharsets.UTF_8));
     }
 
     static List<Item> parse(String json) {

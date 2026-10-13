@@ -67,6 +67,7 @@ public class KelpTest {
         worlds();
         addMods();
         projects();
+        signatures();
         updates();
         crashHelper();
         backups();
@@ -1151,6 +1152,35 @@ public class KelpTest {
                 .filter(m -> m.file().equals(off.file())).findFirst().map(InstalledMod::enabled).orElse(null), "MegaMod.disabled false");
     }
 
+    // ---- Signed lists: update.json and the Store's list only count with Kelp & Squid's signature ----
+
+    static java.security.KeyPair testKey;
+
+    /** A .sig file's contents: the base64 signature of exactly these bytes. */
+    static byte[] sign(java.security.KeyPair key, byte[] bytes) throws Exception {
+        java.security.Signature signer = java.security.Signature.getInstance("Ed25519");
+        signer.initSign(key.getPrivate());
+        signer.update(bytes);
+        return (java.util.Base64.getEncoder().encodeToString(signer.sign()) + "\n").getBytes(StandardCharsets.US_ASCII);
+    }
+
+    static void signatures() throws Exception {
+        check("Kelp has Kelp & Squid's public key (Ed25519)", Signatures.publicKey(Signatures.PUBLIC_KEY).getEncoded().length, 44);
+        // The tests sign their lists with a key of their own. Only a test can swap it in; a player's Kelp only has the real one
+        java.security.KeyPairGenerator generator = java.security.KeyPairGenerator.getInstance("Ed25519");
+        testKey = generator.generateKeyPair();
+        java.security.KeyPair someoneElse = generator.generateKeyPair();
+        Signatures.trusted = testKey.getPublic();
+        byte[] list = "{\"version\": \"9.9\"}\n".getBytes(StandardCharsets.UTF_8);
+        check("a list with its signature is accepted", Signatures.valid(list, sign(testKey, list)), true);
+        byte[] changed = list.clone();
+        changed[14] = '8';
+        check("one changed byte and it's turned down", Signatures.valid(changed, sign(testKey, list)), false);
+        check("a signature made with a different key is turned down", Signatures.valid(list, sign(someoneElse, list)), false);
+        check("a missing .sig is turned down", problem(() -> Signatures.check(list, null, "not signed")), "not signed");
+        check("a .sig that isn't a signature is turned down", Signatures.valid(list, "hello".getBytes()) + " " + Signatures.valid(list, new byte[0]), "false false");
+    }
+
     static void updates() throws Exception {
         check("newer versions", Updates.newer("0.2", "0.1") + " " + Updates.newer("0.10", "0.9") + " " + Updates.newer("1.0", "0.12")
                 + " " + Updates.newer("0.1", "0.1") + " " + Updates.newer("0.1", "0.2"), "true true true false false");
@@ -1169,9 +1199,11 @@ public class KelpTest {
         HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
         String base = "http://127.0.0.1:" + server.getAddress().getPort();
         String[] json = {""};
+        byte[][] sig = {null};
         server.createContext("/", exchange -> {
             String path = exchange.getRequestURI().getPath();
-            byte[] body = path.equals("/update.json") ? json[0].getBytes() : path.equals("/kelp.jar") ? newKelp
+            byte[] body = path.equals("/update.json") ? json[0].getBytes() : path.equals("/update.json.sig") ? (sig[0] == null ? new byte[0] : sig[0])
+                    : path.equals("/kelp.jar") ? newKelp
                     : path.equals("/squid.zip") ? newSquid : path.equals("/broken.jar") ? "tampered".getBytes() : new byte[0];
             exchange.sendResponseHeaders(body.length == 0 ? 404 : 200, body.length == 0 ? -1 : body.length);
             if (body.length > 0) exchange.getResponseBody().write(body);
@@ -1183,8 +1215,19 @@ public class KelpTest {
                     + " \"kelp\": {\"url\": \"" + base + "/kelp.jar\", \"sha256\": \"" + sha256(newKelp) + "\", \"size\": " + newKelp.length + "},"
                     + " \"squid\": {\"url\": \"" + base + "/squid.zip\", \"sha256\": \"" + sha256(newSquid) + "\", \"size\": " + newSquid.length + "}}";
             Updates.manifest = base + "/update.json";
+            String notSigned = "update.json isn't signed by Kelp & Squid, so no update was offered";
+            check("an update.json without update.json.sig is turned down", problem(Updates::newest), notSigned);
+            sig[0] = sign(testKey, json[0].getBytes());
             Updates.Release release = Updates.newest();
-            check("the newest release is read", release.version() + " " + release.kelp().size(), "0.2 " + newKelp.length);
+            check("the newest release is read, once it's signed", release.version() + " " + release.kelp().size(), "0.2 " + newKelp.length);
+            String signed = json[0];
+            json[0] = signed.replace("\"0.2\"", "\"0.3\"");
+            check("a signed update.json changed afterwards is turned down", problem(Updates::newest), notSigned);
+            json[0] = signed;
+            java.security.KeyPair stolen = java.security.KeyPairGenerator.getInstance("Ed25519").generateKeyPair();
+            sig[0] = sign(stolen, json[0].getBytes());
+            check("an update.json signed with any other key is turned down", problem(Updates::newest), notSigned);
+            sig[0] = sign(testKey, json[0].getBytes());
 
             // An old Kelp, with its own Squid next to it
             Path app = Files.createDirectories(home.resolve("update-test-app"));
@@ -1477,18 +1520,33 @@ public class KelpTest {
         byte[] themeBytes = themeZip.toByteArray();
         HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
         String base = "http://127.0.0.1:" + server.getAddress().getPort();
+        String[] storeJson = {""};
+        byte[][] storeSig = {null};
         server.createContext("/", exchange -> {
-            byte[] body = exchange.getRequestURI().getPath().equals("/sunset.zip") ? themeBytes : new byte[0];
+            String path = exchange.getRequestURI().getPath();
+            byte[] body = path.equals("/sunset.zip") ? themeBytes : path.equals("/store.json") ? storeJson[0].getBytes(StandardCharsets.UTF_8)
+                    : path.equals("/store.json.sig") && storeSig[0] != null ? storeSig[0] : new byte[0];
             exchange.sendResponseHeaders(body.length == 0 ? 404 : 200, body.length == 0 ? -1 : body.length);
             if (body.length > 0) exchange.getResponseBody().write(body);
             exchange.close();
         });
         server.start();
         try {
-            List<ThemeStoreScreen.Item> items = ThemeStoreScreen.parse("{\"items\": [{\"id\": \"xray\", \"type\": \"mod\", \"url\": \"u\", \"sha256\": \"a\"},"
+            storeJson[0] = "{\"items\": [{\"id\": \"xray\", \"type\": \"mod\", \"url\": \"u\", \"sha256\": \"a\"},"
                     + "{\"id\": \"sunset\", \"type\": \"theme\", \"name\": \"Sunset\", \"author\": \"Samuel\", \"url\": \"" + base + "/sunset.zip\", \"sha256\": \"" + sha256(themeBytes) + "\"},"
-                    + "{\"id\": \"../evil\", \"type\": \"theme\", \"url\": \"u\", \"sha256\": \"a\"}]}");
-            check("the Store's themes, and only safe ones", items.stream().map(ThemeStoreScreen.Item::id).toList().toString(), "[sunset]");
+                    + "{\"id\": \"../evil\", \"type\": \"theme\", \"url\": \"u\", \"sha256\": \"a\"}]}";
+            ThemeStoreScreen.storeUrl = base + "/store.json";
+            String notSigned = "The Store list isn't signed by Kelp & Squid, so nothing was installed.";
+            check("a Store list without store.json.sig is turned down", problem(ThemeStoreScreen::load), notSigned);
+            storeSig[0] = sign(testKey, storeJson[0].getBytes(StandardCharsets.UTF_8));
+            List<ThemeStoreScreen.Item> items = ThemeStoreScreen.load();
+            check("the Store's themes, and only safe ones, from a signed list", items.stream().map(ThemeStoreScreen.Item::id).toList().toString(), "[sunset]");
+            String signedStore = storeJson[0];
+            storeJson[0] = signedStore.replace(sha256(themeBytes), sha256("someone else's theme".getBytes()));
+            check("a signed Store list with a fingerprint swapped afterwards is turned down", problem(ThemeStoreScreen::load), notSigned);
+            storeJson[0] = signedStore;
+            storeSig[0] = sign(java.security.KeyPairGenerator.getInstance("Ed25519").generateKeyPair(), storeJson[0].getBytes(StandardCharsets.UTF_8));
+            check("a Store list signed with any other key is turned down", problem(ThemeStoreScreen::load), notSigned);
             Theme sunset = ThemeStoreScreen.install(items.get(0));
             check("a Store theme installs", sunset.name() + " " + sunset.scene() + " " + Integer.toHexString(sunset.base()), "Sunset SKY ff8844");
             ThemeStoreScreen.Item tampered = new ThemeStoreScreen.Item("tampered", "T", "", base + "/sunset.zip", "00");
