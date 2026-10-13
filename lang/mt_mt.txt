@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => Il-loop irid ikun twil mill-inq
 The tempo should be beats a minute, like 120. => It-tempo għandu jkun taħbitiet kull minuta, bħal 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => Dak il-modpack jiġi aktar minn 8 GB meta jinfetaħ, allura ma ġiex importat.
 That zip unpacks to more than 32 GB, so it wasn't imported. => Dak iż-zip jiġi aktar minn 32 GB meta jinfetaħ, allura ma ġiex importat.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => Il-lista tal-Ħanut mhix iffirmata minn Kelp & Squid, allura ma ġie installat xejn.

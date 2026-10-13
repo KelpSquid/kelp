@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => Loopen måste vara minst 0,1 se
 The tempo should be beats a minute, like 120. => Tempot ska vara slag per minut, som 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => Modpaketet blir större än 8 GB uppackat, så det importerades inte.
 That zip unpacks to more than 32 GB, so it wasn't imported. => Zip-filen blir större än 32 GB uppackad, så den importerades inte.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => Storens lista är inte signerad av Kelp & Squid, så inget installerades.

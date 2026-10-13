@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => The loop has to be at least 0.1
 The tempo should be beats a minute, like 120. => The beat speed should be beats a minute, like 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => That modpack unfolds to more than 8 GB, so it wasn't brought in.
 That zip unpacks to more than 32 GB, so it wasn't imported. => That zip unfolds to more than 32 GB, so it wasn't brought in.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => The Shop's list isn't undersigned by Kelp & Squid, so naught was set in.

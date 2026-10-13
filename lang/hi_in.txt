@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => लूप कम से कम 
 The tempo should be beats a minute, like 120. => टेम्पो प्रति मिनट बीट में होना चाहिए, जैसे 120।
 That modpack unpacks to more than 8 GB, so it wasn't imported. => खोलने पर वह मॉडपैक 8 GB से ज़्यादा का हो जाता, इसलिए उसे आयात नहीं किया गया।
 That zip unpacks to more than 32 GB, so it wasn't imported. => खोलने पर वह zip 32 GB से ज़्यादा का हो जाता, इसलिए उसे आयात नहीं किया गया।
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => स्टोर की सूची पर Kelp & Squid के हस्ताक्षर नहीं हैं, इसलिए कुछ भी इंस्टॉल नहीं हुआ।

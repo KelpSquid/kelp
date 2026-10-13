@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => ループは 0.1 秒以上に�
 The tempo should be beats a minute, like 120. => テンポは 1 分あたりの拍数で入れてね（例：120）。
 That modpack unpacks to more than 8 GB, so it wasn't imported. => その MOD パックは展開すると 8 GB を超えるので、取り込みませんでした。
 That zip unpacks to more than 32 GB, so it wasn't imported. => その zip は展開すると 32 GB を超えるので、取り込みませんでした。
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => ストアの一覧に Kelp & Squid の署名がないので、何もインストールしませんでした。

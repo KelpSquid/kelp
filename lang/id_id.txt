@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => Pengulangan harus paling sediki
 The tempo should be beats a minute, like 120. => Tempo harus berupa ketukan per menit, seperti 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => Modpack itu jadi lebih dari 8 GB setelah diekstrak, jadi tidak diimpor.
 That zip unpacks to more than 32 GB, so it wasn't imported. => Zip itu jadi lebih dari 32 GB setelah diekstrak, jadi tidak diimpor.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => Daftar Toko tidak ditandatangani oleh Kelp & Squid, jadi tidak ada yang dipasang.

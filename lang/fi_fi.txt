@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => Silmukan pitää olla vähintä
 The tempo should be beats a minute, like 120. => Tempo annetaan iskuina minuutissa, esimerkiksi 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => Tämä modipaketti on purettuna yli 8 GB, joten sitä ei tuotu.
 That zip unpacks to more than 32 GB, so it wasn't imported. => Tämä zip on purettuna yli 32 GB, joten sitä ei tuotu.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => Kaupan listaa ei ole allekirjoittanut Kelp & Squid, joten mitään ei asennettu.

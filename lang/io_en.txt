@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => La ripeto mustas durar adminime
 The tempo should be beats a minute, like 120. => La tempo devas esar batadi per minuto, exemple 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => Ta modifikajo-pako divenas plu kam 8 GB pos depakigo, do ol ne importesis.
 That zip unpacks to more than 32 GB, so it wasn't imported. => Ta zip divenas plu kam 32 GB pos depakigo, do ol ne importesis.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => La listo di la Butiko ne esas signatita da Kelp & Squid, do nulo instalesis.

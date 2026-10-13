@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => El ripet el gh'ha de durà alma
 The tempo should be beats a minute, like 120. => El temp el gh'ha de vess in batud al minut, come 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => Quell modpack, desfaa su, el passa i 8 GB, inscì l'è minga staa importaa.
 That zip unpacks to more than 32 GB, so it wasn't imported. => Quell zip, desfaa su, el passa i 32 GB, inscì l'è minga staa importaa.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => La lista de la Botega l'è minga firmada de Kelp & Squid, inscì s'è installaa nagott.

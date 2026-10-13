@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => De lus moat op syn minst 0,1 se
 The tempo should be beats a minute, like 120. => It tempo moat yn tellen yn 'e minút wêze, lykas 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => Dy modpack is útpakt mear as 8 GB, dus hy is net ymportearre.
 That zip unpacks to more than 32 GB, so it wasn't imported. => Dy zip is útpakt mear as 32 GB, dus hy is net ymportearre.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => De list fan de Winkel is net ûndertekene troch Kelp & Squid, dus der is neat ynstallearre.

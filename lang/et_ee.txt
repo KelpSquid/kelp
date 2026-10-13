@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => Kordus peab olema vähemalt 0,1
 The tempo should be beats a minute, like 120. => Tempo peaks olema löökides minutis, näiteks 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => See modipakk on lahtipakituna üle 8 GB, seega seda ei imporditud.
 That zip unpacks to more than 32 GB, so it wasn't imported. => See zip on lahtipakituna üle 32 GB, seega seda ei imporditud.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => Poe nimekiri pole Kelp & Squidi allkirjastatud, seega midagi ei paigaldatud.

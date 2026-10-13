@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => דער שלייף מוז זײַ
 The tempo should be beats a minute, like 120. => דער טעמפּאָ זאָל זײַן קלאַפּן אַ מינוט, למשל 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => דער מאָדפּאַק ווערט אויסגעפּאַקט מער ווי 8 GB, איז ער ניט אימפּאָרטירט געוואָרן.
 That zip unpacks to more than 32 GB, so it wasn't imported. => די zip־טעקע ווערט אויסגעפּאַקט מער ווי 32 GB, איז זי ניט אימפּאָרטירט געוואָרן.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => די רשימה פֿון דער קראָם איז ניט אונטערגעשריבן פֿון Kelp & Squid, איז גאָרנישט ניט אינסטאַלירט געוואָרן.

@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => sike kalama o awen lon tenpo li
 The tempo should be beats a minute, like 120. => tenpo kalama o nanpa pi kalama utala lon tenpo 60 s, sama 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => kulupu ni pi ante musi li open la ona li suli mute (8 GB en mute). mi pana ala e ona.
 That zip unpacks to more than 32 GB, so it wasn't imported. => lipu zip ni li open la ona li suli mute (32 GB en mute). mi pana ala e ona.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => lipu esun li jo ala e sitelen nimi tan Kelp & Squid. ni la mi pana ala e ijo.

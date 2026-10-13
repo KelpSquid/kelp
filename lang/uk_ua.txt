@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => Повтор має трива�
 The tempo should be beats a minute, like 120. => Темп — це удари за хвилину, наприклад 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => Розпакований, цей модпак більший за 8 ГБ, тому його не імпортовано.
 That zip unpacks to more than 32 GB, so it wasn't imported. => Розпакований, цей zip більший за 32 ГБ, тому його не імпортовано.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => Список Крамниці не підписаний Kelp & Squid, тож нічого не встановлено.

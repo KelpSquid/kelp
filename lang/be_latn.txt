@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => Cykl pavinien doŭžycca nie mi
 The tempo should be beats a minute, like 120. => Temp — heta ŭdary za chvilinu, napryklad 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => Hety modpak paslia raspakoŭki zajmaje bolš za 8 GB, tamu jon nie impartavany.
 That zip unpacks to more than 32 GB, so it wasn't imported. => Hety zip paslia raspakoŭki zajmaje bolš za 32 GB, tamu jon nie impartavany.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => Spis Kramy nie padpisany Kelp & Squid, tamu ničoha nie ŭstalavana.

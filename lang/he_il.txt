@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => הלולאה צריכה להי�
 The tempo should be beats a minute, like 120. => הקצב צריך להיות בפעימות לדקה, כמו 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => חבילת המודים הזאת תופסת יותר מ-8 GB אחרי פריסה, אז היא לא יובאה.
 That zip unpacks to more than 32 GB, so it wasn't imported. => קובץ ה-zip הזה תופס יותר מ-32 GB אחרי פריסה, אז הוא לא יובא.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => רשימת החנות לא חתומה על ידי Kelp & Squid, אז שום דבר לא הותקן.

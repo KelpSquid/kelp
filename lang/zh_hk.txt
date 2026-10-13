@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => 循環最少要 0.1 秒長。
 The tempo should be beats a minute, like 120. => 速度應該是每分鐘的拍數，例如 120。
 That modpack unpacks to more than 8 GB, so it wasn't imported. => 這個模組包解壓後超過 8 GB，所以沒有匯入。
 That zip unpacks to more than 32 GB, so it wasn't imported. => 這個 zip 解壓後超過 32 GB，所以沒有匯入。
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => 商店列表沒有 Kelp & Squid 的簽名，所以甚麼都沒有安裝。

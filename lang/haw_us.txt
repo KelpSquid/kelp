@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => Pono ke kaʻapuni he 0.1 kekona
 The tempo should be beats a minute, like 120. => Pono ke tempo he mau paʻi i ka minuke, e like me 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => Ke wehe ʻia kēlā modpack, ʻoi aku ia ma mua o 8 GB, no laila ʻaʻole i lawe mai ʻia.
 That zip unpacks to more than 32 GB, so it wasn't imported. => Ke wehe ʻia kēlā zip, ʻoi aku ia ma mua o 32 GB, no laila ʻaʻole i lawe mai ʻia.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => ʻAʻole i kākau inoa ʻia ka papa inoa o ka Hale Kūʻai e Kelp & Squid, no laila ʻaʻohe mea i hoʻokomo ʻia.

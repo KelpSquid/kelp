@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => Az ismétlésnek legalább 0,1 
 The tempo should be beats a minute, like 120. => A tempó percenkénti ütésszám legyen, például 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => Ez a modcsomag kicsomagolva több mint 8 GB, ezért nem lett importálva.
 That zip unpacks to more than 32 GB, so it wasn't imported. => Ez a zip kicsomagolva több mint 32 GB, ezért nem lett importálva.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => A Bolt listáját nem írta alá a Kelp & Squid, ezért semmi sem lett telepítve.

@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => Dapat hindi bababa sa 0.1 segun
 The tempo should be beats a minute, like 120. => Dapat bilang ng kumpas bawat minuto ang tempo, gaya ng 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => Lalampas sa 8 GB ang modpack na iyan kapag binuksan, kaya hindi ito naiangkat.
 That zip unpacks to more than 32 GB, so it wasn't imported. => Lalampas sa 32 GB ang zip na iyan kapag binuksan, kaya hindi ito naiangkat.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => Hindi pinirmahan ng Kelp & Squid ang talaan ng Tindahan, kaya walang nailagay.

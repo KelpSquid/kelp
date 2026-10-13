@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => De Schleife muss mindesdns 0,1 
 The tempo should be beats a minute, like 120. => 's Dembo solld Schläsche bro Minude sin, wie 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => Das Modpack is ausgebaggd mehr wie 8 GB, drum wurd's nich imbordierd.
 That zip unpacks to more than 32 GB, so it wasn't imported. => Das Zip is ausgebaggd mehr wie 32 GB, drum wurd's nich imbordierd.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => De Lisde vom Ladn is nich von Kelp & Squid underschriebn, drum wurde nischd inschdallierd.

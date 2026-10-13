@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => Il loop deve durare almeno 0,1 
 The tempo should be beats a minute, like 120. => Il tempo deve essere in battiti al minuto, tipo 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => Quel modpack supera gli 8 GB una volta estratto, quindi non è stato importato.
 That zip unpacks to more than 32 GB, so it wasn't imported. => Quello zip supera i 32 GB una volta estratto, quindi non è stato importato.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => La lista del Negozio non è firmata da Kelp & Squid, quindi non è stato installato niente.

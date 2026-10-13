@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => ݢلوڠ مستي ڤنجڠ سک
 The tempo should be beats a minute, like 120. => تيمڤو هاروس دالم رنتق سمينيت، سڤرتي 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => ڤيک مود ايت لبيه درڤد 8 GB اڤابيلا دبوک، جادي اي تيدق دايمڤورت.
 That zip unpacks to more than 32 GB, so it wasn't imported. => zip ايت لبيه درڤد 32 GB اڤابيلا دبوک، جادي اي تيدق دايمڤورت.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => سناراي کداي تيدق دتندتاڠاني اوليه Kelp & Squid، جادي تيادا اڤ٢ يڠ دڤاسڠ.

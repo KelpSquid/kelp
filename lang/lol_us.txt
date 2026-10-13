@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => Teh loop haz 2 b at leest 0.1 s
 The tempo should be beats a minute, like 120. => Teh tempo shud b beetz a minit, liek 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => Dat modpak unpaks 2 moar dan 8 GB, so it wuznt importd.
 That zip unpacks to more than 32 GB, so it wasn't imported. => Dat zip unpaks 2 moar dan 32 GB, so it wuznt importd.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => Teh Stor list iz not signd by Kelp & Squid, so nuthin got instald.

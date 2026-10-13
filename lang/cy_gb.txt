@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => Rhaid i'r ddolen fod o leiaf 0.
 The tempo should be beats a minute, like 120. => Dylai'r tempo fod yn guriadau y funud, fel 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => Mae'r pecyn modiau yna'n fwy na 8 GB wedi'i ddadbacio, felly chafodd e ddim ei fewnforio.
 That zip unpacks to more than 32 GB, so it wasn't imported. => Mae'r zip yna'n fwy na 32 GB wedi'i ddadbacio, felly chafodd e ddim ei fewnforio.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => Dydy rhestr y Siop ddim wedi'i llofnodi gan Kelp & Squid, felly chafodd dim byd ei osod.

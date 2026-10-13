@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => O bucle ten que durar polo meno
 The tempo should be beats a minute, like 120. => O tempo debe ir en pulsacións por minuto, como 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => Ese modpack ocupa máis de 8 GB descomprimido, así que non se importou.
 That zip unpacks to more than 32 GB, so it wasn't imported. => Ese zip ocupa máis de 32 GB descomprimido, así que non se importou.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => A lista da Tenda non está asinada por Kelp & Squid, así que non se instalou nada.

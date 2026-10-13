@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => Geardduheapmi ferte leat unnimu
 The tempo should be beats a minute, like 120. => Tempo lea čuojahusat juohke minuhtas, nugo 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => Dat modpáhkka šaddá stuorát go 8 GB go dat rahpojuvvo, danne dat ii buktojuvvon sisa.
 That zip unpacks to more than 32 GB, so it wasn't imported. => Dat zip šaddá stuorát go 32 GB go dat rahpojuvvo, danne dat ii buktojuvvon sisa.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => Gávppi listtu ii leat Kelp & Squid vuolláičállán, danne ii mihkkege sajáiduhttojuvvon.

@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => Kartojimas turi trukti bent 0.1
 The tempo should be beats a minute, like 120. => Tempas nurodomas dūžiais per minutę, pvz., 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => Išpakuotas šis modų paketas užimtų daugiau nei 8 GB, todėl jis nebuvo importuotas.
 That zip unpacks to more than 32 GB, so it wasn't imported. => Išpakuotas šis zip užimtų daugiau nei 32 GB, todėl jis nebuvo importuotas.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => Parduotuvės sąrašas nepasirašytas Kelp & Squid, todėl niekas nebuvo įdiegta.

@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => Smyčka musí být dlouhá aspo
 The tempo should be beats a minute, like 120. => Tempo má být v úderech za minutu, třeba 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => Ten balíček módů má po rozbalení víc než 8 GB, takže nebyl importován.
 That zip unpacks to more than 32 GB, so it wasn't imported. => Ten zip má po rozbalení víc než 32 GB, takže nebyl importován.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => Seznam Obchodu není podepsaný od Kelp & Squid, takže se nic nenainstalovalo.

@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => Lykkjan þarf að vera að minn
 The tempo should be beats a minute, like 120. => Takturinn á að vera slög á mínútu, eins og 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => Þessi moddpakki verður stærri en 8 GB þegar hann er tekinn upp, svo hann var ekki fluttur inn.
 That zip unpacks to more than 32 GB, so it wasn't imported. => Þessi zip-skrá verður stærri en 32 GB þegar hún er tekin upp, svo hún var ekki flutt inn.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => Listi Búðarinnar er ekki undirritaður af Kelp & Squid, svo ekkert var sett upp.

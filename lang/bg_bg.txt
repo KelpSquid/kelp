@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => Повтарянето тряб
 The tempo should be beats a minute, like 120. => Темпото трябва да е удари в минута, например 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => Разархивиран, този модпак е над 8 GB, затова не е внесен.
 That zip unpacks to more than 32 GB, so it wasn't imported. => Разархивиран, този zip е над 32 GB, затова не е внесен.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => Списъкът на Магазина не е подписан от Kelp & Squid, затова нищо не е инсталирано.

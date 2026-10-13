@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => Lykkja lyt vera minst 0,1 sekun
 The tempo should be beats a minute, like 120. => Tempoet bør vera slag i minuttet, som 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => Den modpakken vert større enn 8 GB når han vert utpakka, so han vart ikkje innførd.
 That zip unpacks to more than 32 GB, so it wasn't imported. => Den zip-fila vert større enn 32 GB når ho vert utpakka, so ho vart ikkje innførd.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => Lista i Handelen er ikkje underskrivi av Kelp & Squid, so inkje vart innsett.

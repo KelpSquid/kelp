@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => 0.1 lup nI'nIS gho, pagh nI'qu'
 The tempo should be beats a minute, like 120. => tup wa'Daq ruQmey mI' 'oHnIS Do, 120 rur.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => choH vey vam poSmoHlu'DI', tIn law' 8 GB tIn puS. vaj qemlu'be'.
 That zip unpacks to more than 32 GB, so it wasn't imported. => zip vam poSmoHlu'DI', tIn law' 32 GB tIn puS. vaj qemlu'be'.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => ngevwI' tetlh qI'be' Kelp & Squid. vaj pagh jomlu'.

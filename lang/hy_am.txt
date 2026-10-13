@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => Կրկնումը պետք է տ
 The tempo should be beats a minute, like 120. => Տեմպը պետք է լինի զարկեր րոպեում, օրինակ՝ 120։
 That modpack unpacks to more than 8 GB, so it wasn't imported. => Այդ մոդփաթեթը բացելիս 8 GB-ից ավելի է դառնում, ուստի այն չներմուծվեց։
 That zip unpacks to more than 32 GB, so it wasn't imported. => Այդ zip-ը բացելիս 32 GB-ից ավելի է դառնում, ուստի այն չներմուծվեց։
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => Խանութի ցանկը ստորագրված չէ Kelp & Squid-ի կողմից, ուստի ոչինչ չտեղադրվեց։

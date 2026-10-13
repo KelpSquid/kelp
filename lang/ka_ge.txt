@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => გამეორება მ
 The tempo should be beats a minute, like 120. => ტემპი უნდა იყოს დარტყმები წუთში, მაგალითად 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => ეს მოდპაკი გაშლისას 8 GB-ზე მეტია, ამიტომ ის არ შემოვიტანეთ.
 That zip unpacks to more than 32 GB, so it wasn't imported. => ეს zip გაშლისას 32 GB-ზე მეტია, ამიტომ ის არ შემოვიტანეთ.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => მაღაზიის სია არ არის ხელმოწერილი Kelp & Squid-ის მიერ, ამიტომ არაფერი დაყენდა.

@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => การวนซ้ำต้�
 The tempo should be beats a minute, like 120. => จังหวะควรเป็นจำนวนบีตต่อนาที เช่น 120
 That modpack unpacks to more than 8 GB, so it wasn't imported. => ม็อดแพ็กนั้นเมื่อแตกไฟล์แล้วใหญ่เกิน 8 GB จึงไม่ได้นำเข้า
 That zip unpacks to more than 32 GB, so it wasn't imported. => zip นั้นเมื่อแตกไฟล์แล้วใหญ่เกิน 32 GB จึงไม่ได้นำเข้า
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => รายการของร้านค้าไม่ได้ลงนามโดย Kelp & Squid จึงไม่ได้ติดตั้งอะไรเลย

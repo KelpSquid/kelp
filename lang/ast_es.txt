@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => El bucle tien que durar polo me
 The tempo should be beats a minute, like 120. => El tempu tien que ser pulsos per minutu, como 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => Esi modpack ocupa más de 8 GB al descomprimilu, asina que nun s'importó.
 That zip unpacks to more than 32 GB, so it wasn't imported. => Esi zip ocupa más de 32 GB al descomprimilu, asina que nun s'importó.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => La llista de la Tienda nun ta robla por Kelp & Squid, asina que nun s'instaló nada.

@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => Caithfidh an lúb a bheith 0.1 
 The tempo should be beats a minute, like 120. => Ba chóir go mbeadh an luas i mbuillí sa nóiméad, mar 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => Bíonn an pacáiste modanna sin níos mó ná 8 GB nuair a dhíphacáiltear é, mar sin níor iompórtáladh é.
 That zip unpacks to more than 32 GB, so it wasn't imported. => Bíonn an zip sin níos mó ná 32 GB nuair a dhíphacáiltear é, mar sin níor iompórtáladh é.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => Níl liosta an tSiopa sínithe ag Kelp & Squid, mar sin níor suiteáladh aon rud.

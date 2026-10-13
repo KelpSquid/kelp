@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => Кабатлау ким диг�
 The tempo should be beats a minute, like 120. => Темп минуттагы бит саны булырга тиеш, мәсәлән 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => Бу модпак ачылганда 8 GB-тан артып китә, шуңа күрә ул импортланмады.
 That zip unpacks to more than 32 GB, so it wasn't imported. => Бу zip ачылганда 32 GB-тан артып китә, шуңа күрә ул импортланмады.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => Кибет исемлегенә Kelp & Squid кул куймаган, шуңа бернәрсә дә куелмады.

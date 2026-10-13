@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => 반복은 최소 0.1초 이상�
 The tempo should be beats a minute, like 120. => 템포는 1분당 박자 수로 써 주세요. 예: 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => 그 모드팩은 압축을 풀면 8 GB가 넘어서 가져오지 않았어요.
 That zip unpacks to more than 32 GB, so it wasn't imported. => 그 zip은 압축을 풀면 32 GB가 넘어서 가져오지 않았어요.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => 스토어 목록에 Kelp & Squid의 서명이 없어서 아무것도 설치하지 않았어요.

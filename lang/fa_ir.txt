@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => حلقه باید دست‌کم
 The tempo should be beats a minute, like 120. => تمپو باید بر حسب ضرب در دقیقه باشد، مثل 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => این مادپک پس از باز شدن بیشتر از 8 GB می‌شود، برای همین وارد نشد.
 That zip unpacks to more than 32 GB, so it wasn't imported. => این zip پس از باز شدن بیشتر از 32 GB می‌شود، برای همین وارد نشد.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => فهرست فروشگاه امضای Kelp & Squid را ندارد، برای همین چیزی نصب نشد.

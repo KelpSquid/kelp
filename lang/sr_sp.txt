@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => Петља мора да тра
 The tempo should be beats a minute, like 120. => Темпо треба да буде у ударцима у минути, нпр. 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => Тај модпак распакован има више од 8 GB, па није увезен.
 That zip unpacks to more than 32 GB, so it wasn't imported. => Тај zip распакован има више од 32 GB, па није увезен.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => Листа Продавнице није потписана од стране Kelp & Squid, па ништа није инсталирано.

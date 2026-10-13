@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => De Schleifn muass mindestns 0,1
 The tempo should be beats a minute, like 120. => As Tempo soit Schläg pro Minutn sei, wia 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => Des Modpack is ausgpackt mehr ois 8 GB, drum is's ned importiert wordn.
 That zip unpacks to more than 32 GB, so it wasn't imported. => Des Zip is ausgpackt mehr ois 32 GB, drum is's ned importiert wordn.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => De Listn vom Ladn is ned vo Kelp & Squid untaschriebn, drum is nix installiert wordn.

@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => Zanka mora trajati vsaj 0,1 sek
 The tempo should be beats a minute, like 120. => Tempo naj bo v udarcih na minuto, na primer 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => Ta paket modov ima razširjen več kot 8 GB, zato ni bil uvožen.
 That zip unpacks to more than 32 GB, so it wasn't imported. => Ta zip ima razširjen več kot 32 GB, zato ni bil uvožen.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => Seznam Trgovine ni podpisan s strani Kelp & Squid, zato ni bilo nič nameščeno.

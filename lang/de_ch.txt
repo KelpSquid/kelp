@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => D Schlaufe muess mindestens 0,1
 The tempo should be beats a minute, like 120. => S Tempo isch i Schläg pro Minute, zum Biispiel 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => Das Modpack isch uuspackt meh als 8 GB, drum isch es nöd importiert worde.
 That zip unpacks to more than 32 GB, so it wasn't imported. => Das Zip isch uuspackt meh als 32 GB, drum isch es nöd importiert worde.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => D Lischte vom Lade isch nöd vo Kelp & Squid unterschribe, drum isch nüt installiert worde.

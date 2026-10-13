@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => lo rapli cu bilga lo ka clani s
 The tempo should be beats a minute, like 120. => lo sutra cu bilga lo ka namcu lo dandu ze'a pa mentu .i mu'a li pa re no
 That modpack unpacks to more than 8 GB, so it wasn't imported. => lo galfi bakfu cu zmadu 8 GB lo ka barda ca lo nu se kalri .i se ki'u bo na pu jmina
 That zip unpacks to more than 32 GB, so it wasn't imported. => lo zip cu zmadu 32 GB lo ka barda ca lo nu se kalri .i se ki'u bo na pu jmina
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => la Kelp joi la Squid na ciska lo cmene lo liste be lo zarci .i se ki'u bo no da pu se cpacu

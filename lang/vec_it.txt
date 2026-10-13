@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => Ła ripetision ła ga da durar 
 The tempo should be beats a minute, like 120. => El tenpo el ga da èsar i colpi al minuto, come 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => Sto modpack, verto, el passa i 8 GB, alora no'l xe stà inportà.
 That zip unpacks to more than 32 GB, so it wasn't imported. => Sto zip, verto, el passa i 32 GB, alora no'l xe stà inportà.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => Ła łista de ła Botega no ła xe firmada da Kelp & Squid, alora no xe stà instałà gnente.

@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => Повтор мусить бы�
 The tempo should be beats a minute, like 120. => Темпо мать быти в ударах за минуту, як 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => Тот модпак по розбалїню мать веце як 8 ГБ, та го не імпортовано.
 That zip unpacks to more than 32 GB, so it wasn't imported. => Тот zip по розбалїню мать веце як 32 ГБ, та го не імпортовано.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => Зознам Склепу не підписаный Kelp & Squid, та ніч ся не наінштальовало.

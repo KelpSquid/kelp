@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => Begiztak gutxienez 0,1 segundo 
 The tempo should be beats a minute, like 120. => Tempoa minutuko taupadetan adierazi behar da, adibidez 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => Modpack hori 8 GB baino gehiago da deskonprimituta, beraz ez da inportatu.
 That zip unpacks to more than 32 GB, so it wasn't imported. => Zip hori 32 GB baino gehiago da deskonprimituta, beraz ez da inportatu.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => Dendaren zerrenda ez dago Kelp & Squid-ek sinatuta, beraz ez da ezer instalatu.

@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => Petlja musi trajati najmenje 0,
 The tempo should be beats a minute, like 120. => Tempo musi byti v udarah na minutu, napriklad 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => Tutoj paket modov po razpakovanju imaje vyše od 8 GB, zato ne byl importovany.
 That zip unpacks to more than 32 GB, so it wasn't imported. => Tutoj zip po razpakovanju imaje vyše od 32 GB, zato ne byl importovany.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => Spisok Magazina ne jest podpisany od Kelp & Squid, zato ničto ne bylo instalovano.

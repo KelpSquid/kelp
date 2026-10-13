@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => Bucla trebuie să aibă cel pu�
 The tempo should be beats a minute, like 120. => Tempoul e în bătăi pe minut, de exemplu 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => Modpackul ăsta are peste 8 GB dezarhivat, așa că nu a fost importat.
 That zip unpacks to more than 32 GB, so it wasn't imported. => Zip-ul ăsta are peste 32 GB dezarhivat, așa că nu a fost importat.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => Lista Magazinului nu este semnată de Kelp & Squid, așa că nu s-a instalat nimic.

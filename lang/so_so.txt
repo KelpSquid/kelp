@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => Wareeggu waa inuu ahaadaa ugu y
 The tempo should be beats a minute, like 120. => Garaaca waa inuu noqdaa garaacyo daqiiqadkii, sida 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => Baakaddaas mod waxay noqonaysaa in ka badan 8 GB marka la furo, markaa lama soo gelin.
 That zip unpacks to more than 32 GB, so it wasn't imported. => Zip-kaas wuxuu noqonayaa in ka badan 32 GB marka la furo, markaa lama soo gelin.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => Liiska Dukaanka ma saxeexin Kelp & Squid, markaa waxba lama rakibin.

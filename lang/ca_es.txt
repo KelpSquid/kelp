@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => El bucle ha de durar com a mín
 The tempo should be beats a minute, like 120. => El tempo han de ser pulsacions per minut, com 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => Aquest modpack ocupa més de 8 GB descomprimit, així que no s'ha importat.
 That zip unpacks to more than 32 GB, so it wasn't imported. => Aquest zip ocupa més de 32 GB descomprimit, així que no s'ha importat.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => La llista de la Botiga no està signada per Kelp & Squid, així que no s'ha instal·lat res.

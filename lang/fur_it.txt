@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => La ripetizion e à di durâ alm
 The tempo should be beats a minute, like 120. => Il tempo al à di jessi in bats al minût, come 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => Chel modpack al devente plui di 8 GB une volte dispachetât, alore nol è stât impuartât.
 That zip unpacks to more than 32 GB, so it wasn't imported. => Chel zip al devente plui di 32 GB une volte dispachetât, alore nol è stât impuartât.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => La liste de Buteghe no je firmade di Kelp & Squid, alore nol è stât instalât nuie.

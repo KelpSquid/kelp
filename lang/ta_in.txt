@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => சுழற்சி குற
 The tempo should be beats a minute, like 120. => டெம்போ நிமிடத்துக்குத் துடிப்புகளாக இருக்க வேண்டும், 120 போல.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => அந்த மோட்பேக்கைப் பிரித்தால் 8 GB-க்கு மேல் ஆகும், அதனால் இறக்குமதி செய்யப்படவில்லை.
 That zip unpacks to more than 32 GB, so it wasn't imported. => அந்த zip-ஐப் பிரித்தால் 32 GB-க்கு மேல் ஆகும், அதனால் இறக்குமதி செய்யப்படவில்லை.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => கடையின் பட்டியலில் Kelp & Squid கையொப்பம் இல்லை, அதனால் எதுவும் நிறுவப்படவில்லை.

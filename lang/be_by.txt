@@ -498,3 +498,4 @@ The loop has to be at least 0.1 seconds long. => Цыкл павінен доў�
 The tempo should be beats a minute, like 120. => Тэмп — гэта ўдары за хвіліну, напрыклад 120.
 That modpack unpacks to more than 8 GB, so it wasn't imported. => Гэты модпак пасля распакоўкі займае больш за 8 ГБ, таму ён не імпартаваны.
 That zip unpacks to more than 32 GB, so it wasn't imported. => Гэты zip пасля распакоўкі займае больш за 32 ГБ, таму ён не імпартаваны.
+The Store list isn't signed by Kelp & Squid, so nothing was installed. => Спіс Крамы не падпісаны Kelp & Squid, таму нічога не ўсталявана.
