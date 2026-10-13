@@ -11,7 +11,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -95,13 +94,14 @@ public class ThemeStoreScreen extends Screen {
         if (!sha.equals(item.sha256())) throw new IOException(t("it arrived damaged, so it wasn't installed"));
         Path dir = Theme.folder().resolve(item.id()).toAbsolutePath().normalize();
         Files.createDirectories(dir);
+        Unzip unzip = new Unzip(256 * Unzip.MB, t("it arrived damaged, so it wasn't installed"));
         try (InputStream bytes = new java.io.ByteArrayInputStream(zip); ZipInputStream in = new ZipInputStream(bytes)) {
             for (ZipEntry entry; (entry = in.getNextEntry()) != null; ) {
                 if (entry.isDirectory()) continue;
                 Path target = dir.resolve(entry.getName()).normalize();
                 if (!target.startsWith(dir)) throw new IOException(t("it arrived damaged, so it wasn't installed"));
                 Files.createDirectories(target.getParent());
-                Files.copy(in, target, StandardCopyOption.REPLACE_EXISTING);
+                unzip.copy(in, target);
             }
         }
         Theme theme = Theme.read(dir);

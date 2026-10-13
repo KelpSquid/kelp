@@ -1,7 +1,6 @@
 package kelp;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -85,6 +84,7 @@ public final class Worlds {
         // Unpack into a temporary folder in saves first, then move the world out, so a broken zip leaves nothing behind
         Path unpack = Files.createTempDirectory(saves, ".importing-");
         try {
+            Unzip unzip = new Unzip(32 * Unzip.GB, "That zip unpacks to more than 32 GB, so it wasn't imported.");
             try (ZipInputStream in = new ZipInputStream(Files.newInputStream(zip))) {
                 ZipEntry entry;
                 while ((entry = in.getNextEntry()) != null) {
@@ -95,7 +95,7 @@ public final class Worlds {
                         Files.createDirectories(out);
                     } else {
                         Files.createDirectories(out.getParent());
-                        copyStream(in, out);
+                        unzip.copy(in, out);
                     }
                 }
             } catch (IllegalArgumentException badZip) {
@@ -109,10 +109,6 @@ public final class Worlds {
         } finally {
             if (Files.exists(unpack)) deleteFolder(unpack);
         }
-    }
-
-    private static void copyStream(InputStream in, Path out) throws IOException {
-        Files.copy(in, out, StandardCopyOption.REPLACE_EXISTING);
     }
 
     /** "My World", or "My World (2)", "My World (3)"... whichever isn't taken. */

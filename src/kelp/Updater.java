@@ -62,6 +62,7 @@ public final class Updater {
     private static void unzip(Path zip, Path into) throws IOException {
         Files.createDirectories(into);
         Path root = into.toAbsolutePath().normalize();
+        Unzip unzip = new Unzip(Unzip.GB, "squid.zip unpacks to more than 1 GB");
         try (InputStream file = Files.newInputStream(zip); ZipInputStream in = new ZipInputStream(file)) {
             for (ZipEntry entry; (entry = in.getNextEntry()) != null; ) {
                 Path target = root.resolve(entry.getName()).normalize();
@@ -70,7 +71,7 @@ public final class Updater {
                     Files.createDirectories(target);
                 } else {
                     Files.createDirectories(target.getParent());
-                    Files.copy(in, target, StandardCopyOption.REPLACE_EXISTING);
+                    unzip.copy(in, target);
                 }
             }
         }

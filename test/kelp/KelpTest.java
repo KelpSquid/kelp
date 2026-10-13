@@ -92,6 +92,27 @@ public class KelpTest {
         check("JSON empty object and list", Json.parse("{\"x\": {}, \"y\": []}").toString(), "{x={}, y=[]}");
         check("broken JSON is explained", problem(() -> Json.parse("{\"a\": }")), "Bad JSON at character 6: unexpected character");
         check("JSON with junk after the end", problem(() -> Json.parse("[1] 2")), "Bad JSON at character 4: extra text after the end");
+        check("JSON nested thousands deep is refused, not a crash", problem(() -> Json.parse("[".repeat(100_000))), "Bad JSON at character 513: nested too deep");
+        check("JSON nested a normal amount is fine", Json.parse("[".repeat(500) + "]".repeat(500)) != null, true);
+        check("a bad \\u escape is explained", problem(() -> Json.parse("\"\\uZZZZ\"")), "Bad JSON at character 3: bad \\u escape");
+        check("a bad number is explained", problem(() -> Json.parse("[1e]")), "Bad JSON at character 3: bad number");
+        zipCeiling();
+    }
+
+    static void zipCeiling() {
+        try {
+            Path folder = Files.createTempDirectory("kelp-unzip");
+            Unzip unzip = new Unzip(1000, "too big");
+            unzip.copy(new java.io.ByteArrayInputStream(new byte[600]), folder.resolve("a"));
+            check("files under the unzip ceiling are unpacked", Files.size(folder.resolve("a")), 600L);
+            check("going past the ceiling all together stops the unzip",
+                    problem(() -> unzip.copy(new java.io.ByteArrayInputStream(new byte[600]), folder.resolve("b"))), "too big");
+            check("and the half-written file isn't left behind", Files.exists(folder.resolve("b")), false);
+            check("a small file read whole past its limit is refused",
+                    problem(() -> Unzip.read(new java.io.ByteArrayInputStream(new byte[11]), 10, "too long")), "too long");
+        } catch (IOException e) {
+            throw new java.io.UncheckedIOException(e);
+        }
     }
 
     // ---- Which files are for which computer ----

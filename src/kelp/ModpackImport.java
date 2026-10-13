@@ -8,7 +8,6 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -113,7 +112,10 @@ public final class ModpackImport {
 
     /** A Prism Launcher or MultiMC instance: its components say the versions, and its .minecraft folder has everything. */
     private static Plan multiMc(ZipFile zip, ZipEntry mmc) throws IOException {
-        Map<String, Object> pack = Json.object(Json.parse(new String(zip.getInputStream(mmc).readAllBytes(), StandardCharsets.UTF_8)));
+        Map<String, Object> pack;
+        try (InputStream in = zip.getInputStream(mmc)) {
+            pack = Json.object(Json.parse(new String(Unzip.read(in, 32 * Unzip.MB, t("That file isn't a modpack Kelp can read.")), StandardCharsets.UTF_8)));
+        }
         String minecraft = null;
         Loader loader = Loader.VANILLA;
         for (Object entry : Json.array(pack.get("components"))) {
@@ -190,6 +192,7 @@ public final class ModpackImport {
     /** Copies the pack's own files (settings, configs, resource packs...) into the instance. */
     private static void copyOverrides(Path pack, List<String> folders, Path instance) throws IOException {
         Path root = instance.toAbsolutePath().normalize();
+        Unzip unzip = new Unzip(8 * Unzip.GB, t("That modpack unpacks to more than 8 GB, so it wasn't imported."));
         try (ZipFile zip = new ZipFile(pack.toFile())) {
             Enumeration<? extends ZipEntry> entries = zip.entries();
             while (entries.hasMoreElements()) {
@@ -206,7 +209,7 @@ public final class ModpackImport {
                     if (kelpOwned(root, target)) continue; // the instance's details and fast boot are Kelp's, not the pack's
                     Files.createDirectories(target.getParent());
                     try (InputStream in = zip.getInputStream(entry)) {
-                        Files.copy(in, target, StandardCopyOption.REPLACE_EXISTING);
+                        unzip.copy(in, target);
                     }
                 }
             }
@@ -250,6 +253,8 @@ public final class ModpackImport {
     }
 
     private static String text(ZipFile zip, String name) throws IOException {
-        return new String(zip.getInputStream(zip.getEntry(name)).readAllBytes(), StandardCharsets.UTF_8);
+        try (InputStream in = zip.getInputStream(zip.getEntry(name))) {
+            return new String(Unzip.read(in, 32 * Unzip.MB, t("That file isn't a modpack Kelp can read.")), StandardCharsets.UTF_8);
+        }
     }
 }
