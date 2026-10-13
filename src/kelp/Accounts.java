@@ -147,14 +147,16 @@ public final class Accounts {
             Files.createDirectories(FILE.getParent());
             // Write to a .part file first, so a crash halfway through never loses every account
             Path part = FILE.resolveSibling(FILE.getFileName() + ".part");
-            try (Writer out = Files.newBufferedWriter(part)) {
-                values.store(out, "Kelp's accounts. These are sign-in keys: don't share this file with anyone!");
-            }
+            Files.deleteIfExists(part);
             try {
-                // On Mac and Linux, only you can read it (Windows already keeps your AppData folder to you)
-                Files.setPosixFilePermissions(part, PosixFilePermissions.fromString("rw-------"));
+                // On Mac and Linux, only you can read it, from the moment it's made, before any key is written in
+                // (Windows already keeps your AppData folder to you)
+                Files.createFile(part, PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rw-------")));
             } catch (UnsupportedOperationException windows) {
                 // fine
+            }
+            try (Writer out = Files.newBufferedWriter(part)) {
+                values.store(out, "Kelp's accounts. These are sign-in keys: don't share this file with anyone!");
             }
             Files.move(part, FILE, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
