@@ -1,0 +1,35 @@
+# Runs Kelp's tests (the same ones as test.bat) on every push, on Windows and Linux,
+# so a change that breaks something shows up as a red X on the commit.
+
+name: tests
+
+on:
+  push:
+    branches: ['**']
+    paths-ignore: ['**.md', 'branding/**']
+  workflow_dispatch:
+
+concurrency: # a newer push replaces a run still going: only the latest code gets tested
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Build and test
+        shell: bash
+        run: |
+          javac -d build/test-classes src/kelp/*.java test/kelp/*.java
+          java -Djava.awt.headless=true -cp build/test-classes kelp.KelpTest | tee test-output.txt
+          grep -q "ALL PASSED" test-output.txt
